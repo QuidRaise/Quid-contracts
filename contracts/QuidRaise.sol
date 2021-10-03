@@ -2,8 +2,8 @@
 
 pragma solidity ^0.7.0;
 
-contract Quid {
-    string public name = "Quid";
+contract QuidRaise {
+    string public name = "Quid Raise";
 
     function getName() public view returns (string) {
         return name;
