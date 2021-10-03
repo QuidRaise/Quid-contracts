@@ -2,6 +2,13 @@
 
 pragma solidity 0.7.0;
 
+import './libraries/Ownable.sol';
+import './libraries/Address.sol';
+
+import './interfaces/IDNS.sol';
+
+
+
 contract DNS is Ownable,IDNS {
     mapping(string=>address payable) RouteTable;
 
@@ -14,7 +21,7 @@ contract DNS is Ownable,IDNS {
 
     }
 
-    function getRoute(string calldata name) external view returns(address payable){
+    function getRoute(string calldata name) external override view returns(address payable){
         address payable contractAddress = RouteTable[name];
         require(contractAddress!=address(0x0),"route entry not found");
         return contractAddress;

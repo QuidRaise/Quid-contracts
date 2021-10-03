@@ -2,16 +2,12 @@
 
 pragma solidity 0.7.0;
 
-contract Context {
-    constructor () internal { }
-    // solhint-disable-previous-line no-empty-blocks
-
-    function _msgSender() internal view returns (address payable) {
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
         return msg.sender;
     }
 
-    function _msgData() internal view returns (bytes memory) {
-        this; 
+    function _msgData() internal view virtual returns (bytes calldata) {
         return msg.data;
     }
 }
