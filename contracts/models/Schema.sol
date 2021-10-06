@@ -68,5 +68,11 @@ struct Proposal{
    RecordStatus ProposalStatus;
 }
 
+struct Investor{
+   address WalletAddress;
+   uint roundsParticipatedIn;
+   uint proposalsVotedIn  ;
+}
+
 enum RecordStatus{InActive,Active}
 
