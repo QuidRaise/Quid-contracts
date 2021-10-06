@@ -74,5 +74,15 @@ struct Investor{
    uint proposalsVotedIn  ;
 }
 
+struct Company{
+   uint Id;
+   string CompanyName;
+   string IPFSLinkToLogo;
+   string IPFSLinkToCompanyProposal;
+   string CompanyWebsiteAddress;
+   address CompanyTokenContractAddress;
+   address OwnerAddress;
+}
+
 enum RecordStatus{InActive,Active}
 
