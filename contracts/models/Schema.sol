@@ -31,18 +31,42 @@ struct Round {
    // When set to true, the round duration is not considered
    // The round is kept open until it has been fully subscribed
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
-   bool RunTillFullySubscribed
+   bool RunTillFullySubscribed;
 
 }
 
+
+/**
+
+  Used in representing the NFT an investor has gotten from participating in a round
+  Contains records about the NFT as well as the COmpany token amount backing up this token
+  We need to find a way for people to interact with these records on chain
+  Lots of integration potentials here with other nft market places
+
+ */
 struct RoundNft
 {
    uint Id;
-   address Investor;
    address NftContractAddress;
    uint TokenId;
    uint UnderlyingFundAmount;
    uint RoundId;
 }
 
-struct 
+struct Proposal{
+   uint Id;
+   uint CompanyId;
+   uint AmountRequested;
+   uint VoteSessionDuration;
+   uint VoteStartTimeStamp;
+   uint ApprovedVotes;
+   uint RejectedVotes;
+   uint TokensStakedForApprovedVotes;
+   uint TokensStakedForRejectedVotes;
+
+   //Proposals can only be deleted when no vote has been passed for them for this MVP
+   RecordStatus ProposalStatus;
+}
+
+enum RecordStatus{InActive,Active}
+
