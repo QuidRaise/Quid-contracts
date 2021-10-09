@@ -11,7 +11,6 @@ abstract contract Deprecateable is BaseContract,DataGrant {
 
 
     constructor() {
-        owner = payable (msg.sender);
         isDeprecated = false;
     }
 

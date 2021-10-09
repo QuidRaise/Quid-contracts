@@ -43,14 +43,14 @@ interface IIdentityContract {
      * inherit from it and have the modifer already in place
      * Let's make life easier for Kelvin
      */
-    function validateC2CTransaction(address sourceContract,address destinationContract) external returns (bool);
+    function validateC2CTransaction(address sourceContract,address destinationContract) external view returns (bool);
 
     function grantContractInteraction(address sourceContract,address destinationContract) external;
     function revokeContractInteraction(address sourceContract, address destinationContract) external;
 
-    function isCompanyAddressWhitelisted(address companyOwnerAddress) external returns(bool);
-    function isCompanyWhitelisted(uint companyId) external returns(bool);
+    function isCompanyAddressWhitelisted(address companyOwnerAddress) external view returns(bool);
+    function isCompanyWhitelisted(uint companyId) external view returns(bool);
 
-    function isInvestorAddressWhitelisted(address companyOwnerAddress) external returns(bool);
+    function isInvestorAddressWhitelisted(address companyOwnerAddress) external view returns(bool);
 
 }

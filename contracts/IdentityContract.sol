@@ -14,6 +14,9 @@ contract IdentityContract is DataGrant,IIdentityContract {
 
     mapping(address=>mapping(address=>bool)) private _c2cWhitleist;
 
+   constructor(address dnsContract) BaseContract(dnsContract) {
+
+    }
 
     /**
      * Should be called by only the owner address
