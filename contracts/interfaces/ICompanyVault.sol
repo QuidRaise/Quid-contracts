@@ -26,7 +26,7 @@ interface ICompanyVault {
       * During round creation, any leftover tokens from a previous round are sent out to the Company owner's address
       * Before the new deposit is processed
      */
-    function withdrawCompanyTokens(uint companyId) external;
+    function withdrawCompanyTokens(uint companyId, uint amount) external;
 
     /**
       * Companies after submitting a proposal that has been approved can access their capital by calling this function
