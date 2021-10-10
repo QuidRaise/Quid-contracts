@@ -6,7 +6,6 @@ import "./interfaces/ICompanyVaultStore.sol";
 pragma solidity 0.7.0;
 
 contract CompanyVaultStore is BaseContract, DataGrant, ICompanyVaultStore {
-
     /** @dev
      * Outer Key = Company Id
      * Inner Key  = Contract Address Of payment Currency (USDT, DAI, USDC, ... )
