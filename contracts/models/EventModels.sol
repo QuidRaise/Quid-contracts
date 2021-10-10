@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
-interface EventModels
-{
 
     
- struct CompanyDeposit{
+ struct CompanyDepositRequest{
         uint  CompanyId;
         uint  RoundId;
         address  Sender;
@@ -13,7 +11,7 @@ interface EventModels
         uint Amount;
  }
 
- struct CompanyWithdrawal{
+ struct CompanyWithdrawalRequest{
         uint CompanyId;
         uint RoundId;
         address Receiver;
@@ -21,7 +19,7 @@ interface EventModels
         uint Amount;
  }
 
- struct InvestmentDeposit{
+ struct InvestmentDepositRequest{
         uint CompanyId;
         uint RoundId;  
         address Sender;
@@ -29,7 +27,7 @@ interface EventModels
         uint Amount;
  }
 
-struct InvestmentWithdrawal{
+struct InvestmentWithdrawalRequest{
         uint  CompanyId;
         uint  RoundId; 
         address  Receiver;
@@ -37,51 +35,51 @@ struct InvestmentWithdrawal{
         uint Amount;
 }
 
-struct WhitelistCompanyOwner{
+struct WhitelistCompanyOwnerRequest{
         address  CompanyOwner;
         address  PerformedBy;
 }
 
-struct BlacklistCompanyOwner{
+struct BlacklistCompanyOwnerRequest{
         address  CompanyOwner;
         address  PerformedBy;
 }
 
 
-struct WhitelistCompany{
+struct WhitelistCompanyRequest{
         address  CompanyId;
         address  PerformedBy;
 }
 
-struct BlacklistCompany{
+struct BlacklistCompanyRequest{
         address  CompanyId;
         address  PerformedBy;
 }
 
-struct WhitelistInvestor{
+struct WhitelistInvestorRequest{
         address  Investor;
         address  PerformedBy;
 }
 
-struct BlacklistInvestor{
+struct BlacklistInvestorRequest{
         address  Investor;
         address  PerformedBy;
 }
 
-struct C2CAccessGrant{
+struct C2CAccessGrantRequest{
     address  SourceContract;
     address  DestinationContract;
     address  PerformedBy;
 }
 
-struct C2CAccessRevoked{
+struct C2CAccessRevokedRequest{
     address  SourceContract;
     address  DestinationContract;
     address  PerformedBy;
 }
 
 
-struct CompanyCreated{
+struct CompanyCreatedRequest{
     uint  CompanyId; 
     address  CompanyOwner;
     address  PerformedBy;
@@ -91,7 +89,7 @@ struct CompanyCreated{
     address CompanyTokenContract;
 }
 
-struct ProposalCreated{
+struct ProposalCreatedRequest{
     uint  ProposalId;
     uint  CompanyId;
     address  CompanyOwner;
@@ -101,7 +99,7 @@ struct ProposalCreated{
     uint ProposalDuration;
 }
 
-struct RoundCreated{
+struct RoundCreatedRequest{
     uint  RoundId;
     uint  CompanyId;
     address  CompanyOwner;
@@ -113,7 +111,7 @@ struct RoundCreated{
     uint RunTillFullySubscribed;
 }
 
-struct ShareCertificateCreated{
+struct ShareCertificateCreatedRequest{
     uint  RegistryId;
     uint  TokenId;
     uint  RoundId;
@@ -121,7 +119,4 @@ struct ShareCertificateCreated{
     address nftTokenContractAddress;    
 }
 
-
-
-}
 
