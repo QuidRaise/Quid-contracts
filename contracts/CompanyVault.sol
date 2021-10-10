@@ -30,7 +30,7 @@ contract  CompanyVault is BaseContract, DataGrant, ICompanyVault {
 
     constructor(address dnsContract) BaseContract(dnsContract) {
         _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
-        _companyStore = ICompanyStore(_dns.getRoute(COMPANY_VAULT_STORE));
+        _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
 
     }
 
