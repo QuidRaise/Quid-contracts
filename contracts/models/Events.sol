@@ -15,7 +15,7 @@ pragma solidity 0.7.0;
   * CompanyCreated, ProposalCreated, RoundCreated, ShareCertificateCreated
   *
  */
-interface IEvents {
+abstract contract Events {
 
 
  event CompanyDeposit(

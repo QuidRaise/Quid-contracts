@@ -26,6 +26,15 @@ interface IEventEmitter {
      function emitC2CAccessGrantEvent(C2CAccessGrantRequest memory model) external;
      function emitC2CAccessRevokedEvent(C2CAccessRevokedRequest memory model) external;
 
+     function emitCompanyCreatedEvent(CompanyCreatedRequest memory model) external;
+     function emitProposalCreatedEvent(ProposalCreatedRequest memory model) external;
+
+
+     function emitRoundCreatedEvent(RoundCreatedRequest memory model) external;
+     function emitShareCertificateCreatedEvent(ShareCertificateCreatedRequest memory model) external;
+
+
+
 
  
 }
