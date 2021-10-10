@@ -14,29 +14,34 @@ abstract contract BaseContract is Ownable
     using Address for address;
 
     
-    bytes32 constant FEE_VAULT_STORAGE_ROUTE_KEY = "IDENTITY_CONTRACT";
+    bytes32 constant IDENTITY_CONTRACT = "IDENTITY_CONTRACT";
     bytes32 constant EVENT_EMITTER_KEY = "EVENT_EMITTER";
+    bytes32 constant COMPANY_VAULT_STORE = "COMPANY_VAULT_STORE";
+    bytes32 constant COMPANY_VAULT = "COMPANY_VAULT";
+    bytes32 constant COMPANY_STORE = "COMPANY_STORE";
 
-    IDNS Dns;
+
+
+    IDNS _dns;
 
     constructor(address dnsContractAddress){
-        Dns = IDNS(dnsContractAddress);
+        _dns = IDNS(dnsContractAddress);
     }
 
-    function updateDnsContractAddress(address  dnsContractAddress) external onlyOwner{
+    function update_dnsContractAddress(address  dnsContractAddress) external onlyOwner{
         require(dnsContractAddress!=address(0x0),"contract address cannot be empty");
         require(dnsContractAddress.isContract(),"invalid contract address");
-        Dns = IDNS(dnsContractAddress);
+        _dns = IDNS(dnsContractAddress);
 
     }
 
-    function getDnsContractAddress() external view returns (address){
-        return address(Dns);
+    function get_dnsContractAddress() external view returns (address){
+        return address(_dns);
     }
 
 
      modifier c2cCallValid() {
-        IIdentityContract identityContract =  IIdentityContract(Dns.getRoute(FEE_VAULT_STORAGE_ROUTE_KEY));
+        IIdentityContract identityContract =  IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
         bool isValid = identityContract.validateC2CTransaction(msg.sender,address(this));
         require(isValid, "unauthorized contract to contract interaction");
         _;
