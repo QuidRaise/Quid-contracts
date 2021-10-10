@@ -6,34 +6,22 @@ pragma solidity 0.7.0;
 
 interface IIdentityContract {
 
-    /**
-     * Should be called by only the owner address
-     */
+ 
     function whitelistCompanyAddress(address companyOwnerAddress) external;
 
-    /**
-     * Should be called by only the owner address
-     */
+   
     function whitelistCompany(uint companyId) external;
 
-    /**
-     * Should be called by only the owner address
-     */
+   
     function whitelistInvestor(address investor) external;
-    /**
-     * Should be called by only the owner address
-     */
+   
     function blacklistCompanyAddress(address companyOwnerAddress) external;
 
-    /**
-     * Should be called by only the owner address
-     */
+  
     function blacklistCompany(uint companyId) external;
 
 
-    /**
-     * Should be called by only the owner address
-     */
+   
     function blacklistInvestor(address investor) external;
 
     /**

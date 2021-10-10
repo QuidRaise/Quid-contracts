@@ -19,51 +19,37 @@ contract IdentityContract is DataGrant,IIdentityContract {
     }
 
 
-    /**
-     * Should be called by only the owner address
-     */
+
     function whitelistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor 
     {
         _companyOwnerAddressWhitelist[companyOwnerAddress] = true;
     }
 
-    /**
-     * Should be called by only the owner address
-     */
+   
     function whitelistCompany(uint companyId)  external override onlyDataAccessor
     {
         _companyWhitelist[companyId] = true;
     }
 
-    /**
-     * Should be called by only the owner address
-     */
+   
     function whitelistInvestor(address investor) external override onlyDataAccessor 
     {
         _investorWhitelist[investor] = true;
     }
 
 
-    /**
-     * Should be called by only the owner address
-     */
     function blacklistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor 
     {
         _companyOwnerAddressWhitelist[companyOwnerAddress] = false;
     }
 
-    /**
-     * Should be called by only the owner address
-     */
+  
     function blacklistCompany(uint companyId)  external override onlyDataAccessor
     {
         _companyWhitelist[companyId] = false;
     }
 
 
-    /**
-     * Should be called by only the owner address
-     */
     function blacklistInvestor(address investor) external override onlyDataAccessor 
     {
         _investorWhitelist[investor] = false;
