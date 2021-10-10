@@ -18,6 +18,7 @@ contract IdentityContract is DataGrant,IIdentityContract {
 
     }
 
+
     /**
      * Should be called by only the owner address
      */

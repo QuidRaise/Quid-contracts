@@ -45,6 +45,7 @@ interface IIdentityContract {
      */
     function validateC2CTransaction(address sourceContract,address destinationContract) external view returns (bool);
 
+
     function grantContractInteraction(address sourceContract,address destinationContract) external;
     function revokeContractInteraction(address sourceContract, address destinationContract) external;
 
@@ -52,5 +53,6 @@ interface IIdentityContract {
     function isCompanyWhitelisted(uint companyId) external view returns(bool);
 
     function isInvestorAddressWhitelisted(address companyOwnerAddress) external view returns(bool);
+
 
 }

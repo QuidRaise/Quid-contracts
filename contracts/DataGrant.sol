@@ -4,6 +4,7 @@ pragma solidity 0.7.0;
 import "./BaseContract.sol";
 
 abstract contract DataGrant is BaseContract {
+
     mapping(address => bool) private dataAccessor;
 
     function activateDataAcess(address acessor) external onlyOwner {
