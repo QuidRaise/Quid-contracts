@@ -97,21 +97,28 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
          _roundStore.createRoundPaymentOptions(roundId,paymentCurrencies);
 
+        emitRoundCreatedEvents(roundId, paymentCurrencies, company, round);
+         
+    }
+
+    function emitRoundCreatedEvents(uint roundId, address[] memory paymentCurrencies, Company memory company, Round memory round) internal 
+    {
+            
          _eventEmitter
          .emitCompanyDepositEvent(
-                CompanyDepositRequest(company.Id, roundId, companyOwner,
-                                        company.CompanyTokenContractAddress,tokensSuppliedForRound)
+                CompanyDepositRequest(company.Id, roundId, company.OwnerAddress,
+                                        company.CompanyTokenContractAddress,round.TotalTokensUpForSale)
             );
 
 
          _eventEmitter
          .emitRoundCreatedEvent(
-             RoundCreatedRequest(roundId,company.Id, companyOwner,
+             RoundCreatedRequest(roundId,company.Id, company.OwnerAddress,
                                 round.LockUpPeriodForShare, round.PricePerShare, round.TotalTokensUpForSale,
                                 round.RoundStartTimeStamp, round.DurationInSeconds, 
                                 round.RunTillFullySubscribed, paymentCurrencies )
             );
-         
+
     }
 
    
@@ -167,7 +174,7 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
 
     
-    function doesCompanyHaveOpenRound(uint companyId) internal returns (bool)
+    function doesCompanyHaveOpenRound(uint companyId) internal view returns (bool)
     {
          Round[] memory rounds =  _roundStore.getCompanyRounds(companyId);
          Round memory lastRound = rounds[rounds.length-1];
@@ -197,7 +204,7 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
          }
     }
 
-    function doesCompanyHaveOpenProposal(uint companyId) internal returns (bool)
+    function doesCompanyHaveOpenProposal(uint companyId) internal view returns (bool)
     {
         Proposal[] memory proposals = _proposalStore.getCompanyProposals(companyId);
         Proposal memory lastProposal = proposals[proposals.length-1];
@@ -219,7 +226,7 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
         }
     }
 
-     function validateRoundCreationInput(uint companyId,  address[] memory paymentCurrencies) internal 
+     function validateRoundCreationInput(uint companyId,  address[] memory paymentCurrencies) internal view
     {
         bool hasOpenRound = doesCompanyHaveOpenRound(companyId);
          require(!hasOpenRound,"Company has an open round");
@@ -236,7 +243,7 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
     /***
         Checks the payment currencies against a list of supported payment currencies in the company vault contract
     */
-    function validateRoundPaymentOptions(address[] memory paymentCurrencies) internal returns(bool)
+    function validateRoundPaymentOptions(address[] memory paymentCurrencies) internal view returns(bool)
     {
         //TODO: Check CompanyVault for list of supported payment options
         return true;

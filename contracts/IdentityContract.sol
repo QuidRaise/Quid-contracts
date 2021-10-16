@@ -7,6 +7,8 @@ import "./interfaces/IIdentityContract.sol";
 import "./interfaces/IEventEmitter.sol";
 
 pragma solidity 0.7.0;
+pragma experimental ABIEncoderV2;
+
 
 contract IdentityContract is DataGrant,IIdentityContract {
 
