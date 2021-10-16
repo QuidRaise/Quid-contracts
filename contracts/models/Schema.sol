@@ -64,9 +64,6 @@ struct Proposal{
    uint RejectedVotes;
    uint TokensStakedForApprovedVotes;
    uint TokensStakedForRejectedVotes;
-
-   //Proposals can only be deleted when no vote has been passed for them for this MVP
-   RecordStatus ProposalStatus;
    bool IsDeleted;
 }
 
@@ -117,5 +114,4 @@ struct RoundResponse
    uint NumberOfShareholders;
 }
 
-enum RecordStatus{InActive,Active}
 

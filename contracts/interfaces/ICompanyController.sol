@@ -15,8 +15,8 @@ interface ICompanyController {
 
 
 
-    function createProposal(uint amountRequested, uint votingStartTimestamp, address companyOwnerAddress ) external;
-    function getProposalResutl(uint proposalId) view external returns (ProposalResponse memory);
+    function createProposal(uint amountRequested, uint votingStartTimestamp, address companyOwner ) external;
+    function getProposalResult(uint proposalId) view external returns (ProposalResponse memory);
     function getRound(uint roundId) external view returns (RoundResponse memory) ;
     function releaseProposalBudget(uint proposalId, address companyOwnerAddress) external;
 

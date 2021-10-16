@@ -101,52 +101,63 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
          
     }
 
-    function emitRoundCreatedEvents(uint roundId, address[] memory paymentCurrencies, Company memory company, Round memory round) internal 
-    {
-            
-         _eventEmitter
-         .emitCompanyDepositEvent(
-                CompanyDepositRequest(company.Id, roundId, company.OwnerAddress,
-                                        company.CompanyTokenContractAddress,round.TotalTokensUpForSale)
-            );
-
-
-         _eventEmitter
-         .emitRoundCreatedEvent(
-             RoundCreatedRequest(roundId,company.Id, company.OwnerAddress,
-                                round.LockUpPeriodForShare, round.PricePerShare, round.TotalTokensUpForSale,
-                                round.RoundStartTimeStamp, round.DurationInSeconds, 
-                                round.RunTillFullySubscribed, paymentCurrencies )
-            );
-
-    }
-
-   
-    function depsitCompanyTokensToVault(Company memory company, uint expectedTokenDeposit) internal
-    {
-        IERC20 token = IERC20(company.CompanyTokenContractAddress);
-        uint amountToDeposit = token.allowance(company.OwnerAddress, address(this));
-        require(expectedTokenDeposit==amountToDeposit,"Approved deposit does not tally with round allocation");
-        require(amountToDeposit>0,"Cannot deposit 0 tokens");
-
-        token.safeTransferFrom(company.OwnerAddress,address(this),amountToDeposit);
-
-        token.approve(address(_companyVault),amountToDeposit);
-        _companyVault.depositCompanyTokens(company.Id);
-    }
-
-
 
     function createProposal(uint amountRequested, uint votingStartTimestamp, 
-                            address companyOwnerAddress ) external override c2cCallValid
+                            address companyOwner ) external override c2cCallValid
     {
+
+         require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
+         Company memory company = _companyStore.getCompanyByOwner(companyOwner);
+
+        validateProposalCreationAction(company.Id);
+
+        Proposal memory proposal = Proposal(0,company.Id,amountRequested,
+                                            getVoteDuration(),votingStartTimestamp,
+                                            0,0,0,0,false);
+        uint propoalId = _proposalStore.createProposal(proposal);
+
+        _eventEmitter
+        .emitProposalCreatedEvent(
+            ProposalCreatedRequest(propoalId,company.Id,companyOwner,company.CompanyTokenContractAddress,
+                                   proposal.AmountRequested,proposal.VoteStartTimeStamp,
+                                   proposal.VoteSessionDuration)
+        );
+
+
 
     }
 
 
-    function getProposalResutl(uint proposalId) external view override returns (ProposalResponse memory) 
+    function getProposalResult(uint proposalId) external view override returns (ProposalResponse memory) 
     {
 
+       Proposal memory proposal =  _proposalStore.getProposal(proposalId);
+
+       bool hasVotingPeriodElapsed = false;
+       uint expiryDate = proposal.VoteStartTimeStamp.add(proposal.VoteSessionDuration);
+       if(block.timestamp>expiryDate)
+       {
+            hasVotingPeriodElapsed = true;
+       }
+      
+       ProposalResponse memory response = ProposalResponse(proposal.ApprovedVotes, proposal.RejectedVotes,
+                                                           proposal.TokensStakedForApprovedVotes,  proposal.TokensStakedForRejectedVotes ,
+                                                            hasVotingPeriodElapsed );
+
+
+
+    }
+
+    function getVotingResult(Proposal memory proposal, bool hasVotingPeriodElapsed) external returns (bool)
+    {
+        if(!hasVotingPeriodElapsed)
+        {
+            return false;
+        }
+        else
+        {
+
+        }
     }
 
     function getRound(uint roundId) external view override returns (RoundResponse memory) 
@@ -228,7 +239,7 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
      function validateRoundCreationInput(uint companyId,  address[] memory paymentCurrencies) internal view
     {
-        bool hasOpenRound = doesCompanyHaveOpenRound(companyId);
+         bool hasOpenRound = doesCompanyHaveOpenRound(companyId);
          require(!hasOpenRound,"Company has an open round");
 
          bool hasOpenProposal = doesCompanyHaveOpenProposal(companyId);
@@ -239,6 +250,26 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
     }
 
+     function validateProposalCreationAction(uint companyId) internal view
+    {
+         bool hasOpenRound = doesCompanyHaveOpenRound(companyId);
+         require(!hasOpenRound,"Company has an open round");
+
+         bool hasOpenProposal = doesCompanyHaveOpenProposal(companyId);
+         require(!hasOpenProposal,"Company has an open proposal");
+
+       
+
+    }
+
+
+    function getVoteDuration() internal view returns (uint)
+
+    {
+        //TODO: This should be read from our config contract
+        return 0;
+    }
+    
 
     /***
         Checks the payment currencies against a list of supported payment currencies in the company vault contract
@@ -248,6 +279,44 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
         //TODO: Check CompanyVault for list of supported payment options
         return true;
     }
+
+
+
+    
+    function emitRoundCreatedEvents(uint roundId, address[] memory paymentCurrencies, Company memory company, Round memory round) internal 
+    {
+            
+         _eventEmitter
+         .emitCompanyDepositEvent(
+                CompanyDepositRequest(company.Id, roundId, company.OwnerAddress,
+                                        company.CompanyTokenContractAddress,round.TotalTokensUpForSale)
+            );
+
+
+         _eventEmitter
+         .emitRoundCreatedEvent(
+             RoundCreatedRequest(roundId,company.Id, company.OwnerAddress,
+                                round.LockUpPeriodForShare, round.PricePerShare, round.TotalTokensUpForSale,
+                                round.RoundStartTimeStamp, round.DurationInSeconds, 
+                                round.RunTillFullySubscribed, paymentCurrencies )
+            );
+
+    }
+
+   
+    function depsitCompanyTokensToVault(Company memory company, uint expectedTokenDeposit) internal
+    {
+        IERC20 token = IERC20(company.CompanyTokenContractAddress);
+        uint amountToDeposit = token.allowance(company.OwnerAddress, address(this));
+        require(expectedTokenDeposit==amountToDeposit,"Approved deposit does not tally with round allocation");
+        require(amountToDeposit>0,"Cannot deposit 0 tokens");
+
+        token.safeTransferFrom(company.OwnerAddress,address(this),amountToDeposit);
+
+        token.approve(address(_companyVault),amountToDeposit);
+        _companyVault.depositCompanyTokens(company.Id);
+    }
+
 
 
 
