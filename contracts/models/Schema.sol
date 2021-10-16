@@ -16,6 +16,8 @@ pragma solidity 0.7.0;
    For rounds that are not set to run till they ae fully subscribed
 
 */
+
+//TODO: we need to capture number of nfts issued and how many of them have been liquidated
 struct Round {
    uint Id;
    uint CompanyId;
