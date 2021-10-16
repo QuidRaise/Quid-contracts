@@ -124,7 +124,8 @@ event RoundCreated(
     uint tokensSuppliedForRound,
     uint startTimestamp,
     uint roundDuration,
-    uint runTillFullySubscribed
+    uint runTillFullySubscribed,
+    address[] paymentCurrencies,
 );
 
 event ShareCertificateCreated(

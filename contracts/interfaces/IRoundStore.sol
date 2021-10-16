@@ -10,7 +10,8 @@ interface IRoundStore {
 
     function updateRound(uint id, Round memory round) external;
     function createRound(Round memory round) external returns (uint);
-
+    function createRoundPaymentOptions(uint roundId,address[] memory paymentCurrencies) external;
+    function getRoundPaymentOptions(uint id) external returns (address[] memory);
     function createRoundNft(RoundNft memory roundNft) external returns (uint);
     function updateRoundNft(uint id, RoundNft memory roundNft) external;
     function getRoundNft(uint id) external returns (RoundNft memory);

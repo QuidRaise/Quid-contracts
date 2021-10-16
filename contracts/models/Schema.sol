@@ -2,7 +2,7 @@
 
 pragma solidity 0.7.0;
 
-
+// Storage Models
 /** 
    Represents a company's investment round
    When a round is fully subscribed, we emit a Fully Subscribed event
@@ -20,7 +20,7 @@ struct Round {
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   string IPFSLinkForRoadMap;
+   string DocumentUrl;
    uint PricePerShare;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
@@ -32,6 +32,7 @@ struct Round {
    // The round is kept open until it has been fully subscribed
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
    bool RunTillFullySubscribed;
+   bool IsDeleted
 
 }
 
@@ -66,6 +67,7 @@ struct Proposal{
 
    //Proposals can only be deleted when no vote has been passed for them for this MVP
    RecordStatus ProposalStatus;
+   bool IsDeleted
 }
 
 struct Investor{
@@ -77,11 +79,42 @@ struct Investor{
 struct Company{
    uint Id;
    string CompanyName;
-   string IPFSLinkToLogo;
-   string IPFSLinkToCompanyProposal;
-   string CompanyWebsiteAddress;
+   string CompanyUrl;
    address CompanyTokenContractAddress;
    address OwnerAddress;
+}
+
+
+
+
+// Service Models
+
+struct ProposalResponse
+{
+   uint ApprovedVotes;
+   uint RejectedVotes;
+   uint TokensStakedForApprovedVotes;
+   uint TokensStakedForRejectedVotes;
+   uint HasVotingPeriodElapsed;
+   uint IsProposalApproved;
+}
+
+struct RoundResponse
+{
+   uint Id;
+   uint CompanyId;
+   uint LockUpPeriodForShare;
+   string IPFSLinkForRoadMap;
+   uint PricePerShare;
+   uint TotalTokensUpForSale;
+   uint TotalTokensSold;
+   uint TotalInvestors;
+   uint TotalRaised;
+
+   uint RoundStartTimeStamp;   
+   uint DurationInSeconds;
+   bool RunTillFullySubscribed;
+   uint NumberOfShareholders;
 }
 
 enum RecordStatus{InActive,Active}

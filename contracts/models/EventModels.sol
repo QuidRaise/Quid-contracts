@@ -83,8 +83,7 @@ struct CompanyCreatedRequest{
     uint  CompanyId; 
     address  CompanyOwner;
     address  PerformedBy;
-    string CompanyName;
-    string LogoUrl;
+    string CompanyName;    
     string CompanyDocumentUrl;
     address CompanyTokenContract;
 }
@@ -103,12 +102,13 @@ struct RoundCreatedRequest{
     uint  RoundId;
     uint  CompanyId;
     address  CompanyOwner;
-    uint LockupPeriodForSHares;
+    uint LockupPeriodForShares;
     uint PricePerShare;
     uint TokensSuppliedForRound;
     uint StartTimestamp;
     uint RoundDuration;
     uint RunTillFullySubscribed;
+    address[] paymentCurrencies;
 }
 
 struct ShareCertificateCreatedRequest{
