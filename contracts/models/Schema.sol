@@ -92,8 +92,9 @@ struct ProposalResponse
    uint RejectedVotes;
    uint TokensStakedForApprovedVotes;
    uint TokensStakedForRejectedVotes;
-   uint HasVotingPeriodElapsed;
-   uint IsProposalApproved;
+   bool IsProposalApproved;
+   bool HasVotingPeriodElapsed;
+
 }
 
 struct RoundResponse

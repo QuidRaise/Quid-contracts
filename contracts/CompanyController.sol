@@ -142,13 +142,13 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
       
        ProposalResponse memory response = ProposalResponse(proposal.ApprovedVotes, proposal.RejectedVotes,
                                                            proposal.TokensStakedForApprovedVotes,  proposal.TokensStakedForRejectedVotes ,
-                                                            hasVotingPeriodElapsed );
+                                                            isProposalApproved(proposal, hasVotingPeriodElapsed), hasVotingPeriodElapsed );
 
 
-
+       return response;
     }
 
-    function getVotingResult(Proposal memory proposal, bool hasVotingPeriodElapsed) external returns (bool)
+    function isProposalApproved(Proposal memory proposal, bool hasVotingPeriodElapsed) internal pure returns (bool)
     {
         if(!hasVotingPeriodElapsed)
         {
@@ -156,7 +156,17 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
         }
         else
         {
+            uint weightedApprovals = proposal.ApprovedVotes.mul(proposal.TokensStakedForApprovedVotes);
+            uint weightedRejections = proposal.RejectedVotes.mul(proposal.TokensStakedForRejectedVotes);
 
+            if(weightedApprovals>weightedRejections)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
