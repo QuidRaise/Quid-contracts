@@ -24,7 +24,7 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
         _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
         _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
-        _eventEmitter = ICompanyStore(_dns.getRoute(EVENT_EMITTER));
+        _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
         _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
     }
@@ -54,6 +54,8 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
          _eventEmitter.emitCompanyCreatedEvent(CompanyCreatedRequest(companyId, company.CompanyOwner, companyCreatedBy, 
                                                                      company.CompanyName, company.CompanyDocumentUrl,
                                                                      company.CompanyTokenContract));
+
+        _eventEmitter.emitWhitelistCompanyEvent(WhitelistCompanyRequest(companyId,companyCreatedBy));
 
     }
 
