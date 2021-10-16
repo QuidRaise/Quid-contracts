@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 import "./DataGrant.sol";
+import "./models/EventModels.sol";
+
 import "./interfaces/IIdentityContract.sol";
 
 
