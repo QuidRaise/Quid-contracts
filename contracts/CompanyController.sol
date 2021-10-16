@@ -89,8 +89,8 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
          depsitCompanyTokensToVault(company,tokensSuppliedForRound);
 
-         Round memory round = Round(0,company.Id,lockupPeriodForShare,roundDocumentUrl,pricePerShare,
-                             tokensSuppliedForRound,0,0,0,startTimestamp,duration,
+         Round memory round = Round(0,company.Id,lockupPeriodForShare,pricePerShare,
+                             tokensSuppliedForRound,0,0,0,startTimestamp,duration,roundDocumentUrl,
                              runTillFullySubscribed,false);
 
          uint roundId = _roundStore.createRound(round);
@@ -172,7 +172,14 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
     function getRound(uint roundId) external view override returns (RoundResponse memory) 
     {
+        Round memory round =  _roundStore.getRound(roundId);
+        require(!round.IsDeleted,"Round has been deleted");
+        RoundResponse memory response = RoundResponse(round.Id, round.CompanyId, round.LockUpPeriodForShare, 
+                                                      round.PricePerShare, round.TotalTokensUpForSale, round.TotalInvestors, round.TotalRaised,
+                                                      round.TotalTokensSold, round.RoundStartTimeStamp, round.DurationInSeconds,
+                                                      round.DocumentUrl, round.RunTillFullySubscribed, isRoundOpen(round));
 
+        return response;
     }
 
 
@@ -194,27 +201,23 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
 
 
 
-    
-    function doesCompanyHaveOpenRound(uint companyId) internal view returns (bool)
+
+    function isRoundOpen(Round memory round) internal view returns (bool)
     {
-         Round[] memory rounds =  _roundStore.getCompanyRounds(companyId);
-         Round memory lastRound = rounds[rounds.length-1];
-         if(lastRound.RunTillFullySubscribed)
-         {
-            if(lastRound.TotalTokensUpForSale!=lastRound.TotalTokensSold)
-            {
-                return true;
-            }
-            // We need to be careful with round token sales to 
-            //ensure we never oversell tokens sha. If not everything have spoil
-            else 
+        if(round.RunTillFullySubscribed)
+        {
+            if(round.TotalTokensUpForSale==round.TotalTokensSold) 
             {
                 return false;
             }
-         }
-         else
-         {
-             uint expiryTime = lastRound.RoundStartTimeStamp.add(lastRound.DurationInSeconds);
+            else
+            {
+                return true;
+            }
+        }
+        else 
+        {
+              uint expiryTime = round.RoundStartTimeStamp.add(round.DurationInSeconds);
              if(block.timestamp<=expiryTime)
              {
                  return true;
@@ -222,7 +225,16 @@ contract CompanyController is  BaseContract, DataGrant, ICompanyController{
              else{
                  return false;
              }
-         }
+        }
+    }
+
+
+    
+    function doesCompanyHaveOpenRound(uint companyId) internal view returns (bool)
+    {
+         Round[] memory rounds =  _roundStore.getCompanyRounds(companyId);
+         Round memory lastRound = rounds[rounds.length-1];
+         return isRoundOpen(lastRound);
     }
 
     function doesCompanyHaveOpenProposal(uint companyId) internal view returns (bool)

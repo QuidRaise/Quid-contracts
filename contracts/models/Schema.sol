@@ -20,7 +20,6 @@ struct Round {
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   string DocumentUrl;
    uint PricePerShare;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
@@ -29,6 +28,8 @@ struct Round {
 
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
+   string DocumentUrl;
+
    // When set to true, the round duration is not considered
    // The round is kept open until it has been fully subscribed
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
@@ -102,17 +103,16 @@ struct RoundResponse
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   string IPFSLinkForRoadMap;
    uint PricePerShare;
    uint TotalTokensUpForSale;
-   uint TotalTokensSold;
    uint TotalInvestors;
    uint TotalRaised;
-
+   uint TotalTokensSold;
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
+   string DocumentUrl;
    bool RunTillFullySubscribed;
-   uint NumberOfShareholders;
+   bool IsOpen;
 }
 
 
