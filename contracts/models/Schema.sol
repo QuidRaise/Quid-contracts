@@ -25,6 +25,7 @@ struct Round {
    uint TotalTokensUpForSale;
    uint TotalInvestors;
    uint TotalRaised;
+   uint TotalTokensSold;
 
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
@@ -32,8 +33,7 @@ struct Round {
    // The round is kept open until it has been fully subscribed
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
    bool RunTillFullySubscribed;
-   bool IsDeleted
-
+   bool IsDeleted;
 }
 
 
@@ -67,7 +67,7 @@ struct Proposal{
 
    //Proposals can only be deleted when no vote has been passed for them for this MVP
    RecordStatus ProposalStatus;
-   bool IsDeleted
+   bool IsDeleted;
 }
 
 struct Investor{

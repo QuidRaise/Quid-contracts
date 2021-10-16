@@ -4,12 +4,29 @@ import "./models/EventModels.sol";
 
 import "./BaseContract.sol";
 import "./DataGrant.sol";
+import "./libraries/SafeERC20.sol";
+
 import "./interfaces/ICompanyController.sol";
+import "./interfaces/ICompanyStore.sol";
+import "./interfaces/IProposalStore.sol";
+import "./interfaces/IRoundStore.sol";
+import "./interfaces/ICompanyVault.sol";
+import "./interfaces/IEventEmitter.sol";
+import "./interfaces/IIdentityContract.sol";
+import "./interfaces/IInvestorStore.sol";
+import "./interfaces/IERC20.sol";
+
+
+
+
 
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-interface CompanyController is  BaseContract, DataGrant, ICompanyController{
+contract CompanyController is  BaseContract, DataGrant, ICompanyController{
+
+    using SafeERC20 for IERC20;
+    using SafeMath for uint;
 
     ICompanyStore _companyStore;
     IProposalStore _proposalStore;
@@ -34,7 +51,7 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
     // We would need to build a more robust oracle system for QuidRaise
     function createCompany(string calldata CompanyUrl,
                            string calldata companyName, address companyTokenContractAddress, 
-                           address companyOwner, address companyCreatedBy) external  onlyOwner
+                           address companyOwner, address companyCreatedBy) external override  onlyOwner
     {
          bool isInvestor = _investorStore.isInvestor(companyOwner);
          require(!_companyStore.isCompanyOwner(companyOwner),"Company owner already owns a business");
@@ -44,22 +61,19 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
             require(_identityContract.isInvestorAddressWhitelisted(companyOwner), 
                     "Company owner address blacklisted as investor");
          }
-         Company memory company = Company(0,companyName,companyDocUrl,companyTokenContractAddress,companyOwner);
+         Company memory company = Company(0,companyName,CompanyUrl,companyTokenContractAddress,companyOwner);
          uint companyId = _companyStore.createCompany(company);
 
          _identityContract.whitelistCompanyAddress(companyOwner);
          _identityContract.whitelistCompany(companyId);
 
-         Company memory company = Company(0,companyName,companyDocUrl,companyTokenContractAddress,companyOwner);
-         _eventEmitter.emitCompanyCreatedEvent(CompanyCreatedRequest(companyId, company.CompanyOwner, companyCreatedBy, 
-                                                                     company.CompanyName, company.CompanyDocumentUrl,
-                                                                     company.CompanyTokenContract));
-
-        _eventEmitter.emitWhitelistCompanyEvent(WhitelistCompanyRequest(companyId,companyCreatedBy));
+         _eventEmitter.emitCompanyCreatedEvent(CompanyCreatedRequest(companyId, company.OwnerAddress, companyCreatedBy, 
+                                                                     company.CompanyName, company.CompanyUrl,
+                                                                     company.CompanyTokenContractAddress));
 
     }
 
-    function createRound(address companyOwner,string roundDocumentUrl,uint startTimestamp, uint duration,
+    function createRound(address companyOwner,string calldata roundDocumentUrl,uint startTimestamp, uint duration,
                          uint lockupPeriodForShare, uint pricePerShare, 
                          uint tokensSuppliedForRound, bool runTillFullySubscribed, 
                          address[] memory paymentCurrencies) external  override c2cCallValid
@@ -71,19 +85,12 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
          Company memory company = _companyStore.getCompanyByOwner(companyOwner);
 
-         bool hasOpenRound = doesCompanyHaveOpenRound(company.Id);
-         require(!hasOpenRound,"Company has an open round");
+         validateRoundCreationInput(company.Id,paymentCurrencies);
 
-         bool hasOpenProposal = doesCompanyHaveOpenProposal(company.Id);
-         require(!hasOpenProposal,"Company has an open proposal");
+         depsitCompanyTokensToVault(company,tokensSuppliedForRound);
 
-         bool isPaymentOptionsValid = validateRoundPaymentOptions(paymentCurrencies);
-         require(isPaymentOptionsValid,"One or more payment options are not supported");
-
-         depsitCompanyTokensToVault(company);
-
-         Round round = Round(0,company.Id,lockupPeriodForShare,roundDocumentUrl,pricePerShare,
-                             tokensSuppliedForRound,0,0,startTimestamp,duration,
+         Round memory round = Round(0,company.Id,lockupPeriodForShare,roundDocumentUrl,pricePerShare,
+                             tokensSuppliedForRound,0,0,0,startTimestamp,duration,
                              runTillFullySubscribed,false);
 
          uint roundId = _roundStore.createRound(round);
@@ -107,6 +114,7 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
          
     }
 
+   
     function depsitCompanyTokensToVault(Company memory company, uint expectedTokenDeposit) internal
     {
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
@@ -161,7 +169,7 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
     
     function doesCompanyHaveOpenRound(uint companyId) internal returns (bool)
     {
-         Round[] memory rounds =  _roundStore.getCompanyRounds(company.Id);
+         Round[] memory rounds =  _roundStore.getCompanyRounds(companyId);
          Round memory lastRound = rounds[rounds.length-1];
          if(lastRound.RunTillFullySubscribed)
          {
@@ -211,10 +219,24 @@ interface CompanyController is  BaseContract, DataGrant, ICompanyController{
         }
     }
 
+     function validateRoundCreationInput(uint companyId,  address[] memory paymentCurrencies) internal 
+    {
+        bool hasOpenRound = doesCompanyHaveOpenRound(companyId);
+         require(!hasOpenRound,"Company has an open round");
+
+         bool hasOpenProposal = doesCompanyHaveOpenProposal(companyId);
+         require(!hasOpenProposal,"Company has an open proposal");
+
+         bool isPaymentOptionsValid = validateRoundPaymentOptions(paymentCurrencies);
+         require(isPaymentOptionsValid,"One or more payment options are not supported");
+
+    }
+
+
     /***
         Checks the payment currencies against a list of supported payment currencies in the company vault contract
     */
-    function validateRoundPaymentOptions(address[] paymentCurrencies) internal returns(bool)
+    function validateRoundPaymentOptions(address[] memory paymentCurrencies) internal returns(bool)
     {
         //TODO: Check CompanyVault for list of supported payment options
         return true;

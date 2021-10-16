@@ -7,9 +7,9 @@ pragma solidity 0.7.0;
 interface ICompanyController {
     function createCompany(string calldata companyUrl,
                            string calldata companyName, address companyTokenContractAddress, 
-                           address companyOwner) external;
+                           address companyOwner,address companyCreatedBy) external;
 
-    function createRound(address companyOwner,string roundDocumentUrl, uint startTimestamp, uint duration,
+    function createRound(address companyOwner,string calldata roundDocumentUrl, uint startTimestamp, uint duration,
                          uint lockupPeriodForShare, uint pricePerShare, 
                          uint tokensSuppliedForRound,bool runTillFullySubscribed, address[] memory paymentCurrencies) external;
 

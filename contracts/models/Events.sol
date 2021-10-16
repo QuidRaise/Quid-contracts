@@ -63,12 +63,12 @@ event BlacklistCompanyOwner(
 
 
 event WhitelistCompany(
-        address indexed companyId,
+        uint indexed companyId,
         address indexed performedBy
 );
 
 event BlacklistCompany(
-        address indexed companyId,
+        uint indexed companyId,
         address indexed performedBy
 );
 
@@ -124,8 +124,8 @@ event RoundCreated(
     uint tokensSuppliedForRound,
     uint startTimestamp,
     uint roundDuration,
-    uint runTillFullySubscribed,
-    address[] paymentCurrencies,
+    bool runTillFullySubscribed,
+    address[] paymentCurrencies
 );
 
 event ShareCertificateCreated(

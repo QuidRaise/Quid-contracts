@@ -47,12 +47,12 @@ struct BlacklistCompanyOwnerRequest{
 
 
 struct WhitelistCompanyRequest{
-        address  CompanyId;
+        uint  CompanyId;
         address  PerformedBy;
 }
 
 struct BlacklistCompanyRequest{
-        address  CompanyId;
+        uint  CompanyId;
         address  PerformedBy;
 }
 
@@ -107,7 +107,7 @@ struct RoundCreatedRequest{
     uint TokensSuppliedForRound;
     uint StartTimestamp;
     uint RoundDuration;
-    uint RunTillFullySubscribed;
+    bool RunTillFullySubscribed;
     address[] paymentCurrencies;
 }
 

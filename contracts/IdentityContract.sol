@@ -4,6 +4,7 @@ import "./models/EventModels.sol";
 
 import "./interfaces/IIdentityContract.sol";
 
+import "./interfaces/IEventEmitter.sol";
 
 pragma solidity 0.7.0;
 
@@ -49,7 +50,7 @@ contract IdentityContract is DataGrant,IIdentityContract {
     function blacklistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor 
     {
         _companyOwnerAddressWhitelist[companyOwnerAddress] = false;
-        _eventEmitter.emitBlacklistCompanyOwnerEvent(WhitelistInvestorRequest(companyOwnerAddress,_msgSender()));
+        _eventEmitter.emitBlacklistCompanyOwnerEvent(BlacklistCompanyOwnerRequest(companyOwnerAddress,_msgSender()));
 
     }
 
