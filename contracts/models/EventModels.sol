@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
+pragma experimental ABIEncoderV2;
 
     
  struct CompanyDepositRequest{
@@ -47,12 +48,12 @@ struct BlacklistCompanyOwnerRequest{
 
 
 struct WhitelistCompanyRequest{
-        address  CompanyId;
+        uint  CompanyId;
         address  PerformedBy;
 }
 
 struct BlacklistCompanyRequest{
-        address  CompanyId;
+        uint  CompanyId;
         address  PerformedBy;
 }
 
@@ -83,8 +84,7 @@ struct CompanyCreatedRequest{
     uint  CompanyId; 
     address  CompanyOwner;
     address  PerformedBy;
-    string CompanyName;
-    string LogoUrl;
+    string CompanyName;    
     string CompanyDocumentUrl;
     address CompanyTokenContract;
 }
@@ -103,12 +103,13 @@ struct RoundCreatedRequest{
     uint  RoundId;
     uint  CompanyId;
     address  CompanyOwner;
-    uint LockupPeriodForSHares;
+    uint LockupPeriodForShares;
     uint PricePerShare;
     uint TokensSuppliedForRound;
     uint StartTimestamp;
     uint RoundDuration;
-    uint RunTillFullySubscribed;
+    bool RunTillFullySubscribed;
+    address[] paymentCurrencies;
 }
 
 struct ShareCertificateCreatedRequest{

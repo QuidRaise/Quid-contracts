@@ -2,7 +2,7 @@
 
 pragma solidity 0.7.0;
 
-
+// Storage Models
 /** 
    Represents a company's investment round
    When a round is fully subscribed, we emit a Fully Subscribed event
@@ -16,23 +16,27 @@ pragma solidity 0.7.0;
    For rounds that are not set to run till they ae fully subscribed
 
 */
+
+//TODO: we need to capture number of nfts issued and how many of them have been liquidated
 struct Round {
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   string IPFSLinkForRoadMap;
    uint PricePerShare;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
    uint TotalRaised;
+   uint TotalTokensSold;
 
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
+   string DocumentUrl;
+
    // When set to true, the round duration is not considered
    // The round is kept open until it has been fully subscribed
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
    bool RunTillFullySubscribed;
-
+   bool IsDeleted;
 }
 
 
@@ -63,9 +67,7 @@ struct Proposal{
    uint RejectedVotes;
    uint TokensStakedForApprovedVotes;
    uint TokensStakedForRejectedVotes;
-
-   //Proposals can only be deleted when no vote has been passed for them for this MVP
-   RecordStatus ProposalStatus;
+   bool IsDeleted;
 }
 
 struct Investor{
@@ -77,12 +79,42 @@ struct Investor{
 struct Company{
    uint Id;
    string CompanyName;
-   string IPFSLinkToLogo;
-   string IPFSLinkToCompanyProposal;
-   string CompanyWebsiteAddress;
+   string CompanyUrl;
    address CompanyTokenContractAddress;
    address OwnerAddress;
 }
 
-enum RecordStatus{InActive,Active}
+
+
+
+// Service Models
+
+struct ProposalResponse
+{
+   uint ApprovedVotes;
+   uint RejectedVotes;
+   uint TokensStakedForApprovedVotes;
+   uint TokensStakedForRejectedVotes;
+   bool IsProposalApproved;
+   bool HasVotingPeriodElapsed;
+
+}
+
+struct RoundResponse
+{
+   uint Id;
+   uint CompanyId;
+   uint LockUpPeriodForShare;
+   uint PricePerShare;
+   uint TotalTokensUpForSale;
+   uint TotalInvestors;
+   uint TotalRaised;
+   uint TotalTokensSold;
+   uint RoundStartTimeStamp;   
+   uint DurationInSeconds;
+   string DocumentUrl;
+   bool RunTillFullySubscribed;
+   bool IsOpen;
+}
+
 

@@ -15,10 +15,15 @@ abstract contract BaseContract is Ownable
 
     
     bytes32 constant IDENTITY_CONTRACT = "IDENTITY_CONTRACT";
-    bytes32 constant EVENT_EMITTER_KEY = "EVENT_EMITTER";
+    bytes32 constant EVENT_EMITTER = "EVENT_EMITTER";
     bytes32 constant COMPANY_VAULT_STORE = "COMPANY_VAULT_STORE";
     bytes32 constant COMPANY_VAULT = "COMPANY_VAULT";
     bytes32 constant COMPANY_STORE = "COMPANY_STORE";
+    bytes32 constant INVESTOR_STORE = "INVESTOR_STORE";
+    bytes32 constant PROPOSAL_STORE = "PROPOSAL_STORE";
+    bytes32 constant ROUND_STORE = "ROUND_STORE";
+
+
 
 
 
