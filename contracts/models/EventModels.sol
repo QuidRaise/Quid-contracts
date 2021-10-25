@@ -81,7 +81,13 @@ struct C2CAccessRevokedRequest{
 
 
 struct CompanyCreatedRequest{
-    string CompanyUrl;
+    uint  CompanyId; 
+    address  CompanyOwner;
+    address  PerformedBy;
+    string CompanyName;    
+    string CompanyDocumentUrl;
+    address CompanyTokenContract;
+
 }
 
 struct ProposalCreatedRequest{
@@ -104,7 +110,8 @@ struct RoundCreatedRequest{
     uint StartTimestamp;
     uint RoundDuration;
     bool RunTillFullySubscribed;
-    address[] PaymentCurrencies;
+    address[] paymentCurrencies;
+
 }
 
 struct ShareCertificateCreatedRequest{
