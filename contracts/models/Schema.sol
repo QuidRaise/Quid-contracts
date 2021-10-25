@@ -68,6 +68,7 @@ struct Proposal{
    uint TokensStakedForApprovedVotes;
    uint TokensStakedForRejectedVotes;
    bool IsDeleted;
+   bool HasWithdrawn;
 }
 
 struct Investor{
@@ -82,6 +83,13 @@ struct Company{
    string CompanyUrl;
    address CompanyTokenContractAddress;
    address OwnerAddress;
+}
+
+struct SupportedPaymentOption
+{
+   bool IsEnabled;
+   bool Exists;
+   uint256 Index;
 }
 
 
@@ -115,6 +123,12 @@ struct RoundResponse
    string DocumentUrl;
    bool RunTillFullySubscribed;
    bool IsOpen;
+}
+
+struct RebalancedProposalPayout
+{
+   address currencyAddress;
+   uint256 amountToSend;
 }
 
 
