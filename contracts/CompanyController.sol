@@ -25,7 +25,7 @@ import "./interfaces/IERC20.sol";
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-contract CompanyController is  BaseContract, DataGrant, ICompanyController{
+contract CompanyController is  BaseContract, ICompanyController{
 
     using SafeERC20 for IERC20;
     using SafeMath for uint;
