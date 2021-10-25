@@ -87,6 +87,7 @@ struct CompanyCreatedRequest{
     string CompanyName;    
     string CompanyDocumentUrl;
     address CompanyTokenContract;
+
 }
 
 struct ProposalCreatedRequest{
@@ -110,6 +111,7 @@ struct RoundCreatedRequest{
     uint RoundDuration;
     bool RunTillFullySubscribed;
     address[] paymentCurrencies;
+
 }
 
 struct ShareCertificateCreatedRequest{

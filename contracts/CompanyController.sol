@@ -19,9 +19,6 @@ import "./interfaces/IInvestorStore.sol";
 import "./interfaces/IERC20.sol";
 
 
-
-
-
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
@@ -30,21 +27,25 @@ contract CompanyController is  BaseContract, ICompanyController{
     using SafeERC20 for IERC20;
     using SafeMath for uint;
 
+
     ICompanyStore _companyStore;
     IProposalStore _proposalStore;
     IRoundStore _roundStore;
     ICompanyVault _companyVault;
     ICompanyVaultStore _companyVaultStore;
+
     IEventEmitter _eventEmitter;
     IIdentityContract _identityContract;
     IInvestorStore _investorStore;
 
      constructor(address dnsContract) BaseContract(dnsContract) {
+
         _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
         _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
         _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
         _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
@@ -169,6 +170,7 @@ contract CompanyController is  BaseContract, ICompanyController{
             }
             else
             {
+
                 return false;
             }
         }
@@ -182,6 +184,7 @@ contract CompanyController is  BaseContract, ICompanyController{
                                                       round.PricePerShare, round.TotalTokensUpForSale, round.TotalInvestors, round.TotalRaised,
                                                       round.TotalTokensSold, round.RoundStartTimeStamp, round.DurationInSeconds,
                                                       round.DocumentUrl, round.RunTillFullySubscribed, isRoundOpen(round));
+
 
         return response;
     }
@@ -434,8 +437,6 @@ contract CompanyController is  BaseContract, ICompanyController{
         token.approve(address(_companyVault),amountToDeposit);
         _companyVault.depositCompanyTokens(company.Id);
     }
-
-
 
 
 }

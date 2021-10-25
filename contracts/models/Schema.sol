@@ -69,6 +69,7 @@ struct Proposal{
    uint TokensStakedForRejectedVotes;
    bool IsDeleted;
    bool HasWithdrawn;
+
 }
 
 struct Investor{
