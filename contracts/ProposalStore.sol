@@ -30,7 +30,10 @@ contract ProposalStore is BaseContract, IProposalStore {
     }
 
     function createProposal(Proposal memory proposal) external override returns(uint) {
+        uint id = _proposals.length + 1;
+        proposal.Id = id;
         _proposals.push(proposal);
-        return _proposals.length - 1;
+        _companyProposals[proposal.CompanyId].push(proposal);
+        return id;
     }
 }

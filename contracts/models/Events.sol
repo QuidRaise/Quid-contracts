@@ -76,6 +76,15 @@ event C2CAccessRevoked(
 );
 
 
+event CompanyCreated(
+    uint indexed companyId, 
+    address indexed companyOwner,
+    address indexed performedBy,
+    string companyName,
+    string companyDocumentUrl,
+    address companyTokenContract
+);
+
 event ProposalCreated(
     uint indexed proposalId,
     uint indexed companyId,
@@ -97,17 +106,4 @@ event ShareCertificateCreated(
 
 event CompanyCreated(string CompanyUrl);
 
-
-    event RoundCreated(
-        uint256 indexed roundId,
-        uint256 indexed companyId,
-        address indexed companyOwner,
-        uint256 lockupPeriodForSHares,
-        uint256 pricePerShare,
-        uint256 tokensSuppliedForRound,
-        uint256 startTimestamp,
-        uint256 roundDuration,
-        bool runTillFullySubscribed,
-        address[] paymentCurrencies
-    );
 }
