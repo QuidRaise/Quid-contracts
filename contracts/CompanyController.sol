@@ -224,7 +224,25 @@ contract CompanyController is  BaseContract, ICompanyController{
 
             uint256 balance = _companyVaultStore.getCompanyVaultBalance(companyId, currency);
 
-            if(decimal==18)
+            if(decimal>6)
+            {
+                uint256 roundedUpBalance = balance.div(10** decimal.sub(6));
+
+                if(balance>=amountToOffset)
+                {
+                    amountToOffset = 0;
+                    payouts[payoutIndex] = RebalancedProposalPayout(currency,roundedUpBalance);
+                    payoutIndex = payoutIndex.add(1);
+                    break;
+                }
+                else
+                {
+                    amountToOffset = amountToOffset.sub(roundedUpBalance);
+                    payouts[payoutIndex] = RebalancedProposalPayout(currency,roundedUpBalance);
+                    payoutIndex = payoutIndex.add(1);
+                }
+            }
+            else if(decimal == 6)
             {
                 if(balance>=amountToOffset)
                 {
@@ -236,23 +254,6 @@ contract CompanyController is  BaseContract, ICompanyController{
                 else
                 {
                     amountToOffset = amountToOffset.sub(balance);
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,balance);
-                    payoutIndex = payoutIndex.add(1);
-                }
-            }
-            else if(decimal == 6)
-            {
-                uint256 paddedbalance = balance.mul(10**12);
-                if(paddedbalance>=amountToOffset)
-                {
-                    amountToOffset = 0;
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,balance);
-                    payoutIndex = payoutIndex.add(1);
-                    break;
-                }
-                else
-                {
-                    amountToOffset = amountToOffset.sub(paddedbalance);
                     payouts[payoutIndex] = RebalancedProposalPayout(currency,balance);
                     payoutIndex = payoutIndex.add(1);
                 }
