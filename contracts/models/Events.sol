@@ -118,50 +118,50 @@ event ShareCertificateCreated(
 );
 
 
-    event BlacklistCompanyOwner(address indexed companyOwner, address indexed performedBy);
+    // event BlacklistCompanyOwner(address indexed companyOwner, address indexed performedBy);
 
     event WhitelistCompany(uint256 indexed companyId, address indexed performedBy);
 
-    event BlacklistCompany(uint256 indexed companyId, address indexed performedBy);
+    // event BlacklistCompany(uint256 indexed companyId, address indexed performedBy);
 
     event WhitelistInvestor(address indexed investor, address indexed performedBy);
 
-    event BlacklistInvestor(address indexed investor, address indexed performedBy);
+    // event BlacklistInvestor(address indexed investor, address indexed performedBy);
 
-    event C2CAccessGrant(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
+    // event C2CAccessGrant(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
 
-    event C2CAccessRevoked(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
+    // event C2CAccessRevoked(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
 
     event CompanyCreated(string companyUrl);
 
-    event ProposalCreated(
-        uint256 indexed proposalId,
-        uint256 indexed companyId,
-        address indexed companyOwner,
-        address companyTokenContract,
-        uint256 proposalAmount,
-        uint256 proposalStartTimestamp,
-        uint256 proposalDuration
-    );
+    // event ProposalCreated(
+    //     uint256 indexed proposalId,
+    //     uint256 indexed companyId,
+    //     address indexed companyOwner,
+    //     address companyTokenContract,
+    //     uint256 proposalAmount,
+    //     uint256 proposalStartTimestamp,
+    //     uint256 proposalDuration
+    // );
 
-    event RoundCreated(
-        uint256 indexed roundId,
-        uint256 indexed companyId,
-        address indexed companyOwner,
-        uint256 lockupPeriodForSHares,
-        uint256 pricePerShare,
-        uint256 tokensSuppliedForRound,
-        uint256 startTimestamp,
-        uint256 roundDuration,
-        bool runTillFullySubscribed,
-        address[] paymentCurrencies
-    );
+    // event RoundCreated(
+    //     uint256 indexed roundId,
+    //     uint256 indexed companyId,
+    //     address indexed companyOwner,
+    //     uint256 lockupPeriodForSHares,
+    //     uint256 pricePerShare,
+    //     uint256 tokensSuppliedForRound,
+    //     uint256 startTimestamp,
+    //     uint256 roundDuration,
+    //     bool runTillFullySubscribed,
+    //     address[] paymentCurrencies
+    // );
 
-    event ShareCertificateCreated(
-        uint256 indexed registryId,
-        uint256 indexed tokenId,
-        uint256 indexed roundId,
-        uint256 underlyingFundAmount,
-        address nftTokenContractAddress
-    );
+    // event ShareCertificateCreated(
+    //     uint256 indexed registryId,
+    //     uint256 indexed tokenId,
+    //     uint256 indexed roundId,
+    //     uint256 underlyingFundAmount,
+    //     address nftTokenContractAddress
+    // );
 }
