@@ -74,8 +74,9 @@ struct Proposal{
 
 struct Investor{
    address WalletAddress;
-   uint roundsParticipatedIn;
-   uint proposalsVotedIn  ;
+   uint256 proposalsApproved;
+   uint256 proposalsRejected;
+
 }
 
 struct Company{

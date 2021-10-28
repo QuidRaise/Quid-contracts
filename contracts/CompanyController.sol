@@ -3,7 +3,6 @@ import "./models/Schema.sol";
 import "./models/EventModels.sol";
 
 import "./BaseContract.sol";
-import "./DataGrant.sol";
 import "./libraries/SafeERC20.sol";
 
 import "./interfaces/ICompanyController.sol";
@@ -83,12 +82,19 @@ contract CompanyController is  BaseContract, ICompanyController{
                          uint256 tokensSuppliedForRound, bool runTillFullySubscribed, 
                          address[] memory paymentCurrencies) external  override c2cCallValid
     {
+
+
+        
+
          require(startTimestamp>0 && duration>0 && pricePerShare>0 &&  
                  tokensSuppliedForRound>0 && paymentCurrencies.length>0, 
                  "Contract input data is invalid");
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
          Company memory company = _companyStore.getCompanyByOwner(companyOwner);
+
+        ensureCompanyIsWhitelisted(company.Id, companyOwner);
+       
 
          validateRoundCreationInput(company.Id,paymentCurrencies);
 
@@ -113,6 +119,9 @@ contract CompanyController is  BaseContract, ICompanyController{
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
          Company memory company = _companyStore.getCompanyByOwner(companyOwner);
+
+        ensureCompanyIsWhitelisted(company.Id, companyOwner);
+
 
         validateProposalCreationAction(company.Id);
 
@@ -190,11 +199,20 @@ contract CompanyController is  BaseContract, ICompanyController{
     }
 
 
-    function releaseProposalBudget(uint256 proposalId, address companyOwnerAddress) external  override c2cCallValid 
+    function releaseProposalBudget(uint256 proposalId, address companyOwner) external  override c2cCallValid 
     {
+        require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
+
          Proposal memory proposal =  _proposalStore.getProposal(proposalId);
          Company memory company = _companyStore.getCompanyById(proposal.CompanyId);
-         require(company.OwnerAddress==companyOwnerAddress, "Unauthorized access to proposal");
+
+        ensureCompanyIsWhitelisted(company.Id, companyOwner);
+
+
+         require(company.Id==proposal.CompanyId, "Unauthorized access to proposal budget");
+
+
+         require(company.OwnerAddress==companyOwner, "Unauthorized access to proposal budegt");
          require(!proposal.IsDeleted,"Proposal has been deleted");
          require(!proposal.HasWithdrawn,"Proposal has been withdrawn from");
         proposal.HasWithdrawn = true;
@@ -258,13 +276,32 @@ contract CompanyController is  BaseContract, ICompanyController{
                     payoutIndex = payoutIndex.add(1);
                 }
             }
-            else
+            else if(decimal < 6)
             {
                 revert("Proposal settlement currency not supported");
             }
         }
         return payouts;
     }
+
+     function calculatePlatformCommision(uint256 amount) internal view returns (uint256)
+    {
+        //TODO:  get multiplicative factor and precision from config
+        uint256 factor = 0;
+        uint256 precision = 0;
+
+        return amount.mul(factor).div(precision);
+    }
+
+    
+    function ensureCompanyIsWhitelisted(uint256 companyId, address companyOwner) internal view
+    {
+          require(_identityContract.isCompanyAddressWhitelisted(companyOwner),
+                    "Address blacklisted");
+        require(_identityContract.isCompanyWhitelisted(companyId),
+                    "Company blacklisted");
+    }
+
 
     function deleteProposal(uint256 proposalId, address companyOwnerAddress) external  override c2cCallValid 
     {

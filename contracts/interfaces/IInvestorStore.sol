@@ -9,11 +9,13 @@ interface IInvestorStore {
     function getInvestor(address investorAddress) external returns (Investor memory);
     function getAmountInvestorHasSpent(address investorAddress, address paymentCurrencyAddress) external returns (uint);
     function updateInvestor(address investorAddress, Investor memory investor) external;
+    function createInvestor(Investor memory investor) external;
 
 
     function updateAmountSpentByInvestor(address investorAddress, address paymentCurrencyAddress, uint totalAmountSpent) external returns (uint);
     function updateRoundsInvestedIn(address investorAddress, uint roundId) external;
     function updateCompaniesInvestedIn(address investorAddress, uint companyId) external;
+    function updateProposalsVotedIn(address investorAddress, uint proposalVote, bool isApproved) external;
 
     function getRoundsInvestedIn(address investorAddress) external returns (uint[] memory);
     function getCompaniesInvestedIn(address investorAddress) external returns (uint[] memory);
