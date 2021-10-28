@@ -34,7 +34,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     /**
      * @dev See {_setURI}.
      */
-    constructor(string memory uri_) {
+    constructor(string calldata uri_) {
         _setURI(uri_);
     }
 
@@ -244,7 +244,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * Because these URIs cannot be meaningfully represented by the {URI} event,
      * this function emits no events.
      */
-    function _setURI(string memory newuri) internal virtual {
+    function _setURI(string calldata newuri) internal virtual {
         _uri = newuri;
     }
 

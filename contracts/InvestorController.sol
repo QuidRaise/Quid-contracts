@@ -5,7 +5,7 @@ import "./models/EventModels.sol";
 
 import "./BaseContract.sol";
 import "./libraries/SafeERC20.sol";
-
+import "./libraries/ReentrancyGuard.sol";
 import "./interfaces/IInvestorController.sol";
 import "./interfaces/ICompanyStore.sol";
 import "./interfaces/IProposalStore.sol";
@@ -23,19 +23,19 @@ pragma solidity 0.7.0;
 
 contract InvestorController is  BaseContract, IInvestorController{
 
- using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeERC20 for IERC20;
+    using SafeMath for uint256;
 
 
-    ICompanyStore _companyStore;
-    IProposalStore _proposalStore;
-    IRoundStore _roundStore;
-    ICompanyVault _companyVault;
-    ICompanyVaultStore _companyVaultStore;
+    ICompanyStore private _companyStore;
+    IProposalStore private _proposalStore;
+    IRoundStore private _roundStore;
+    ICompanyVault private _companyVault;
+    ICompanyVaultStore private _companyVaultStore;
 
-    IEventEmitter _eventEmitter;
-    IIdentityContract _identityContract;
-    IInvestorStore _investorStore;
+    IEventEmitter private _eventEmitter;
+    IIdentityContract private _identityContract;
+    IInvestorStore private _investorStore;
 
 
 
@@ -54,7 +54,7 @@ contract InvestorController is  BaseContract, IInvestorController{
 
 
 
-    function investInRound(uint256 roundId, address paymentTokenAddress, address investor) external override c2cCallValid
+    function investInRound(uint256 roundId, address paymentTokenAddress, address investor) external override nonReentrant c2cCallValid
     {
         Round memory round =  _roundStore.getRound(roundId);
         ensureWhitelist(round.CompanyId,investor);
@@ -77,11 +77,12 @@ contract InvestorController is  BaseContract, IInvestorController{
         _investorStore.updateRoundsInvestedIn(investor, round.Id);
         _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
 
+        mintShareCertificate(round.CompanyId,round.Id, paymentTokenAddress,investmentAmount);
 
         _eventEmitter.emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
     }
 
-    function mintshareCertificate(uint256 companyId, uint256 roundId, address paymentTokenAddress, uint256 investmentAmount) internal
+    function mintShareCertificate(uint256 companyId, uint256 roundId, address paymentTokenAddress, uint256 investmentAmount) internal
     {
 
     }
@@ -107,10 +108,11 @@ contract InvestorController is  BaseContract, IInvestorController{
         return false;
     }
 
-    function voteForProposal(uint256 proposalId, address investor) external override c2cCallValid
+    function voteForProposal(uint256 proposalId, address investor) external override nonReentrant c2cCallValid
     {
         Proposal memory proposal =  _proposalStore.getProposal(proposalId);
-        //TODO: Verify that investor voted in this proposal and that he has shares in this company
+        //TODO: Verify that investor can vote for this proposal and that he has shares in this company
+        require()
         ensureWhitelist(proposal.CompanyId,investor);
 
     }

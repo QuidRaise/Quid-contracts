@@ -4,6 +4,8 @@ import "./models/EventModels.sol";
 
 import "./BaseContract.sol";
 import "./libraries/SafeERC20.sol";
+import "./libraries/ReentrancyGuard.sol";
+
 
 import "./interfaces/ICompanyController.sol";
 import "./interfaces/ICompanyStore.sol";
@@ -27,15 +29,15 @@ contract CompanyController is  BaseContract, ICompanyController{
     using SafeMath for uint;
 
 
-    ICompanyStore _companyStore;
-    IProposalStore _proposalStore;
-    IRoundStore _roundStore;
-    ICompanyVault _companyVault;
-    ICompanyVaultStore _companyVaultStore;
+    ICompanyStore private _companyStore;
+    IProposalStore private _proposalStore;
+    IRoundStore private _roundStore;
+    ICompanyVault private _companyVault;
+    ICompanyVaultStore private _companyVaultStore;
 
-    IEventEmitter _eventEmitter;
-    IIdentityContract _identityContract;
-    IInvestorStore _investorStore;
+    IEventEmitter private _eventEmitter;
+    IIdentityContract private _identityContract;
+    IInvestorStore private _investorStore;
 
      constructor(address dnsContract) BaseContract(dnsContract) {
 
@@ -55,7 +57,7 @@ contract CompanyController is  BaseContract, ICompanyController{
     // We would need to build a more robust oracle system for QuidRaise
     function createCompany(string calldata CompanyUrl,
                            string calldata companyName, address companyTokenContractAddress, 
-                           address companyOwner, address companyCreatedBy) external override  onlyOwner
+                           address companyOwner, address companyCreatedBy) external override  nonReentrant onlyOwner
     {
          bool isInvestor = _investorStore.isInvestor(companyOwner);
          require(!_companyStore.isCompanyOwner(companyOwner),"Company owner already owns a business");
@@ -80,7 +82,7 @@ contract CompanyController is  BaseContract, ICompanyController{
     function createRound(address companyOwner,string calldata roundDocumentUrl,uint256 startTimestamp, uint256 duration,
                          uint256 lockupPeriodForShare, uint256 pricePerShare, 
                          uint256 tokensSuppliedForRound, bool runTillFullySubscribed, 
-                         address[] memory paymentCurrencies) external  override c2cCallValid
+                         address[] memory paymentCurrencies) external  override nonReentrant c2cCallValid
     {
 
 
@@ -114,7 +116,7 @@ contract CompanyController is  BaseContract, ICompanyController{
 
 
     function createProposal(uint256 amountRequested, uint256 votingStartTimestamp, 
-                            address companyOwner ) external override c2cCallValid
+                            address companyOwner ) external override nonReentrant c2cCallValid
     {
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
@@ -199,7 +201,7 @@ contract CompanyController is  BaseContract, ICompanyController{
     }
 
 
-    function releaseProposalBudget(uint256 proposalId, address companyOwner) external  override c2cCallValid 
+    function releaseProposalBudget(uint256 proposalId, address companyOwner) external  override nonReentrant c2cCallValid 
     {
         require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
 
