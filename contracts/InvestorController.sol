@@ -192,7 +192,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         proposalVote = ProposalVote(proposal.Id,tokenAllocation,isApproved,true);
 
         _investorStore.updateProposalsVotedIn(investor,proposalVote);
-        _proposalStore.updateProposal(proposal.Id, proposal);
+        _proposalStore.updateProposal(proposal);
     }
 
     function viewProposalVote(uint256 proposalId, address investor) external view override returns (ProposalVote memory)
