@@ -68,7 +68,8 @@ struct RoundNft
 struct Proposal{
    uint Id;
    uint CompanyId;
-   uint AmountRequested;
+   uint[] AmountRequested;
+   address[] PaymentCurrencies;
    uint VoteSessionDuration;
    uint VoteStartTimeStamp;
    uint ApprovedVotes;

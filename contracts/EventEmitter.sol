@@ -77,6 +77,7 @@ contract EventEmitter is BaseContract, DataGrant, Events, IEventEmitter {
             model.CompanyOwner,
             model.CompanyTokenContract,
             model.ProposalAmount,
+            model.PaymentCurrencies,
             model.ProposalStartTimestamp,
             model.ProposalDuration
         );

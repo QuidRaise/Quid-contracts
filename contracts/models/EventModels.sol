@@ -95,7 +95,8 @@ struct ProposalCreatedRequest{
     uint  CompanyId;
     address  CompanyOwner;
     address CompanyTokenContract;
-    uint ProposalAmount;
+    uint[] ProposalAmount;
+    address[] PaymentCurrencies;
     uint ProposalStartTimestamp;
     uint ProposalDuration;
 }

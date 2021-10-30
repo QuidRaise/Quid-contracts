@@ -119,7 +119,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
     }
 
 
-    function createProposal(uint256 amountRequested, uint256 votingStartTimestamp, 
+    function createProposal(uint256[] calldata amountRequested,address[] calldata paymentCurrencies, uint256 votingStartTimestamp, 
                             address companyOwner ) external override nonReentrant c2cCallValid
     {
 
@@ -131,7 +131,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
 
         validateProposalCreationAction(company.Id);
 
-        Proposal memory proposal = Proposal(0,company.Id,amountRequested,
+        Proposal memory proposal = Proposal(0,company.Id,amountRequested,paymentCurrencies,
                                             getVoteDuration(),votingStartTimestamp,
                                             0,0,0,0,false,false);
         uint256 propoalId = _proposalStore.createProposal(proposal);
@@ -139,7 +139,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
         _eventEmitter
         .emitProposalCreatedEvent(
             ProposalCreatedRequest(propoalId,company.Id,companyOwner,company.CompanyTokenContractAddress,
-                                   proposal.AmountRequested,proposal.VoteStartTimeStamp,
+                                   proposal.AmountRequested,proposal.PaymentCurrencies, proposal.VoteStartTimeStamp,
                                    proposal.VoteSessionDuration)
         );
 
@@ -223,72 +223,18 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
          require(!proposal.HasWithdrawn,"Proposal has been withdrawn from");
         proposal.HasWithdrawn = true;
         _proposalStore.updateProposal(proposal.Id, proposal);
-         RebalancedProposalPayout[] memory payouts = balancePayoutDistribution(proposal.CompanyId, proposal.AmountRequested);
-         for (uint256 i = 0; i < payouts.length; i++) {
-             RebalancedProposalPayout memory payout = payouts[i];             
-             _companyVault.withdrawPaymentTokensFromVault(proposal.CompanyId, payout.currencyAddress, payout.amountToSend);             
-         }
+
+        for (uint256 i = 0; i < proposal.PaymentCurrencies.length; i++) {
+            address currency = proposal.PaymentCurrencies[i];
+            uint256 balance = _companyVaultStore.getCompanyVaultBalance(proposal.CompanyId, currency);
+            require(balance>=proposal.AmountRequested[i],"Insufficient Vault Balance");
+            _companyVault.withdrawPaymentTokensFromVault(proposal.CompanyId, currency, proposal.AmountRequested[i]);             
+
+        }
+
          
     }
 
-    function balancePayoutDistribution(uint256 companyId, uint256 paymentAmount) internal view returns (RebalancedProposalPayout[] memory)
-    {
-        uint256 payoutIndex = 0;
-
-        uint256 amountToOffset = paymentAmount;
-        address[] memory companyPaymentCurrencies = _companyVaultStore.getCompanyVaultBalanceCurrencies(companyId);
-        RebalancedProposalPayout[] memory payouts = new RebalancedProposalPayout[](companyPaymentCurrencies.length);
-
-        for (uint256 i = 0; i < companyPaymentCurrencies.length; i++) 
-        {
-            address currency = companyPaymentCurrencies[i];
-            IERC20 token = IERC20(currency);
-
-            uint256 decimal = token.decimals();
-
-            uint256 balance = _companyVaultStore.getCompanyVaultBalance(companyId, currency);
-
-            if(decimal>6)
-            {
-                uint256 roundedUpBalance = balance.div(10** decimal.sub(6));
-
-                if(balance>=amountToOffset)
-                {
-                    amountToOffset = 0;
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,roundedUpBalance);
-                    payoutIndex = payoutIndex.add(1);
-                    break;
-                }
-                else
-                {
-                    amountToOffset = amountToOffset.sub(roundedUpBalance);
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,roundedUpBalance);
-                    payoutIndex = payoutIndex.add(1);
-                }
-            }
-            else if(decimal == 6)
-            {
-                if(balance>=amountToOffset)
-                {
-                    amountToOffset = 0;
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,balance);
-                    payoutIndex = payoutIndex.add(1);
-                    break;
-                }
-                else
-                {
-                    amountToOffset = amountToOffset.sub(balance);
-                    payouts[payoutIndex] = RebalancedProposalPayout(currency,balance);
-                    payoutIndex = payoutIndex.add(1);
-                }
-            }
-            else if(decimal < 6)
-            {
-                revert("Proposal settlement currency not supported");
-            }
-        }
-        return payouts;
-    }
 
      function calculatePlatformCommision(uint256 amount) internal view returns (uint256)
     {

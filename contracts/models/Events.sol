@@ -107,7 +107,8 @@ event RoundCreated(
         uint256 indexed companyId,
         address indexed companyOwner,
         address companyTokenContract,
-        uint256 proposalAmount,
+        uint256[] proposalAmount,
+        address[] paymentCurrencies,
         uint256 proposalStartTimestamp,
         uint256 proposalDuration
     );
