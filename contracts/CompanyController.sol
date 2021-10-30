@@ -18,6 +18,8 @@ import "./interfaces/IEventEmitter.sol";
 import "./interfaces/IIdentityContract.sol";
 import "./interfaces/IInvestorStore.sol";
 import "./interfaces/IERC20.sol";
+import "./interfaces/IConfig.sol";
+
 
 
 pragma experimental ABIEncoderV2;
@@ -38,6 +40,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
     IEventEmitter private _eventEmitter;
     IIdentityContract private _identityContract;
     IInvestorStore private _investorStore;
+    IConfig private _config;
 
      constructor(address dnsContract) BaseContract(dnsContract) {
 
@@ -50,6 +53,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
         _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
         _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
+        _config = IConfig(_dns.getRoute(CONFIG));
     }
 
 
@@ -85,7 +89,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
                          address[] memory paymentCurrencies, uint256[] memory pricePerShare) external  override nonReentrant c2cCallValid
     {
 
-        //TODO: Add check to the paymentCurrencies length, so we don't ever get to a scenario where we run out of gass
+        require(_config.getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
 
        
          for (uint256 i = 0; i < pricePerShare.length; i++) 
@@ -125,8 +129,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
                             address companyOwner ) external override nonReentrant c2cCallValid
     {
 
-        //TODO: Add check to the paymentCurrencies length, so we don't ever get to a scenario where we run out of gas
-
+        require( _config.getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
          Company memory company = _companyStore.getCompanyByOwner(companyOwner);
@@ -243,9 +246,8 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
 
      function calculatePlatformCommision(uint256 amount) internal view returns (uint256)
     {
-        //TODO:  get multiplicative factor and precision from config
-        uint256 factor = 0;
-        uint256 precision = 0;
+        uint256 factor = _config.getNumericConfig(PLATFORM_COMMISION);
+        uint256 precision = _config.getNumericConfig(PRECISION);
 
         return amount.mul(factor).div(precision);
     }
@@ -375,11 +377,9 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
     }
 
 
-    function getVoteDuration() internal view returns (uint)
-
+    function getVoteDuration() internal view returns (uint256)
     {
-        //TODO: This should be read from our config contract
-        return 0;
+        return _config.getNumericConfig(CONFIG);
     }
     
 

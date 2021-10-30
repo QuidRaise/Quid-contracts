@@ -102,14 +102,6 @@ event RoundCreated(
 
 );
 
-event CompanyCreated(
-    uint indexed companyId, 
-    address indexed companyOwner,
-    address indexed performedBy,
-    string companyName,
-    string companyDocumentUrl,
-    address companyTokenContract
-);
 
     event ProposalCreated(
         uint256 indexed proposalId,
@@ -135,4 +127,16 @@ event CompanyCreated(
         bool runTillFullySubscribed,
         address[] paymentCurrencies
     );
+
+    event ShareCertificateCreated(
+        uint indexed registryId,
+        uint indexed tokenId,
+        uint indexed roundId,
+        uint underlyingFundAmount,
+        address nftTokenContractAddress 
+
+    );
+
+
+
 }

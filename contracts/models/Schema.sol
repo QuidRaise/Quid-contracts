@@ -48,6 +48,13 @@ struct RoundInvestment
 }
 
 
+struct Index
+{
+   uint256 Index;
+   bool Exists;
+}
+
+
 /**
 
   Used in representing the NFT an investor has gotten from participating in a round
