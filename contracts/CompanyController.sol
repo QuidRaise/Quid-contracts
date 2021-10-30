@@ -85,7 +85,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
                          address[] memory paymentCurrencies, uint256[] memory pricePerShare) external  override nonReentrant c2cCallValid
     {
 
-
+       
          for (uint256 i = 0; i < pricePerShare.length; i++) 
          {
              require(pricePerShare[i]> 0, "Price per share cannot be zero");
@@ -107,7 +107,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
          depsitCompanyTokensToVault(company,tokensSuppliedForRound);
 
          Round memory round = Round(0,company.Id,lockupPeriodForShare,pricePerShare,paymentCurrencies,
-                             tokensSuppliedForRound,0,0,0,startTimestamp,duration,roundDocumentUrl,
+                             tokensSuppliedForRound,0, new uint256[](paymentCurrencies.length),0,startTimestamp,duration,roundDocumentUrl,
                              runTillFullySubscribed,false);
 
          uint256 roundId = _roundStore.createRound(round);
@@ -328,7 +328,13 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
         Company memory company = _companyStore.getCompanyById(round.CompanyId);
         require(company.OwnerAddress==companyOwnerAddress, "Unauthorized access to round");
         require(!round.IsDeleted,"Round has been deleted");
-        require(round.TotalRaised==0 && round.TotalTokensSold==0,"Round can no longer be deleted");
+        require(round.TotalTokensSold==0,"Round can no longer be deleted");
+
+        for (uint256 i = 0; i < round.TotalRaised.length; i++) 
+        {
+            require(round.TotalRaised[i]==0 ,"Round can no longer be deleted");
+        }
+
         round.IsDeleted = true;
 
        _roundStore.updateRound(roundId, round);

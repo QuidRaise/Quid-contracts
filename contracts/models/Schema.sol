@@ -25,9 +25,8 @@ struct Round {
    address[] PaymentCurrencies;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
-   uint TotalRaised;
+   uint[] TotalRaised;
    uint TotalTokensSold;
-
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
    string DocumentUrl;
@@ -137,7 +136,7 @@ struct RoundResponse
 
    uint TotalTokensUpForSale;
    uint TotalInvestors;
-   uint TotalRaised;
+   uint[] TotalRaised;
    uint TotalTokensSold;
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;

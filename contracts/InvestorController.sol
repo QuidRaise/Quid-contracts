@@ -90,6 +90,9 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
             uint256[] memory investmentAmounts = new uint256[](paymentOptions.length);
            
             roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts ,true);
+            // If it's a new investor, then we update the investor count for this round;
+            round.TotalInvestors.add(1);
+
         }
 
          for (uint256 i = 0; i < paymentOptions.length; i++) 
@@ -100,10 +103,13 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
                 roundInvestment.TokenAlloaction =   roundInvestment.TokenAlloaction.add(tokenAllocation);
             }                
          }
+
+         round.TotalTokensSold =  round.TotalTokensSold.add(tokenAllocation);
        
+        _roundStore.updateRound(round.Id, round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
         _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
-         _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
+        _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
 
 
         _eventEmitter.emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
