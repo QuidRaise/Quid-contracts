@@ -47,10 +47,11 @@ struct RoundInvestment
    bool Exists;
 }
 
+
 struct Index
 {
    uint256 Index;
-   bool Exist;
+   bool Exists;
 }
 
 

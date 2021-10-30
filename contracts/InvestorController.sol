@@ -111,7 +111,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
        
         _roundStore.updateRound(round.Id, round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
-        _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
+        // _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
         _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
 
 
