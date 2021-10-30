@@ -230,7 +230,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
          require(!proposal.IsDeleted,"Proposal has been deleted");
          require(!proposal.HasWithdrawn,"Proposal has been withdrawn from");
         proposal.HasWithdrawn = true;
-        _proposalStore.updateProposal(proposal.Id, proposal);
+        _proposalStore.updateProposal(proposal);
 
         for (uint256 i = 0; i < proposal.PaymentCurrencies.length; i++) {
             address currency = proposal.PaymentCurrencies[i];
@@ -270,7 +270,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
        require(!proposal.IsDeleted,"Proposal has been deleted");
        require(proposal.ApprovedVotes==0 && proposal.RejectedVotes==0,"Proposal can no longer be deleted");
        proposal.IsDeleted = true;
-       _proposalStore.updateProposal(proposalId,proposal);
+       _proposalStore.updateProposal(proposal);
        //TODO: Emit Proposal Deleted Event;
 
     }
