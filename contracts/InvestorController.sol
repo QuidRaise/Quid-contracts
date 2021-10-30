@@ -91,7 +91,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
            
             roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts ,true);
             // If it's a new investor, then we update the investor count for this round;
-            round.TotalInvestors.add(1);
+            round.TotalInvestors = round.TotalInvestors.add(1);
 
         }
 
@@ -101,6 +101,9 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
             {
                 roundInvestment.InvestmentAmounts[i] = roundInvestment.InvestmentAmounts[i].add(investmentAmount);
                 roundInvestment.TokenAlloaction =   roundInvestment.TokenAlloaction.add(tokenAllocation);
+
+                 // Update the Total raised in that round for that particular currency
+                 round.TotalRaised[i] = round.TotalRaised[i].add(investmentAmount);
             }                
          }
 

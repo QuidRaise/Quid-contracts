@@ -85,6 +85,8 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
                          address[] memory paymentCurrencies, uint256[] memory pricePerShare) external  override nonReentrant c2cCallValid
     {
 
+        //TODO: Add check to the paymentCurrencies length, so we don't ever get to a scenario where we run out of gass
+
        
          for (uint256 i = 0; i < pricePerShare.length; i++) 
          {
@@ -122,6 +124,9 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
     function createProposal(uint256[] calldata amountRequested,address[] calldata paymentCurrencies, uint256 votingStartTimestamp, 
                             address companyOwner ) external override nonReentrant c2cCallValid
     {
+
+        //TODO: Add check to the paymentCurrencies length, so we don't ever get to a scenario where we run out of gas
+
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
          Company memory company = _companyStore.getCompanyByOwner(companyOwner);
