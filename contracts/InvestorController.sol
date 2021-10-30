@@ -103,13 +103,13 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
        
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
         _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
+         _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
 
-        mintShareCertificate(round.CompanyId,round.Id, paymentTokenAddress,investmentAmount);
 
         _eventEmitter.emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
     }
 
-    function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal returns (uint256)
+    function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)
     {
        for (uint256 i = 0; i < round.PaymentCurrencies.length; i++)
        {
@@ -122,10 +122,6 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
        revert("Token allocation cannot be calculated");
     }
 
-    function mintShareCertificate(uint256 companyId, uint256 roundId, address paymentTokenAddress, uint256 investmentAmount) internal
-    {
-
-    }
 
     function ensureWhitelist(uint256 companyId, address investor) internal view
     {
