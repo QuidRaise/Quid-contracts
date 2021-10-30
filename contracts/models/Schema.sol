@@ -17,12 +17,12 @@ pragma solidity 0.7.0;
 
 */
 
-//TODO: we need to capture number of nfts issued and how many of them have been liquidated
 struct Round {
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   uint PricePerShare;
+   uint256[] PricePerShare;
+   address[] PaymentCurrencies;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
    uint TotalRaised;
@@ -39,6 +39,15 @@ struct Round {
    bool IsDeleted;
 }
 
+struct RoundInvestment
+{
+   uint256 RoundId;
+   uint256 TokenAlloaction;
+   address[] PaymentCurrencies;
+   uint256[] InvestmentAmounts;
+   bool Exists;
+}
+
 
 /**
 
@@ -51,10 +60,10 @@ struct Round {
 struct RoundNft
 {
    uint Id;
-   address NftContractAddress;
-   uint TokenId;
-   uint UnderlyingFundAmount;
    uint RoundId;
+   address NftContractAddress;
+   address Investor;
+
 }
 
 struct Proposal{
@@ -94,6 +103,14 @@ struct SupportedPaymentOption
    uint256 Index;
 }
 
+struct ProposalVote
+{
+   uint256 ProposalId;  
+   uint256 SharesStaked;
+   bool IsApproved;
+   bool Exists;
+}
+
 
 
 
@@ -115,7 +132,9 @@ struct RoundResponse
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   uint PricePerShare;
+   uint256[] PricePerShare;
+   address[] PaymentCurrencies;
+
    uint TotalTokensUpForSale;
    uint TotalInvestors;
    uint TotalRaised;
@@ -132,5 +151,7 @@ struct RebalancedProposalPayout
    address currencyAddress;
    uint256 amountToSend;
 }
+
+
 
 

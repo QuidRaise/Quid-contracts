@@ -13,37 +13,51 @@ import "./interfaces/IIdentityContract.sol";
 
 import "./BaseContract.sol";
 
-
-
-
-
-contract QuidRaiseShares is BaseContract, ERC1155,  ReentrancyGuard, Ownable {
+contract QuidRaiseShares is BaseContract, ERC1155,  ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
     IIdentityContract private _identityContract;
 
 
+
+
+
     function mint(uint256 tokenId, uint256 numberOfTokens, address recipient) external nonReentrant c2cCallValid
     {
-        _mint(recipient, tokenId,numberOfTokens);
+        _mint(recipient, tokenId,numberOfTokens,"");
 
     }
 
-    function setUri(string memory baseuri) external onlyOwner{
+
+
+
+    function burn(
+        address from,
+        uint256 id,
+        uint256 amount
+    ) external 
+    {
+        super._burn(from,id,amount);      
+    }
+
+    function burnBatch(
+        address from,
+        uint256[] memory ids,
+        uint256[] memory amounts
+    ) internal virtual {
+
+        super._burnBatch(from,ids,amounts);
+    }
+
+
+
+
+    function setUri(string memory baseUri) external onlyOwner{
         _setURI(baseUri);
     }
 
-    function getUri() external view returns (string memory){
-        return _baseURI();
-    }
-
-    function _baseURI() internal view override returns (string memory) {
-        return _baseUri;
-    }
-    
-
-     constructor(string calldata baseUri, address dnsContract) BaseContract(dnsContract) ERC1155(baseUri) {
+     constructor(string memory baseUri, address dnsContract) BaseContract(dnsContract) ERC1155(baseUri) {
         _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
      }
 

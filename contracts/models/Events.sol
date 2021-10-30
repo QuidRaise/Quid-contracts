@@ -81,58 +81,26 @@ event CompanyCreated(
     address indexed companyOwner,
     address indexed performedBy,
     string companyName,
-    string logoUrl,
     string companyDocumentUrl,
     address companyTokenContract
 );
 
-event ProposalCreated(
-    uint indexed proposalId,
-    uint indexed companyId,
-    address indexed companyOwner,
-    address companyTokenContract,
-    uint proposalAmount,
-    uint proposalStartTimestamp,
-    uint proposalDuration
-);
+
 
 event RoundCreated(
     uint indexed roundId,
     uint indexed companyId,
     address indexed companyOwner,
     uint lockupPeriodForSHares,
-    uint pricePerShare,
     uint tokensSuppliedForRound,
     uint startTimestamp,
     uint roundDuration,
     bool runTillFullySubscribed,
-    address[] paymentCurrencies
+    address[] paymentCurrencies,
+    uint[] pricePerShare
+
 );
 
-event ShareCertificateCreated(
-    uint indexed registryId,
-    uint indexed tokenId,
-    uint indexed roundId,
-    uint underlyingFundAmount,
-    address nftTokenContractAddress    
-);
-
-
-    event BlacklistCompanyOwner(address indexed companyOwner, address indexed performedBy);
-
-    event WhitelistCompany(uint256 indexed companyId, address indexed performedBy);
-
-    event BlacklistCompany(uint256 indexed companyId, address indexed performedBy);
-
-    event WhitelistInvestor(address indexed investor, address indexed performedBy);
-
-    event BlacklistInvestor(address indexed investor, address indexed performedBy);
-
-    event C2CAccessGrant(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
-
-    event C2CAccessRevoked(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
-
-    event CompanyCreated(string companyUrl);
 
     event ProposalCreated(
         uint256 indexed proposalId,

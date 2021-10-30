@@ -3,7 +3,7 @@
 
 pragma solidity 0.7.0;
 
-import "..ERC1155.sol";
+import "./ERC1155.sol";
 
 /**
  * @dev Extension of {ERC1155} that allows token holders to destroy both their

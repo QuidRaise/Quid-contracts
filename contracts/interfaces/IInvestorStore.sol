@@ -5,19 +5,20 @@ pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
 interface IInvestorStore {
-    function isInvestor(address investorAddress ) external returns (bool);
-    function getInvestor(address investorAddress) external returns (Investor memory);
-    function getAmountInvestorHasSpent(address investorAddress, address paymentCurrencyAddress) external returns (uint);
+    function isInvestor(address investorAddress ) external view returns (bool);
+    function getInvestor(address investorAddress) external view returns (Investor memory);
+    function getAmountInvestorHasSpent(address investorAddress, address paymentCurrencyAddress) external view returns (uint);
+
+
     function updateInvestor(address investorAddress, Investor memory investor) external;
     function createInvestor(Investor memory investor) external;
-
-
-    function updateAmountSpentByInvestor(address investorAddress, address paymentCurrencyAddress, uint totalAmountSpent) external returns (uint);
-    function updateRoundsInvestedIn(address investorAddress, uint roundId) external;
+    function updateRoundsInvestment(address investorAddress, RoundInvestment memory roundInvestment) external;
     function updateCompaniesInvestedIn(address investorAddress, uint companyId) external;
-    function updateProposalsVotedIn(address investorAddress, uint proposalVote, bool isApproved) external;
+    function updateProposalsVotedIn(address investorAddress, ProposalVote memory proposalVote) external;
 
-    function getRoundsInvestedIn(address investorAddress) external returns (uint[] memory);
-    function getCompaniesInvestedIn(address investorAddress) external returns (uint[] memory);
+    function getRoundsInvestedIn(address investorAddress) external view returns (uint[] memory);
+    function getCompaniesInvestedIn(address investorAddress) external view returns (uint[] memory);
+    function getProposalVote(address investorAddress, uint256 proposalId) external view returns (ProposalVote memory);
+    function getRoundInvestment(address investorAddress, uint256 roundId) external view returns (RoundInvestment memory);
     
 }

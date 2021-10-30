@@ -23,7 +23,7 @@ import "./interfaces/IERC20.sol";
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-contract CompanyController is  BaseContract, ICompanyController{
+contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyController{
 
     using SafeERC20 for IERC20;
     using SafeMath for uint;
@@ -80,16 +80,20 @@ contract CompanyController is  BaseContract, ICompanyController{
     }
 
     function createRound(address companyOwner,string calldata roundDocumentUrl,uint256 startTimestamp, uint256 duration,
-                         uint256 lockupPeriodForShare, uint256 pricePerShare, 
+                         uint256 lockupPeriodForShare, 
                          uint256 tokensSuppliedForRound, bool runTillFullySubscribed, 
-                         address[] memory paymentCurrencies) external  override nonReentrant c2cCallValid
+                         address[] memory paymentCurrencies, uint256[] memory pricePerShare) external  override nonReentrant c2cCallValid
     {
 
 
-        
+         for (uint256 i = 0; i < pricePerShare.length; i++) 
+         {
+             require(pricePerShare[i]> 0, "Price per share cannot be zero");
+         }
 
-         require(startTimestamp>0 && duration>0 && pricePerShare>0 &&  
-                 tokensSuppliedForRound>0 && paymentCurrencies.length>0, 
+         require(startTimestamp>0 && duration>0 &&   
+                 tokensSuppliedForRound>0 && paymentCurrencies.length>0 &&
+                 paymentCurrencies.length == pricePerShare.length, 
                  "Contract input data is invalid");
 
          require(!_companyStore.isCompanyOwner(companyOwner),"Could not find a company owned by this user");
@@ -102,7 +106,7 @@ contract CompanyController is  BaseContract, ICompanyController{
 
          depsitCompanyTokensToVault(company,tokensSuppliedForRound);
 
-         Round memory round = Round(0,company.Id,lockupPeriodForShare,pricePerShare,
+         Round memory round = Round(0,company.Id,lockupPeriodForShare,pricePerShare,paymentCurrencies,
                              tokensSuppliedForRound,0,0,0,startTimestamp,duration,roundDocumentUrl,
                              runTillFullySubscribed,false);
 
@@ -192,7 +196,7 @@ contract CompanyController is  BaseContract, ICompanyController{
         Round memory round =  _roundStore.getRound(roundId);
         require(!round.IsDeleted,"Round has been deleted");
         RoundResponse memory response = RoundResponse(round.Id, round.CompanyId, round.LockUpPeriodForShare, 
-                                                      round.PricePerShare, round.TotalTokensUpForSale, round.TotalInvestors, round.TotalRaised,
+                                                      round.PricePerShare,round.PaymentCurrencies, round.TotalTokensUpForSale, round.TotalInvestors, round.TotalRaised,
                                                       round.TotalTokensSold, round.RoundStartTimeStamp, round.DurationInSeconds,
                                                       round.DocumentUrl, round.RunTillFullySubscribed, isRoundOpen(round));
 
@@ -457,9 +461,9 @@ contract CompanyController is  BaseContract, ICompanyController{
          _eventEmitter
          .emitRoundCreatedEvent(
              RoundCreatedRequest(roundId,company.Id, company.OwnerAddress,
-                                round.LockUpPeriodForShare, round.PricePerShare, round.TotalTokensUpForSale,
+                                round.LockUpPeriodForShare,  round.TotalTokensUpForSale,
                                 round.RoundStartTimeStamp, round.DurationInSeconds, 
-                                round.RunTillFullySubscribed, paymentCurrencies )
+                                round.RunTillFullySubscribed, paymentCurrencies,round.PricePerShare )
             );
 
     }

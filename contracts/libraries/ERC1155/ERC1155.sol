@@ -8,9 +8,13 @@ import "../../interfaces/ERC1155/IERC1155Receiver.sol";
 import "../../interfaces/ERC1155/IERC1155MetadataURI.sol";
 import "../../interfaces/ERC1155/IERC165.sol";
 
-import "./libraries/Address.sol";
-import "./libraries/Context.sol";
-import "./libraries/ERC1155/ERC165.sol";
+import "../Address.sol";
+import "../Context.sol";
+import "./ERC165.sol";
+import "../SafeMath.sol";
+import "../Strings.sol";
+
+
 
 /**
  * @dev Implementation of the basic standard multi-token.
@@ -21,6 +25,10 @@ import "./libraries/ERC1155/ERC165.sol";
  */
 contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
+    using SafeMath for uint256;
+    using Strings for uint256;
+
+
 
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
@@ -34,7 +42,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     /**
      * @dev See {_setURI}.
      */
-    constructor(string calldata uri_) {
+    constructor(string memory uri_) {
         _setURI(uri_);
     }
 
@@ -58,7 +66,17 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * Clients calling this function must replace the `\{id\}` substring with the
      * actual token type ID.
      */
-    function uri(uint256) public view virtual override returns (string memory) {
+    function uri(uint256 tokenId) public view virtual override returns (string memory) {
+        string memory baseURI = _baseURI();
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(),".json")) : "";
+    }
+
+    /**
+     * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
+     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
+     * by default, can be overriden in child contracts.
+     */
+    function _baseURI() internal view virtual returns (string memory) {
         return _uri;
     }
 
@@ -174,9 +192,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
         uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
-        unchecked {
-            _balances[id][from] = fromBalance - amount;
-        }
+        _balances[id][from] = fromBalance.sub(amount);
         _balances[id][to] += amount;
 
         emit TransferSingle(operator, from, to, id, amount);
@@ -214,9 +230,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
-            unchecked {
-                _balances[id][from] = fromBalance - amount;
-            }
+            _balances[id][from] = fromBalance.sub(amount);
             _balances[id][to] += amount;
         }
 
@@ -244,7 +258,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * Because these URIs cannot be meaningfully represented by the {URI} event,
      * this function emits no events.
      */
-    function _setURI(string calldata newuri) internal virtual {
+    function _setURI(string memory newuri) internal virtual {
         _uri = newuri;
     }
 
@@ -329,9 +343,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
         uint256 fromBalance = _balances[id][from];
         require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
-        unchecked {
-            _balances[id][from] = fromBalance - amount;
-        }
+        _balances[id][from] = fromBalance.sub(amount);        
 
         emit TransferSingle(operator, from, address(0), id, amount);
     }
@@ -361,9 +373,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
             uint256 fromBalance = _balances[id][from];
             require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
-            unchecked {
-                _balances[id][from] = fromBalance - amount;
-            }
+            _balances[id][from] = fromBalance.sub(amount);
         }
 
         emit TransferBatch(operator, from, address(0), ids, amounts);
