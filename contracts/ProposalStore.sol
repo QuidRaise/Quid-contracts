@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 import "./interfaces/IProposalStore.sol";
 import "./BaseContract.sol";
 import "./models/Schema.sol";

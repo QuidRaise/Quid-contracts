@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 import "./interfaces/IInvestorStore.sol";
 import "./BaseContract.sol";
 import "./models/Schema.sol";
@@ -10,22 +12,22 @@ pragma solidity 0.7.0;
 contract ProposalStore is BaseContract, IInvestorStore {
     
 
-    mapping (address  => Index)  _investorsIndex;
-    Investor[] _investors;
+    mapping (address  => Index) private _investorsIndex;
+    Investor[] private _investors;
 
-    mapping(address=> Index[]) _investorRoundsIndex;
-    mapping(address=> mapping(uint256=>Index)) _investorRoundIndex;
-    RoundInvestment[] _investorRounds;
+    mapping(address=> Index[]) private _investorRoundsIndex;
+    mapping(address=> mapping(uint256=>Index)) private _investorRoundIndex;
+    RoundInvestment[] private  _investorRounds;
 
-    mapping(address=> Index[]) _investorProposalsIndex;
-    mapping(address=> mapping(uint256=>Index)) _investorProposalIndex;
-    ProposalVote[] _investorProposalVotes;
-
-
+    mapping(address=> Index[]) private _investorProposalsIndex;
+    mapping(address=> mapping(uint256=>Index)) private _investorProposalIndex;
+    ProposalVote[] private _investorProposalVotes;
 
 
 
-    mapping(address=> mapping(address=>uint256)) _investorInvestmentsAcrossCurrencies;
+
+    //TODO: Need To Create Getter and Setter functions for this field so we can track how much an investor has invested in
+    mapping(address=> mapping(address=>uint256)) private _investorInvestmentsAcrossCurrencies;
 
 
     constructor(address dnsContract) BaseContract(dnsContract) {
@@ -61,9 +63,9 @@ contract ProposalStore is BaseContract, IInvestorStore {
         }
         else
         {
-            uint256 index = _investors.length;
+            uint256 recordIndex = _investors.length;
             _investors.push(investor);
-            _investorsIndex[investorAddress] = Index(index, true);
+            _investorsIndex[investorAddress] = Index(recordIndex, true);
 
         }
 
