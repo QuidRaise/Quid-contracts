@@ -61,7 +61,7 @@ contract CompanyController is  BaseContract, ReentrancyGuard,  ICompanyControlle
     // We would need to build a more robust oracle system for QuidRaise
     function createCompany(string calldata CompanyUrl,
                            string calldata companyName, address companyTokenContractAddress, 
-                           address companyOwner, address companyCreatedBy) external override  nonReentrant onlyOwner
+                           address companyOwner, address companyCreatedBy) external override  nonReentrant c2cCallValid
     {
          bool isInvestor = _investorStore.isInvestor(companyOwner);
          require(!_companyStore.isCompanyOwner(companyOwner),"Company owner already owns a business");
