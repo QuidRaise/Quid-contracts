@@ -8,6 +8,6 @@ interface ICompanyStore {
     function isCompanyOwner(address ownerAddress) external returns (bool);
     function getCompanyById(uint id) external returns (Company memory);
     function getCompanyByOwner(address ownerAddress) external returns (Company memory);
-    function updateCompany(uint id, Company memory company) external;
+    function updateCompany(Company memory company) external;
     function createCompany(Company memory company) external returns (uint);
 }
