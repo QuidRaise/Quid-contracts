@@ -54,7 +54,7 @@ contract RoundStore is BaseContract, IRoundStore {
         _companyroundsIndex[round.CompanyId][round.Id] = index;
         _companyRounds[round.CompanyId].push(index);
 
-        return index.Index;
+        return round.Id;
     }
 
     function createRoundPaymentOptions(uint roundId, address[] memory paymentCurrencies) external override {

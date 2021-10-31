@@ -55,7 +55,7 @@ contract CompanyStore is BaseContract, ICompanyStore {
         _ownedCompanies[company.OwnerAddress] = index;
         _companyIndexes[company.Id] = index;
 
-        return index.Index;
+        return company.Id;
 
 
     }
