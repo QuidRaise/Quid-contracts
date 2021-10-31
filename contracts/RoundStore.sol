@@ -18,8 +18,7 @@ contract RoundStore is BaseContract, IRoundStore {
     Round[] private _rounds;
 
     constructor(address dnContract) BaseContract(dnContract) {
-
-    }
+        
 
     function getRound(uint roundId) external override view returns(Round memory){
         return _rounds[roundId.sub(1)];
@@ -30,8 +29,8 @@ contract RoundStore is BaseContract, IRoundStore {
         Round[] memory rounds = new Round[](indexes.length);
 
         for(uint256 i = 0; i < indexes.length; i++){
-            uint256 roundIndex = indexes[i].Index;
-            rounds[roundIndex] = _rounds[roundIndex];
+            uint256 roundIndex = _companyRounds[companyId][i].Index;
+            rounds[i] = _rounds[roundIndex];
         }
 
         return rounds;
