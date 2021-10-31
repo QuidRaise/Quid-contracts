@@ -127,8 +127,6 @@ event RoundCreated(
         bool runTillFullySubscribed,
         address[] paymentCurrencies
     );
-<<<<<<< HEAD
-=======
 
     event ShareCertificateCreated(
         uint indexed registryId,
@@ -141,5 +139,4 @@ event RoundCreated(
 
 
 
->>>>>>> e21595e54d9eb42262657b4e5c89543770ee9174
 }
