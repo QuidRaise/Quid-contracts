@@ -76,29 +76,6 @@ event C2CAccessRevoked(
 );
 
 
-<<<<<<< HEAD
-event ProposalCreated(
-    uint indexed proposalId,
-    uint indexed companyId,
-    address indexed companyOwner,
-    address companyTokenContract,
-    uint proposalAmount,
-    uint proposalStartTimestamp,
-    uint proposalDuration
-);
-
-
-event ShareCertificateCreated(
-    uint indexed registryId,
-    uint indexed tokenId,
-    uint indexed roundId,
-    uint underlyingFundAmount,
-    address nftTokenContractAddress    
-);
-
-event CompanyCreated(string CompanyUrl);
-
-=======
 event CompanyCreated(
     uint indexed companyId, 
     address indexed companyOwner,
@@ -136,7 +113,6 @@ event RoundCreated(
         uint256 proposalStartTimestamp,
         uint256 proposalDuration
     );
->>>>>>> e21595e54d9eb42262657b4e5c89543770ee9174
 
 
     event RoundCreated(
