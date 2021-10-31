@@ -76,6 +76,7 @@ event C2CAccessRevoked(
 );
 
 
+<<<<<<< HEAD
 event ProposalCreated(
     uint indexed proposalId,
     uint indexed companyId,
@@ -97,6 +98,46 @@ event ShareCertificateCreated(
 
 event CompanyCreated(string CompanyUrl);
 
+=======
+event CompanyCreated(
+    uint indexed companyId, 
+    address indexed companyOwner,
+    address indexed performedBy,
+    string companyName,
+    string companyDocumentUrl,
+    address companyTokenContract
+);
+
+
+
+event RoundCreated(
+    uint indexed roundId,
+    uint indexed companyId,
+    address indexed companyOwner,
+    uint lockupPeriodForSHares,
+    uint tokensSuppliedForRound,
+    uint startTimestamp,
+    uint roundDuration,
+    bool runTillFullySubscribed,
+    address[] paymentCurrencies,
+    uint[] pricePerShare
+
+
+);
+
+
+    event ProposalCreated(
+        uint256 indexed proposalId,
+        uint256 indexed companyId,
+        address indexed companyOwner,
+        address companyTokenContract,
+        uint256[] proposalAmount,
+        address[] paymentCurrencies,
+        uint256 proposalStartTimestamp,
+        uint256 proposalDuration
+    );
+>>>>>>> e21595e54d9eb42262657b4e5c89543770ee9174
+
 
     event RoundCreated(
         uint256 indexed roundId,
@@ -110,4 +151,19 @@ event CompanyCreated(string CompanyUrl);
         bool runTillFullySubscribed,
         address[] paymentCurrencies
     );
+<<<<<<< HEAD
+=======
+
+    event ShareCertificateCreated(
+        uint indexed registryId,
+        uint indexed tokenId,
+        uint indexed roundId,
+        uint underlyingFundAmount,
+        address nftTokenContractAddress 
+
+    );
+
+
+
+>>>>>>> e21595e54d9eb42262657b4e5c89543770ee9174
 }

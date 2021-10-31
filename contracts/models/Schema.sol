@@ -17,17 +17,16 @@ pragma solidity 0.7.0;
 
 */
 
-//TODO: we need to capture number of nfts issued and how many of them have been liquidated
 struct Round {
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   uint PricePerShare;
+   uint256[] PricePerShare;
+   address[] PaymentCurrencies;
    uint TotalTokensUpForSale;
    uint TotalInvestors;
-   uint TotalRaised;
+   uint[] TotalRaised;
    uint TotalTokensSold;
-
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
    string DocumentUrl;
@@ -37,6 +36,22 @@ struct Round {
    // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
    bool RunTillFullySubscribed;
    bool IsDeleted;
+}
+
+struct RoundInvestment
+{
+   uint256 RoundId;
+   uint256 TokenAlloaction;
+   address[] PaymentCurrencies;
+   uint256[] InvestmentAmounts;
+   bool Exists;
+}
+
+
+struct Index
+{
+   uint256 Index;
+   bool Exists;
 }
 
 
@@ -51,16 +66,17 @@ struct Round {
 struct RoundNft
 {
    uint Id;
-   address NftContractAddress;
-   uint TokenId;
-   uint UnderlyingFundAmount;
    uint RoundId;
+   address NftContractAddress;
+   address Investor;
+
 }
 
 struct Proposal{
    uint Id;
    uint CompanyId;
-   uint AmountRequested;
+   uint[] AmountRequested;
+   address[] PaymentCurrencies;
    uint VoteSessionDuration;
    uint VoteStartTimeStamp;
    uint ApprovedVotes;
@@ -74,8 +90,9 @@ struct Proposal{
 
 struct Investor{
    address WalletAddress;
-   uint roundsParticipatedIn;
-   uint proposalsVotedIn  ;
+   uint256 proposalsApproved;
+   uint256 proposalsRejected;
+
 }
 
 struct Company{
@@ -91,6 +108,14 @@ struct SupportedPaymentOption
    bool IsEnabled;
    bool Exists;
    uint256 Index;
+}
+
+struct ProposalVote
+{
+   uint256 ProposalId;  
+   uint256 SharesStaked;
+   bool IsApproved;
+   bool Exists;
 }
 
 
@@ -114,10 +139,12 @@ struct RoundResponse
    uint Id;
    uint CompanyId;
    uint LockUpPeriodForShare;
-   uint PricePerShare;
+   uint256[] PricePerShare;
+   address[] PaymentCurrencies;
+
    uint TotalTokensUpForSale;
    uint TotalInvestors;
-   uint TotalRaised;
+   uint[] TotalRaised;
    uint TotalTokensSold;
    uint RoundStartTimeStamp;   
    uint DurationInSeconds;
@@ -131,5 +158,7 @@ struct RebalancedProposalPayout
    address currencyAddress;
    uint256 amountToSend;
 }
+
+
 
 

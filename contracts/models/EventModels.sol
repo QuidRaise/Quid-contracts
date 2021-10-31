@@ -95,7 +95,8 @@ struct ProposalCreatedRequest{
     uint  CompanyId;
     address  CompanyOwner;
     address CompanyTokenContract;
-    uint ProposalAmount;
+    uint[] ProposalAmount;
+    address[] PaymentCurrencies;
     uint ProposalStartTimestamp;
     uint ProposalDuration;
 }
@@ -105,12 +106,13 @@ struct RoundCreatedRequest{
     uint  CompanyId;
     address  CompanyOwner;
     uint LockupPeriodForShares;
-    uint PricePerShare;
     uint TokensSuppliedForRound;
     uint StartTimestamp;
     uint RoundDuration;
     bool RunTillFullySubscribed;
-    address[] paymentCurrencies;
+    address[] PaymentCurrencies;
+    uint256[] PricePerShare;
+
 
 }
 
