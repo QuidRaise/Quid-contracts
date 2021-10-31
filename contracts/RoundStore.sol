@@ -17,7 +17,7 @@ contract RoundStore is BaseContract, IRoundStore {
 
     Round[] private _rounds;
 
-    constructor(address dnContract) BaseContract(dnContract) {
+    constructor(address dnContract) BaseContract(dnContract) {}
         
 
     function getRound(uint roundId) external override view returns(Round memory){
