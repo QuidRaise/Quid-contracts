@@ -22,6 +22,11 @@ abstract contract BaseContract is Ownable
     bytes32 constant INVESTOR_STORE = "INVESTOR_STORE";
     bytes32 constant PROPOSAL_STORE = "PROPOSAL_STORE";
     bytes32 constant ROUND_STORE = "ROUND_STORE";
+    bytes32 constant NFT = "NFT";
+    bytes32 constant CONFIG = "CONFIG";
+    bytes32 constant MAX_ROUND_PAYMENT_OPTION = "MAX_ROUND_PAYMENT_OPTION";
+    bytes32 constant PLATFORM_COMMISION = "PLATFORM_COMMISION";
+    bytes32 constant PRECISION = "PRECISION";
 
 
 
