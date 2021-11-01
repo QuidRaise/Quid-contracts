@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
-import "./models/Schema.sol";
-import "./models/EventModels.sol";
+import "../models/Schema.sol";
+import "../models/EventModels.sol";
 
-import "./BaseContract.sol";
-import "./libraries/SafeERC20.sol";
-import "./libraries/ReentrancyGuard.sol";
+import "../BaseContract.sol";
+import "../libraries/SafeERC20.sol";
+import "../libraries/ReentrancyGuard.sol";
 
 
-import "./interfaces/ICompanyController.sol";
-import "./interfaces/ICompanyStore.sol";
-import "./interfaces/IProposalStore.sol";
-import "./interfaces/IRoundStore.sol";
-import "./interfaces/ICompanyVault.sol";
-import "./interfaces/ICompanyVaultStore.sol";
+import "../interfaces/ICompanyController.sol";
+import "../interfaces/ICompanyStore.sol";
+import "../interfaces/IProposalStore.sol";
+import "../interfaces/IRoundStore.sol";
+import "../interfaces/ICompanyVault.sol";
+import "../interfaces/ICompanyVaultStore.sol";
 
-import "./interfaces/IEventEmitter.sol";
-import "./interfaces/IIdentityContract.sol";
-import "./interfaces/IInvestorStore.sol";
-import "./interfaces/IERC20.sol";
-import "./interfaces/IConfig.sol";
+import "../interfaces/IEventEmitter.sol";
+import "../interfaces/IIdentityContract.sol";
+import "../interfaces/IInvestorStore.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/IConfig.sol";
 
 
 pragma experimental ABIEncoderV2;

@@ -4,16 +4,12 @@ pragma solidity 0.7.0;
 import "./BaseContract.sol";
 import "./DataGrant.sol";
 
-
-abstract contract Deprecateable is BaseContract,DataGrant {
-   
-   bool private isDeprecated;
-
+abstract contract Deprecateable is BaseContract, DataGrant {
+    bool private isDeprecated;
 
     constructor() {
         isDeprecated = false;
     }
-
 
     function deprecate() external onlyOwner {
         isDeprecated = true;
@@ -23,9 +19,8 @@ abstract contract Deprecateable is BaseContract,DataGrant {
         isDeprecated = false;
     }
 
-
     modifier notDeprecated() {
         require(!isDeprecated, "Cannot access deprecated contract");
         _;
-    } 
+    }
 }

@@ -25,19 +25,19 @@ module.exports = {
     },
   },
   networks: {
-    testnet: {
+    /* testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
       accounts: [`0x${PRIVATE_KEY}`],
-    },
+    }, */
     localhost: {
-      url: `http://localhost:8545`,
+      url: `http://localhost:9545`,
       accounts: [`0x${PRIVATE_KEY_GANACHE}`],
       timeout: 150000,
       gasPrice: parseInt(utils.parseUnits("132", "gwei")),
     },
-    mainnet: {
+    /* mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       accounts: [`0x${PRIVATE_KEY}`],
@@ -48,7 +48,7 @@ module.exports = {
         blockNumber: 6674768,
       },
       blockGasLimit: 12000000,
-    },
+    }, */
   },
   etherscan: {
     apiKey: process.env.BSCSCAN_API_KEY,

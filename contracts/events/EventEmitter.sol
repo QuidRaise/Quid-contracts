@@ -66,9 +66,14 @@ contract EventEmitter is BaseContract, DataGrant, Events, IEventEmitter {
     }
 
     function emitCompanyCreatedEvent(CompanyCreatedRequest memory model) external override c2cCallValid {
-        emit CompanyCreated(model.CompanyId, model.CompanyOwner, model.PerformedBy, model.CompanyName,
-                            model.CompanyDocumentUrl, model.CompanyTokenContract);
-
+        emit CompanyCreated(
+            model.CompanyId,
+            model.CompanyOwner,
+            model.PerformedBy,
+            model.CompanyName,
+            model.CompanyDocumentUrl,
+            model.CompanyTokenContract
+        );
     }
 
     function emitProposalCreatedEvent(ProposalCreatedRequest memory model) external override c2cCallValid {
@@ -96,7 +101,6 @@ contract EventEmitter is BaseContract, DataGrant, Events, IEventEmitter {
             model.RunTillFullySubscribed,
             model.PaymentCurrencies,
             model.PricePerShare
-
         );
     }
 

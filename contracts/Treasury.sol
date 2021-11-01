@@ -5,16 +5,11 @@ import "./libraries/Ownable.sol";
 import "./interfaces/IERC20.sol";
 import "./libraries/SafeERC20.sol";
 
-
 contract Treasury is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    event TokenDepositEvent(
-        address indexed depositorAddress,
-        address indexed tokenContractAddress,
-        uint256 amount
-    );
+    event TokenDepositEvent(address indexed depositorAddress, address indexed tokenContractAddress, uint256 amount);
 
     event EtherDepositEvent(address indexed depositorAddress, uint256 amount);
 
@@ -26,27 +21,14 @@ contract Treasury is Ownable {
     function depositToken(address token) public payable {
         require(token != address(0x0), "token contract address cannot be null");
 
-        require(
-            address(token) != address(0),
-            "tken contract address cannot be 0"
-        );
+        require(address(token) != address(0), "tken contract address cannot be 0");
 
         IERC20 tokenContract = IERC20(token);
-        uint256 amountToDeposit = tokenContract.allowance(
-            msg.sender,
-            address(this)
-        );
+        uint256 amountToDeposit = tokenContract.allowance(msg.sender, address(this));
 
-        require(
-            amountToDeposit != 0,
-            "Cannot deposit nothing into the treasury"
-        );
+        require(amountToDeposit != 0, "Cannot deposit nothing into the treasury");
 
-       tokenContract.safeTransferFrom(
-            msg.sender,
-            address(this),
-            amountToDeposit
-        );
+        tokenContract.safeTransferFrom(msg.sender, address(this), amountToDeposit);
         emit TokenDepositEvent(msg.sender, token, amountToDeposit);
     }
 
@@ -57,10 +39,7 @@ contract Treasury is Ownable {
     function getTokenBalance(address token) public view returns (uint256) {
         require(token != address(0x0), "token contract address cannot be null");
 
-        require(
-            address(token) != address(0),
-            "tken contract address cannot be 0"
-        );
+        require(address(token) != address(0), "tken contract address cannot be 0");
 
         IERC20 tokenContract = IERC20(token);
         return tokenContract.balanceOf(address(this));

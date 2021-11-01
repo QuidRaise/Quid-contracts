@@ -3,7 +3,6 @@
 
 pragma solidity 0.7.0;
 
-
 import "../../interfaces/ERC1155/IAccessControl.sol";
 
 import "../Context.sol";
