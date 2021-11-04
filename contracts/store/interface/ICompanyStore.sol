@@ -11,7 +11,6 @@ interface ICompanyStore {
 
     function getCompanyByOwner(address ownerAddress) external returns (Company memory);
 
-    function updateCompany(uint256 id, Company memory company) external;
-
+    function updateCompany(Company memory company) external;
     function createCompany(Company memory company) external returns (uint256);
 }
