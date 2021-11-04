@@ -387,17 +387,6 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         return true;
     }
 
-    function emitCompanyDepositEvent(
-        uint256 roundId,
-        address[] memory paymentCurrencies,
-        Company memory company,
-        Round memory round
-    ) internal {
-        _eventEmitter.emitCompanyDepositEvent(
-            CompanyDepositRequest(company.Id, roundId, company.OwnerAddress, company.CompanyTokenContractAddress, round.TotalTokensUpForSale)
-        );
-    }
-
     function emitRoundCreatedEvents(
         uint256 roundId,
         address[] memory paymentCurrencies,
