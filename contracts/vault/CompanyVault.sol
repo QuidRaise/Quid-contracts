@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-import "../BaseContract.sol";
+import "../infrastructure/BaseContract.sol";
 import "../DataGrant.sol";
-import "./interfaces/ICompanyVault.sol";
-import "../interfaces/ICompanyVaultStore.sol";
-import "../interfaces/ICompanyStore.sol";
+import "./interface/ICompanyVault.sol";
+import "../store/interface/ICompanyVaultStore.sol";
+import "../store/interface/ICompanyStore.sol";
 import "../interfaces/IERC20.sol";
 import "../libraries/SafeERC20.sol";
 import "../libraries/SafeMath.sol";

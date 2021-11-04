@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import "../models/EventModels.sol";
+import "../../models/EventModels.sol";
 
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;

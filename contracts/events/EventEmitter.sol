@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-import "./BaseContract.sol";
-import "./DataGrant.sol";
-import "./interfaces/IEventEmitter.sol";
+import "../infrastructure/BaseContract.sol";
+import "../DataGrant.sol";
+import "./interface/IEventEmitter.sol";
 
-import "./models/Events.sol";
-import "./models/EventModels.sol";
+import "../models/Events.sol";
+import "../models/EventModels.sol";
 
 pragma experimental ABIEncoderV2;
 

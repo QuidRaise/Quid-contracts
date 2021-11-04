@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
-import "./BaseContract.sol";
+import "./infrastructure/BaseContract.sol";
 import "./DataGrant.sol";
 
 abstract contract Deprecateable is BaseContract, DataGrant {

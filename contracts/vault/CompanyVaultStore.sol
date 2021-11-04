@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-import "../BaseContract.sol";
+import "../infrastructure/BaseContract.sol";
 import "../DataGrant.sol";
 import "../models/Schema.sol";
-import "../interfaces/ICompanyVaultStore.sol";
+import "../store/interface/ICompanyVaultStore.sol";
 
 pragma solidity 0.7.0;
 

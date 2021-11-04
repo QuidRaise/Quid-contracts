@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import "./interface/IInvestorStore.sol";
-import "../BaseContract.sol";
+import "../infrastructure/BaseContract.sol";
 import "../models/Schema.sol";
 
 pragma experimental ABIEncoderV2;

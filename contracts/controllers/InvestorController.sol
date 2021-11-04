@@ -3,7 +3,7 @@
 import "../models/Schema.sol";
 import "../models/EventModels.sol";
 
-import "../BaseContract.sol";
+import "../infrastructure/BaseContract.sol";
 import "../libraries/SafeERC20.sol";
 import "../libraries/SafeMath.sol";
 
@@ -11,7 +11,7 @@ import "../libraries/ReentrancyGuard.sol";
 import "./interface/IInvestorController.sol";
 import "../store/interface/ICompanyStore.sol";
 import "../store/interface/IProposalStore.sol";
-import "../interfaces/IRoundStore.sol";
+import "../store/interface/IRoundStore.sol";
 import "../vault/interface/ICompanyVault.sol";
 import "../store/interface/ICompanyVaultStore.sol";
 
@@ -19,7 +19,7 @@ import "../events/interface/IEventEmitter.sol";
 import "../infrastructure/interface/IIdentityContract.sol";
 import "../store/interface/IInvestorStore.sol";
 import "../interfaces/IERC20.sol";
-import "../interfaces/IQuidRaiseShares.sol";
+import "../nfts/interface/IQuidRaiseShares.sol";
 
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
@@ -109,8 +109,8 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
          round.TotalTokensSold =  round.TotalTokensSold.add(tokenAllocation);
 
-        _round                Store.updateRound(round.Id, round);
-        _investorStore.updateRoundsInvestment(investor,roun       dInvestment);
+        _roundStore.updateRound(round.Id, round);
+        _investorStore.updateRoundsInvestment(investor,roundInvestment);
         // _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
         _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
 
@@ -165,7 +165,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
          if(proposalVote.Exists)
         {
-           uint256 s        takedShares =  proposalVote.SharesStaked;
+           uint256 stakedShares =  proposalVote.SharesStaked;
            if(proposalVote.IsApproved)
            {
              proposal.TokensStakedForApprovedVotes = proposal.TokensStakedForApprovedVotes.sub(stakedShares);
@@ -180,8 +180,8 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         if(isApproved)
         {
-            proposal.TokensStakedForApprovedVote        s =  proposal.TokensStakedForApprovedVotes.add(tokenAllocation);
-            proposal.ApprovedVot      es = proposal.ApprovedVotes.add(1);
+            proposal.TokensStakedForApprovedVotes =  proposal.TokensStakedForApprovedVotes.add(tokenAllocation);
+            proposal.ApprovedVotes = proposal.ApprovedVotes.add(1);
 
         }
         else
@@ -215,12 +215,12 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
                              round.PaymentCurrencies, round.TotalTokensUpForSale,
                              round.TotalInvestors, round.TotalRaised, round.TotalTokensSold, round.RoundStartTimeStamp,
                               round.DurationInSeconds,
-                             round.Docu mentUrl, round.RunTillFullySubscribed, isRoundOpen(round)
+                             round.DocumentUrl, round.RunTillFullySubscribed, isRoundOpen(round)
                              );
     }
 
 
-    function isRoundOpe n(Round memory round) internal view returns (bool)
+    function isRoundOpen(Round memory round) internal view returns (bool)
     {
         if(round.RunTillFullySubscribed)
         {

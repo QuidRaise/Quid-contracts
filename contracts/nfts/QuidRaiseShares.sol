@@ -2,16 +2,16 @@
 
 pragma solidity 0.7.0;
 
-import "./libraries/ERC1155/ERC1155.sol";
-import "./libraries/ReentrancyGuard.sol";
-import "./libraries/Ownable.sol";
-import "./libraries/SafeMath.sol";
-import "./libraries/SafeERC20.sol";
-import "./interfaces/IERC20.sol";
-import "./interfaces/ITreasury.sol";
-import "./infrastructure/interface/IIdentityContract.sol";
+import "../libraries/ERC1155/ERC1155.sol";
+import "../libraries/ReentrancyGuard.sol";
+import "../libraries/Ownable.sol";
+import "../libraries/SafeMath.sol";
+import "../libraries/SafeERC20.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/ITreasury.sol";
+import "../infrastructure/interface/IIdentityContract.sol";
 
-import "./infrastructure/BaseContract.sol";
+import "../infrastructure/BaseContract.sol";
 
 contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
     using SafeMath for uint256;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
-import "./BaseContract.sol";
+import "./infrastructure/BaseContract.sol";
 
 abstract contract DataGrant is BaseContract {
     mapping(address => bool) private dataAccessor;

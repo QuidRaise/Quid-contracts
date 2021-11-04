@@ -4,7 +4,7 @@ import "../models/EventModels.sol";
 
 import "./interface/IIdentityContract.sol";
 
-import "../interfaces/IEventEmitter.sol";
+import "../events/interface/IEventEmitter.sol";
 
 pragma solidity 0.7.0;
 pragma experimental ABIEncoderV2;
