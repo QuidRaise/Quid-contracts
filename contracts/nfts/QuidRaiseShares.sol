@@ -48,6 +48,8 @@ contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
     }
 
     constructor(string memory baseUri, address dnsContract) BaseContract(dnsContract) ERC1155(baseUri) {
+         //TODO: Move this initialization into an internal function
+        //This internal function would be called before any external function execution on this contract
         _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
     }
 }

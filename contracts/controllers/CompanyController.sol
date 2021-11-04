@@ -38,6 +38,9 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     IConfig private _config;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
+
+        //TODO: Move this initialization into an internal function
+        //This internal function would be called before any external function execution on this contract
         _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
