@@ -8,12 +8,12 @@ import "./libraries/Address.sol";
 
 pragma solidity 0.7.0;
 
-abstract contract BaseContract is Ownable 
+abstract contract BaseContract is Ownable
 {
 
     using Address for address;
 
-    
+
     bytes32 constant IDENTITY_CONTRACT = "IDENTITY_CONTRACT";
     bytes32 constant EVENT_EMITTER = "EVENT_EMITTER";
     bytes32 constant COMPANY_VAULT_STORE = "COMPANY_VAULT_STORE";
@@ -55,7 +55,7 @@ abstract contract BaseContract is Ownable
         bool isValid = identityContract.validateC2CTransaction(msg.sender,address(this));
         require(isValid, "unauthorized contract to contract interaction");
         _;
-    }     
+    }
 
 
 
