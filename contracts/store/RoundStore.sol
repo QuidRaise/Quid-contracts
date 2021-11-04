@@ -1,7 +1,7 @@
-import "./interfaces/IRoundStore.sol";
-import "./BaseContract.sol";
-import "./models/Schema.sol";
-import "./libraries/SafeMath.sol";
+import "./interface/IRoundStore.sol";
+import "../infrastructure/BaseContract.sol";
+import "../models/Schema.sol";
+import "../libraries/SafeMath.sol";
 
 
 pragma experimental ABIEncoderV2;

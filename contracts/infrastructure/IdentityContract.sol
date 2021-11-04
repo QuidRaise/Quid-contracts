@@ -19,6 +19,8 @@ contract IdentityContract is DataGrant, IIdentityContract {
     mapping(address => mapping(address => bool)) private _c2cWhitleist;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
+        //TODO: move these initialization logic into an internal function
+        // call that internal function first on any external/public function in this contract
         _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
     }
 

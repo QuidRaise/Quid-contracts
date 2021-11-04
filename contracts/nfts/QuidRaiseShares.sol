@@ -17,8 +17,6 @@ contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    IIdentityContract private _identityContract;
-
     function mint(
         uint256 tokenId,
         uint256 numberOfTokens,
@@ -48,6 +46,6 @@ contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
     }
 
     constructor(string memory baseUri, address dnsContract) BaseContract(dnsContract) ERC1155(baseUri) {
-        _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
+       
     }
 }

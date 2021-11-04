@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-import "./models/Schema.sol";
-import "./BaseContract.sol";
+import "../models/Schema.sol";
+import "../infrastructure/BaseContract.sol";
 
-import "./interfaces/ICompanyStore.sol";
-import "./libraries/SafeMath.sol";
+import "./interface/ICompanyStore.sol";
+import "../libraries/SafeMath.sol";
 
 
 pragma experimental ABIEncoderV2;

@@ -38,6 +38,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     IConfig private _config;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
+        //TODO: move these initialization logic into an internal function
+        // call that internal function first on any external/public function in this contract
         _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
@@ -385,17 +387,6 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         }
 
         return true;
-    }
-
-    function emitCompanyDepositEvent(
-        uint256 roundId,
-        address[] memory paymentCurrencies,
-        Company memory company,
-        Round memory round
-    ) internal {
-        _eventEmitter.emitCompanyDepositEvent(
-            CompanyDepositRequest(company.Id, roundId, company.OwnerAddress, company.CompanyTokenContractAddress, round.TotalTokensUpForSale)
-        );
     }
 
     function emitRoundCreatedEvents(
