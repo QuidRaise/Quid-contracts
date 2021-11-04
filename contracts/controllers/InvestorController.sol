@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: MIT
 
-import "./models/Schema.sol";
-import "./models/EventModels.sol";
+import "../models/Schema.sol";
+import "../models/EventModels.sol";
 
-import "./BaseContract.sol";
-import "./libraries/SafeERC20.sol";
-import "./libraries/SafeMath.sol";
+import "../infrastructure/BaseContract.sol";
+import "../libraries/SafeERC20.sol";
+import "../libraries/SafeMath.sol";
 
-import "./libraries/ReentrancyGuard.sol";
-import "./interfaces/IInvestorController.sol";
-import "./interfaces/ICompanyStore.sol";
-import "./interfaces/IProposalStore.sol";
-import "./interfaces/IRoundStore.sol";
-import "./interfaces/ICompanyVault.sol";
-import "./interfaces/ICompanyVaultStore.sol";
+import "../libraries/ReentrancyGuard.sol";
+import "./interface/IInvestorController.sol";
+import "../store/interface/ICompanyStore.sol";
+import "../store/interface/IProposalStore.sol";
+import "../store/interface/IRoundStore.sol";
+import "../vault/interface/ICompanyVault.sol";
+import "../store/interface/ICompanyVaultStore.sol";
 
-import "./interfaces/IEventEmitter.sol";
-import "./interfaces/IIdentityContract.sol";
-import "./interfaces/IInvestorStore.sol";
-import "./interfaces/IERC20.sol";
-import "./interfaces/IQuidRaiseShares.sol";
+import "../events/interface/IEventEmitter.sol";
+import "../infrastructure/interface/IIdentityContract.sol";
+import "../store/interface/IInvestorStore.sol";
+import "../interfaces/IERC20.sol";
+import "../nfts/interface/IQuidRaiseShares.sol";
 
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
@@ -88,27 +88,27 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         if(!roundInvestment.Exists)
         {
             uint256[] memory investmentAmounts = new uint256[](paymentOptions.length);
-           
-            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts ,true);
+
+            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts            ,true);
             // If it's a new investor, then we update the investor count for this round;
             round.TotalInvestors = round.TotalInvestors.add(1);
 
         }
 
-         for (uint256 i = 0; i < paymentOptions.length; i++) 
+         for (uint256 i = 0; i < paymentOptions.length; i++)
          {
             if(paymentOptions[i]==paymentTokenAddress)
             {
-                roundInvestment.InvestmentAmounts[i] = roundInvestment.InvestmentAmounts[i].add(investmentAmount);
+                 roundInvestment.InvestmentAmounts[i] = roundInvestment.InvestmentAmounts[i].add(investmentAmount);
                 roundInvestment.TokenAlloaction =   roundInvestment.TokenAlloaction.add(tokenAllocation);
 
                  // Update the Total raised in that round for that particular currency
                  round.TotalRaised[i] = round.TotalRaised[i].add(investmentAmount);
-            }                
+            }
          }
 
          round.TotalTokensSold =  round.TotalTokensSold.add(tokenAllocation);
-       
+
         _roundStore.updateRound(round.Id, round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
         // _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
@@ -144,7 +144,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
     {
         address[] memory paymentAddresses = _roundStore.getRoundPaymentOptions(roundId);
         for (uint256 i = 0; i < paymentAddresses.length; i++) {
-            
+
             if(tokenAddress==paymentAddresses[i])
             {
                 return true;
@@ -157,13 +157,13 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
     {
         Proposal memory proposal =  _proposalStore.getProposal(proposalId);
         uint256 tokenAllocation = _quidRaiseShares.balanceOf(investor,proposal.CompanyId);
-        require(tokenAllocation>0, "You are not a shareholder in this company"); 
+        require(tokenAllocation>0, "You are not a shareholder in this company");
         ensureWhitelist(proposal.CompanyId,investor);
 
-        
+
         ProposalVote memory proposalVote  = _investorStore.getProposalVote(investor,proposal.Id);
 
-        if(proposalVote.Exists)
+         if(proposalVote.Exists)
         {
            uint256 stakedShares =  proposalVote.SharesStaked;
            if(proposalVote.IsApproved)
@@ -173,11 +173,11 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
            }
            else
            {
-             proposal.TokensStakedForRejectedVotes = proposal.TokensStakedForRejectedVotes.sub(stakedShares);        
+             proposal.TokensStakedForRejectedVotes = proposal.TokensStakedForRejectedVotes.sub(stakedShares);
              proposal.RejectedVotes = proposal.RejectedVotes.sub(1);
            }
         }
-      
+
         if(isApproved)
         {
             proposal.TokensStakedForApprovedVotes =  proposal.TokensStakedForApprovedVotes.add(tokenAllocation);
@@ -211,37 +211,37 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
     function getRound(uint256 roundId) external view override returns (RoundResponse memory)
     {
         Round memory round =  _roundStore.getRound(roundId);
-        return RoundResponse(round.Id, round.CompanyId, round.LockUpPeriodForShare, round.PricePerShare, 
-                             round.PaymentCurrencies, round.TotalTokensUpForSale, 
-                             round.TotalInvestors, round.TotalRaised, round.TotalTokensSold, round.RoundStartTimeStamp, 
-                             round.DurationInSeconds,
+        return RoundResponse(round.Id, round.CompanyId, round.LockUpPeriodForShare, round.PricePerShare,
+                             round.PaymentCurrencies, round.TotalTokensUpForSale,
+                             round.TotalInvestors, round.TotalRaised, round.TotalTokensSold, round.RoundStartTimeStamp,
+                              round.DurationInSeconds,
                              round.DocumentUrl, round.RunTillFullySubscribed, isRoundOpen(round)
-                             );  
+                             );
     }
 
-    
+
     function isRoundOpen(Round memory round) internal view returns (bool)
     {
         if(round.RunTillFullySubscribed)
         {
-            if(round.TotalTokensUpForSale==round.TotalTokensSold) 
-            {
-                return false;
+            if(round.TotalTokensUpForSale==round.TotalTokensSold)
+              {
+                    return false;
             }
             else
             {
                 return true;
             }
         }
-        else 
+        else
         {
-              uint256 expiryTime = round.RoundStartTimeStamp.add(round.DurationInSeconds);
+              uint256 expiryTime = round.RoundStartTimeStamp .add(round.DurationInSeconds);
              if(block.timestamp<=expiryTime)
              {
                  return true;
              }
              else{
-                 return false;
+                  return false;
              }
         }
     }
