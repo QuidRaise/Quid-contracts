@@ -71,7 +71,7 @@ contract ProposalStore is BaseContract, IProposalStore {
         _companyProposals[proposal.CompanyId].push(index);
         _companyProposalIndex[proposal.CompanyId][proposal.Id] = index;
 
-
+        return index.Index;
 
     }
 

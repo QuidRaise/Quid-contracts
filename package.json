@@ -44,7 +44,7 @@
     "ethers": "^5.4.4",
     "fs-extra": "^10.0.0",
     "ganache-cli": "^6.12.2",
-    "hardhat": "^2.6.0",
+    "hardhat": "^2.6.7",
     "hardhat-gas-reporter": "^1.0.4",
     "husky": "^7.0.1",
     "lint-staged": "^11.1.2",
@@ -76,5 +76,6 @@
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.4",
     "@tenderly/hardhat-tenderly": "^1.0.12"
-  }
+  },
+  "packageManager": "yarn@3.1.0"
 }

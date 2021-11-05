@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
-import "./BaseContract.sol";
+import "./infrastructure/BaseContract.sol";
 
 abstract contract DataGrant is BaseContract {
-
     mapping(address => bool) private dataAccessor;
 
     function activateDataAcess(address acessor) external onlyOwner {
@@ -15,19 +14,14 @@ abstract contract DataGrant is BaseContract {
         dataAccessor[acessor] = false;
     }
 
-    
-
-    function reAssignWriteAccess(address acessor)
-        external
-        onlyDataAccessor
-    {
+    function reAssignWriteAccess(address acessor) external onlyDataAccessor {
         dataAccessor[msg.sender] = false;
         dataAccessor[acessor] = true;
     }
 
-     modifier onlyDataAccessor() {
+    modifier onlyDataAccessor() {
         bool hasAccess = dataAccessor[msg.sender];
         require(hasAccess, "unauthorized access to contract");
         _;
-    }     
+    }
 }

@@ -37,71 +37,41 @@ abstract contract Events {
 
     event WhitelistCompanyOwner(address indexed companyOwner, address indexed performedBy);
 
-event BlacklistCompanyOwner(
+    event BlacklistCompanyOwner(address indexed companyOwner, address indexed performedBy);
+
+    event WhitelistCompany(uint256 indexed companyId, address indexed performedBy);
+
+    event BlacklistCompany(uint256 indexed companyId, address indexed performedBy);
+
+    event WhitelistInvestor(address indexed investor, address indexed performedBy);
+
+    event BlacklistInvestor(address indexed investor, address indexed performedBy);
+
+    event C2CAccessGrant(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
+
+    event C2CAccessRevoked(address indexed sourceContract, address indexed destinationContract, address indexed performedBy);
+
+    event CompanyCreated(
+        uint256 indexed companyId,
         address indexed companyOwner,
-        address indexed performedBy
-);
+        address indexed performedBy,
+        string companyName,
+        string companyDocumentUrl,
+        address companyTokenContract
+    );
 
-
-event WhitelistCompany(
-        uint indexed companyId,
-        address indexed performedBy
-);
-
-event BlacklistCompany(
-        uint indexed companyId,
-        address indexed performedBy
-);
-
-event WhitelistInvestor(
-        address indexed investor,
-        address indexed performedBy
-);
-
-event BlacklistInvestor(
-        address indexed investor,
-        address indexed performedBy
-);
-
-event C2CAccessGrant(
-    address indexed sourceContract,
-    address indexed destinationContract,
-    address indexed performedBy
-);
-
-event C2CAccessRevoked(
-    address indexed sourceContract,
-    address indexed destinationContract,
-    address indexed performedBy
-);
-
-
-event CompanyCreated(
-    uint indexed companyId, 
-    address indexed companyOwner,
-    address indexed performedBy,
-    string companyName,
-    string companyDocumentUrl,
-    address companyTokenContract
-);
-
-
-
-event RoundCreated(
-    uint indexed roundId,
-    uint indexed companyId,
-    address indexed companyOwner,
-    uint lockupPeriodForSHares,
-    uint tokensSuppliedForRound,
-    uint startTimestamp,
-    uint roundDuration,
-    bool runTillFullySubscribed,
-    address[] paymentCurrencies,
-    uint[] pricePerShare
-
-
-);
-
+    event RoundCreated(
+        uint256 indexed roundId,
+        uint256 indexed companyId,
+        address indexed companyOwner,
+        uint256 lockupPeriodForSHares,
+        uint256 tokensSuppliedForRound,
+        uint256 startTimestamp,
+        uint256 roundDuration,
+        bool runTillFullySubscribed,
+        address[] paymentCurrencies,
+        uint256[] pricePerShare
+    );
 
     event ProposalCreated(
         uint256 indexed proposalId,
@@ -113,7 +83,6 @@ event RoundCreated(
         uint256 proposalStartTimestamp,
         uint256 proposalDuration
     );
-
 
     event RoundCreated(
         uint256 indexed roundId,
@@ -129,14 +98,10 @@ event RoundCreated(
     );
 
     event ShareCertificateCreated(
-        uint indexed registryId,
-        uint indexed tokenId,
-        uint indexed roundId,
-        uint underlyingFundAmount,
-        address nftTokenContractAddress 
-
+        uint256 indexed registryId,
+        uint256 indexed tokenId,
+        uint256 indexed roundId,
+        uint256 underlyingFundAmount,
+        address nftTokenContractAddress
     );
-
-
-
 }

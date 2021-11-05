@@ -7,8 +7,6 @@ import "./libraries/Address.sol";
 
 import "./interfaces/IDNS.sol";
 
-
-
 contract DNS is Ownable,IDNS {
     mapping(bytes32=>address payable) RouteTable;
 

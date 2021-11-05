@@ -3,125 +3,117 @@
 pragma solidity 0.7.0;
 pragma experimental ABIEncoderV2;
 
-    
- struct CompanyDepositRequest{
-        uint  CompanyId;
-        uint  RoundId;
-        address  Sender;
-        address TokenContractAddress;
-        uint Amount;
- }
-
- struct CompanyWithdrawalRequest{
-        uint CompanyId;
-        uint RoundId;
-        address Receiver;
-        address TokenContractAddress;
-        uint Amount;
- }
-
- struct InvestmentDepositRequest{
-        uint CompanyId;
-        uint RoundId;  
-        address Sender;
-        address TokenContractAddress;
-        uint Amount;
- }
-
-struct InvestmentWithdrawalRequest{
-        uint  CompanyId;
-        uint  RoundId; 
-        address  Receiver;
-        address TokenContractAddress;
-        uint Amount;
+struct CompanyDepositRequest {
+    uint256 CompanyId;
+    uint256 RoundId;
+    address Sender;
+    address TokenContractAddress;
+    uint256 Amount;
 }
 
-struct WhitelistCompanyOwnerRequest{
-        address  CompanyOwner;
-        address  PerformedBy;
+struct CompanyWithdrawalRequest {
+    uint256 CompanyId;
+    uint256 RoundId;
+    address Receiver;
+    address TokenContractAddress;
+    uint256 Amount;
 }
 
-struct BlacklistCompanyOwnerRequest{
-        address  CompanyOwner;
-        address  PerformedBy;
+struct InvestmentDepositRequest {
+    uint256 CompanyId;
+    uint256 RoundId;
+    address Sender;
+    address TokenContractAddress;
+    uint256 Amount;
 }
 
-
-struct WhitelistCompanyRequest{
-        uint  CompanyId;
-        address  PerformedBy;
+struct InvestmentWithdrawalRequest {
+    uint256 CompanyId;
+    uint256 RoundId;
+    address Receiver;
+    address TokenContractAddress;
+    uint256 Amount;
 }
 
-struct BlacklistCompanyRequest{
-        uint  CompanyId;
-        address  PerformedBy;
+struct WhitelistCompanyOwnerRequest {
+    address CompanyOwner;
+    address PerformedBy;
 }
 
-struct WhitelistInvestorRequest{
-        address  Investor;
-        address  PerformedBy;
+struct BlacklistCompanyOwnerRequest {
+    address CompanyOwner;
+    address PerformedBy;
 }
 
-struct BlacklistInvestorRequest{
-        address  Investor;
-        address  PerformedBy;
+struct WhitelistCompanyRequest {
+    uint256 CompanyId;
+    address PerformedBy;
 }
 
-struct C2CAccessGrantRequest{
-    address  SourceContract;
-    address  DestinationContract;
-    address  PerformedBy;
+struct BlacklistCompanyRequest {
+    uint256 CompanyId;
+    address PerformedBy;
 }
 
-struct C2CAccessRevokedRequest{
-    address  SourceContract;
-    address  DestinationContract;
-    address  PerformedBy;
+struct WhitelistInvestorRequest {
+    address Investor;
+    address PerformedBy;
 }
 
+struct BlacklistInvestorRequest {
+    address Investor;
+    address PerformedBy;
+}
 
-struct CompanyCreatedRequest{
-    uint  CompanyId; 
-    address  CompanyOwner;
-    address  PerformedBy;
-    string CompanyName;    
+struct C2CAccessGrantRequest {
+    address SourceContract;
+    address DestinationContract;
+    address PerformedBy;
+}
+
+struct C2CAccessRevokedRequest {
+    address SourceContract;
+    address DestinationContract;
+    address PerformedBy;
+}
+
+struct CompanyCreatedRequest {
+    uint256 CompanyId;
+    address CompanyOwner;
+    address PerformedBy;
+    string CompanyName;
     string CompanyDocumentUrl;
     address CompanyTokenContract;
-
 }
 
-struct ProposalCreatedRequest{
-    uint  ProposalId;
-    uint  CompanyId;
-    address  CompanyOwner;
+struct ProposalCreatedRequest {
+    uint256 ProposalId;
+    uint256 CompanyId;
+    address CompanyOwner;
     address CompanyTokenContract;
-    uint[] ProposalAmount;
+    uint256[] ProposalAmount;
     address[] PaymentCurrencies;
-    uint ProposalStartTimestamp;
-    uint ProposalDuration;
+    uint256 ProposalStartTimestamp;
+    uint256 ProposalDuration;
 }
 
-struct RoundCreatedRequest{
-    uint  RoundId;
-    uint  CompanyId;
-    address  CompanyOwner;
-    uint LockupPeriodForShares;
-    uint TokensSuppliedForRound;
-    uint StartTimestamp;
-    uint RoundDuration;
+struct RoundCreatedRequest {
+    uint256 RoundId;
+    uint256 CompanyId;
+    address CompanyOwner;
+    uint256 LockupPeriodForShares;
+    uint256 TokensSuppliedForRound;
+    uint256 StartTimestamp;
+    uint256 RoundDuration;
     bool RunTillFullySubscribed;
     address[] PaymentCurrencies;
     uint256[] PricePerShare;
-
-
 }
 
-struct ShareCertificateCreatedRequest{
-    uint  RegistryId;
-    uint  TokenId;
-    uint  RoundId;
-    uint UnderlyingFundAmount;
-    address nftTokenContractAddress;    
+struct ShareCertificateCreatedRequest {
+    uint256 RegistryId;
+    uint256 TokenId;
+    uint256 RoundId;
+    uint256 UnderlyingFundAmount;
+    address nftTokenContractAddress;
 }
-
-
