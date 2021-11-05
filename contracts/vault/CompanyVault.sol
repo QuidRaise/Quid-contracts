@@ -26,6 +26,8 @@ contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
     ICompanyStore _companyStore;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
+        //TODO: move these initialization logic into an internal function
+        // call that internal function first on any external/public function in this contract
         _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
         _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
     }

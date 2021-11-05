@@ -44,7 +44,8 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
 
  constructor(address dnsContract) BaseContract(dnsContract) {
-
+        //TODO: move these initialization logic into an internal function       
+        // call that internal function first on any external/public function in this contract
         _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
