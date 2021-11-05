@@ -63,6 +63,7 @@
     "compile": "hardhat compile",
     "coverage": "cross-env CODE_COVERAGE=true hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"./test/**/*.ts\"",
     "deploy": "npx hardhat run --network mainnet scripts/deploy.js",
+    "deploy:localhost": "npx hardhat run --network localhost scripts/deploy.js",
     "deploy:testnet": "npx hardhat run --network testnet scripts/deploy.js",
     "deploy:fork": "npx hardhat run --network hardhat scripts/deploy.js",
     "lint": "yarn run lint:sol && yarn run prettier:check",
