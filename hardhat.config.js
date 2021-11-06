@@ -48,6 +48,7 @@ module.exports = {
       //   // blockNumber: 6674768,
       // },
       blockGasLimit: 12000000,
+      allowUnlimitedContractSize :true
     }, 
   },
   etherscan: {

@@ -2,11 +2,11 @@
 pragma solidity 0.7.0;
 
 interface IConfig {
-    function setConfig(bytes32 key, uint256 value) external;
+    function setNumericConfig(string calldata key, uint256 value) external;
 
-    function setConfig(bytes32 key, string calldata value) external;
+    function setCharacterConfig(string calldata key, string calldata value) external;
 
-    function getNumericConfig(bytes32 key) external view returns (uint256);
+    function getNumericConfig(string calldata key) external view returns (uint256);
 
-    function getCharacterConfig(bytes32 key) external view returns (string memory);
+    function getCharacterConfig(string calldata key) external view returns (string memory);
 }
