@@ -46,11 +46,4 @@ abstract contract BaseContract is Ownable {
         require(isValid, "unauthorized contract to contract interaction");
         _;
     }
-<<<<<<< HEAD:contracts/BaseContract.sol
-
-
-
-
-=======
->>>>>>> 576d8c43ea60da2773f596cbfcfb0085ec093d77:contracts/infrastructure/BaseContract.sol
 }

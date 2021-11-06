@@ -1,4 +1,6 @@
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-waffle")
+require('hardhat-deploy');
 require("@tenderly/hardhat-tenderly");
 require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
@@ -30,9 +32,9 @@ module.exports = {
       chainId: 97,
       gasPrice: 20000000000,
       accounts: [`${PRIVATE_KEY}`],
-    }, 
+    },
     localhost: {
-      url: `http://localhost:8545`,
+      url: `http://localhost:9545`,
       accounts: [`${PRIVATE_KEY_GANACHE}`],
       timeout: 150000,
       gasPrice: parseInt(utils.parseUnits("132", "gwei")),
@@ -48,7 +50,7 @@ module.exports = {
         blockNumber: 6674768,
       },
       blockGasLimit: 12000000,
-    }, 
+    },
   },
   etherscan: {
     apiKey: process.env.BSCSCAN_API_KEY,

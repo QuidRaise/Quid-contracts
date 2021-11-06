@@ -54,6 +54,10 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
     //Currently defaulting oracle to owner address
     // We would need to build a more robust oracle system for QuidRaise
+    /**
+        company owner - wallet address of the person who owns a company
+        company created by - wallet address of who initiated the company creation transaction
+     */
     function createCompany(
         string calldata CompanyUrl,
         string calldata companyName,
