@@ -8,7 +8,7 @@ pragma experimental ABIEncoderV2;
 
 pragma solidity 0.7.0;
 
-contract ProposalStore is BaseContract, IInvestorStore {
+contract InvestorStore is BaseContract, IInvestorStore {
     mapping(address => Index) private _investorsIndex;
     Investor[] private _investors;
 

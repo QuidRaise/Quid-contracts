@@ -43,10 +43,10 @@ module.exports = {
       accounts: [`${PRIVATE_KEY}`],
     },
     hardhat: {
-      forking: {
-        url: `https://bsc-dataseed.binance.org/`,
-        blockNumber: 6674768,
-      },
+      // forking: {
+      //   url: `https://bsc-dataseed.binance.org/`,
+      //   // blockNumber: 6674768,
+      // },
       blockGasLimit: 12000000,
     }, 
   },

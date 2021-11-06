@@ -29,40 +29,17 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-
-    ICompanyStore private _companyStore;
-    IProposalStore private _proposalStore;
-    IRoundStore private _roundStore;
-    ICompanyVault private _companyVault;
-    ICompanyVaultStore private _companyVaultStore;
-
-    IEventEmitter private _eventEmitter;
-    IIdentityContract private _identityContract;
-    IInvestorStore private _investorStore;
-    IQuidRaiseShares private _quidRaiseShares;
-
-
-
- constructor(address dnsContract) BaseContract(dnsContract) {
-        //TODO: move these initialization logic into an internal function       
-        // call that internal function first on any external/public function in this contract
-        _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
-        _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
-        _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
-        _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
-        _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
-
-        _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
-        _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
-        _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
-        _quidRaiseShares = IQuidRaiseShares(_dns.getRoute(NFT));
-
+    constructor(address dnsContract) BaseContract(dnsContract) {
+       
     }
 
 
 
     function investInRound(uint256 roundId, address paymentTokenAddress, address investor) external override nonReentrant c2cCallValid
     {
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
+
         Round memory round =  _roundStore.getRound(roundId);
         ensureWhitelist(round.CompanyId,investor);
         require(isSupportedPaymentOption(roundId,paymentTokenAddress), "Payment token not supported");
@@ -75,8 +52,8 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         token.safeTransferFrom(investor,address(this),investmentAmount);
 
-        token.approve(address(_companyVault),investmentAmount);
-        _companyVault.depositPaymentTokensToVault(round.CompanyId, paymentTokenAddress);
+        token.approve(address(_dns.getRoute(COMPANY_VAULT)),investmentAmount);
+        (ICompanyVault(_dns.getRoute(COMPANY_VAULT))).depositPaymentTokensToVault(round.CompanyId, paymentTokenAddress);
 
         uint256 tokenAllocation = getTokenAllocation(round,paymentTokenAddress,investmentAmount);
 
@@ -113,10 +90,10 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         _roundStore.updateRound(round.Id, round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
         // _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
-        _quidRaiseShares.mint(round.CompanyId, tokenAllocation, investor);
+        (IQuidRaiseShares(_dns.getRoute(NFT))).mint(round.CompanyId, tokenAllocation, investor);
 
 
-        _eventEmitter.emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
+        (IEventEmitter(_dns.getRoute(EVENT_EMITTER))).emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
     }
 
     function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)
@@ -135,6 +112,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function ensureWhitelist(uint256 companyId, address investor) internal view
     {
+        IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
         require(_identityContract.isInvestorAddressWhitelisted(investor),
                     "Address blacklisted");
         require(_identityContract.isCompanyWhitelisted(companyId),
@@ -143,6 +121,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function isSupportedPaymentOption(uint roundId,address tokenAddress) internal view returns (bool)
     {
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
         address[] memory paymentAddresses = _roundStore.getRoundPaymentOptions(roundId);
         for (uint256 i = 0; i < paymentAddresses.length; i++) {
 
@@ -156,6 +135,10 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function voteForProposal(uint256 proposalId, address investor, bool isApproved) external override nonReentrant c2cCallValid
     {
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
+        IQuidRaiseShares _quidRaiseShares = IQuidRaiseShares(_dns.getRoute(NFT));
+
         Proposal memory proposal =  _proposalStore.getProposal(proposalId);
         uint256 tokenAllocation = _quidRaiseShares.balanceOf(investor,proposal.CompanyId);
         require(tokenAllocation>0, "You are not a shareholder in this company");
@@ -198,6 +181,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function viewProposalVote(uint256 proposalId, address investor) external view override returns (ProposalVote memory)
     {
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
         ProposalVote memory proposalVote  = _investorStore.getProposalVote(investor,proposalId);
         require(proposalVote.Exists, "Investor vote not found");
         return proposalVote;
@@ -205,12 +189,14 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function getRoundInvestment(uint256 roundId, address investor) external view override  returns (RoundInvestment memory)
     {
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
         return _investorStore.getRoundInvestment(investor,roundId);
     }
 
 
     function getRound(uint256 roundId) external view override returns (RoundResponse memory)
     {
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
         Round memory round =  _roundStore.getRound(roundId);
         return RoundResponse(round.Id, round.CompanyId, round.LockUpPeriodForShare, round.PricePerShare,
                              round.PaymentCurrencies, round.TotalTokensUpForSale,

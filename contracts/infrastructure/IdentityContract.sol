@@ -10,7 +10,6 @@ pragma solidity 0.7.0;
 pragma experimental ABIEncoderV2;
 
 contract IdentityContract is DataGrant, IIdentityContract {
-    IEventEmitter _eventEmitter;
 
     mapping(address => bool) private _companyOwnerAddressWhitelist;
     mapping(uint256 => bool) private _companyWhitelist;
@@ -19,37 +18,41 @@ contract IdentityContract is DataGrant, IIdentityContract {
     mapping(address => mapping(address => bool)) private _c2cWhitleist;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
-        //TODO: move these initialization logic into an internal function
-        // call that internal function first on any external/public function in this contract
-        _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
+       
     }
 
     function whitelistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _companyOwnerAddressWhitelist[companyOwnerAddress] = true;
         _eventEmitter.emitWhitelistCompanyOwnerEvent(WhitelistCompanyOwnerRequest(companyOwnerAddress, _msgSender()));
     }
 
     function whitelistCompany(uint256 companyId) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _companyWhitelist[companyId] = true;
         _eventEmitter.emitWhitelistCompanyEvent(WhitelistCompanyRequest(companyId, _msgSender()));
     }
 
     function whitelistInvestor(address investor) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _investorWhitelist[investor] = true;
         _eventEmitter.emitWhitelistInvestorEvent(WhitelistInvestorRequest(investor, _msgSender()));
     }
 
     function blacklistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _companyOwnerAddressWhitelist[companyOwnerAddress] = false;
         _eventEmitter.emitBlacklistCompanyOwnerEvent(BlacklistCompanyOwnerRequest(companyOwnerAddress, _msgSender()));
     }
 
     function blacklistCompany(uint256 companyId) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _companyWhitelist[companyId] = false;
         _eventEmitter.emitBlacklistCompanyEvent(BlacklistCompanyRequest(companyId, _msgSender()));
     }
 
     function blacklistInvestor(address investor) external override onlyDataAccessor {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _investorWhitelist[investor] = false;
         _eventEmitter.emitBlacklistInvestorEvent(BlacklistInvestorRequest(investor, _msgSender()));
     }
@@ -66,11 +69,13 @@ contract IdentityContract is DataGrant, IIdentityContract {
     }
 
     function grantContractInteraction(address sourceContract, address destinationContract) external override onlyOwner {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _c2cWhitleist[sourceContract][destinationContract] = true;
         _eventEmitter.emitC2CAccessGrantEvent(C2CAccessGrantRequest(sourceContract, destinationContract, _msgSender()));
     }
 
     function revokeContractInteraction(address sourceContract, address destinationContract) external override onlyOwner {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _c2cWhitleist[sourceContract][destinationContract] = false;
         _eventEmitter.emitC2CAccessRevokedEvent(C2CAccessRevokedRequest(sourceContract, destinationContract, _msgSender()));
     }
