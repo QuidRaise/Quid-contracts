@@ -21,15 +21,8 @@ pragma solidity 0.7.0;
 contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
-
-    ICompanyVaultStore _companyVaultStore;
-    ICompanyStore _companyStore;
-
     constructor(address dnsContract) BaseContract(dnsContract) {
-        //TODO: move these initialization logic into an internal function
-        // call that internal function first on any external/public function in this contract
-        _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
-        _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+       
     }
 
     /**
@@ -37,6 +30,9 @@ contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
      * The round allocation tokens are deposited in the company vault contract by calling this function
      */
     function depositCompanyTokens(uint256 companyId) external override c2cCallValid {
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         Company memory company = _companyStore.getCompanyById(companyId);
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
@@ -55,6 +51,8 @@ contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
      * Amount Sent To Vault = Investors payment - Quidraise commissions
      */
     function depositPaymentTokensToVault(uint256 companyId, address tokenContractAddress) external override c2cCallValid {
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         IERC20 token = IERC20(tokenContractAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
         token.safeTransferFrom(_msgSender(), address(this), allowance);
@@ -70,6 +68,9 @@ contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
      * Before the new deposit is processed
      */
     function withdrawCompanyTokens(uint256 companyId, uint256 amount) external override c2cCallValid {
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         Company memory company = _companyStore.getCompanyById(companyId);
         uint256 balance = _companyVaultStore.getCompanyTokenBalance(companyId);
 
@@ -90,6 +91,8 @@ contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
         address tokenContractAddress,
         uint256 amount
     ) external override c2cCallValid {
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         uint256 balance = _companyVaultStore.getCompanyVaultBalance(companyId, tokenContractAddress);
         require(balance >= amount, "[CompanyVault] amount exceeded balance");
         uint256 newBalance = balance.sub(amount);

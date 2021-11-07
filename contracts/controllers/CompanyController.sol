@@ -26,30 +26,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    ICompanyStore private _companyStore;
-    IProposalStore private _proposalStore;
-    IRoundStore private _roundStore;
-    ICompanyVault private _companyVault;
-    ICompanyVaultStore private _companyVaultStore;
-
-    IEventEmitter private _eventEmitter;
-    IIdentityContract private _identityContract;
-    IInvestorStore private _investorStore;
-    IConfig private _config;
-
     constructor(address dnsContract) BaseContract(dnsContract) {
-        //TODO: move these initialization logic into an internal function
-        // call that internal function first on any external/public function in this contract
-        _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
-        _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
-        _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
-        _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
-        _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
-
-        _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
-        _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
-        _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
-        _config = IConfig(_dns.getRoute(CONFIG));
+       
     }
 
     //Currently defaulting oracle to owner address
@@ -65,6 +43,13 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         address companyOwner,
         address companyCreatedBy
     ) external override nonReentrant onlyOwner {
+
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
+        IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
+
+
         bool isInvestor = _investorStore.isInvestor(companyOwner);
         require(!_companyStore.isCompanyOwner(companyOwner), "Company owner already owns a business");
 
@@ -100,7 +85,9 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         address[] memory paymentCurrencies,
         uint256[] memory pricePerShare
     ) external override nonReentrant c2cCallValid {
-        require(_config.getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+
+        require((IConfig(_dns.getRoute(CONFIG))).getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
 
         for (uint256 i = 0; i < pricePerShare.length; i++) {
             require(pricePerShare[i] > 0, "Price per share cannot be zero");
@@ -141,9 +128,9 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             false
         );
 
-        uint256 roundId = _roundStore.createRound(round);
+        uint256 roundId = (IRoundStore(_dns.getRoute(ROUND_STORE))).createRound(round);
 
-        _roundStore.createRoundPaymentOptions(roundId, paymentCurrencies);
+        (IRoundStore(_dns.getRoute(ROUND_STORE))).createRoundPaymentOptions(roundId, paymentCurrencies);
 
         emitRoundCreatedEvents(roundId, paymentCurrencies, company, round);
     }
@@ -154,6 +141,13 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         uint256 votingStartTimestamp,
         address companyOwner
     ) external override nonReentrant c2cCallValid {
+
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        IConfig _config = IConfig(_dns.getRoute(CONFIG));
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
+
+
         require(_config.getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
 
         require(!_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
@@ -194,6 +188,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function getProposalResult(uint256 proposalId) external view override returns (ProposalResponse memory) {
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+
         Proposal memory proposal = _proposalStore.getProposal(proposalId);
 
         bool hasVotingPeriodElapsed = false;
@@ -230,6 +226,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function getRound(uint256 roundId) external view override returns (RoundResponse memory) {
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
+
         Round memory round = _roundStore.getRound(roundId);
         require(!round.IsDeleted, "Round has been deleted");
         RoundResponse memory response = RoundResponse(
@@ -253,6 +251,12 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function releaseProposalBudget(uint256 proposalId, address companyOwner) external override nonReentrant c2cCallValid {
+        
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+        ICompanyVault _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+        
         require(!_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
 
         Proposal memory proposal = _proposalStore.getProposal(proposalId);
@@ -277,6 +281,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function calculatePlatformCommision(uint256 amount) internal view returns (uint256) {
+        IConfig _config = IConfig(_dns.getRoute(CONFIG));
+
         uint256 factor = _config.getNumericConfig(PLATFORM_COMMISION);
         uint256 precision = _config.getNumericConfig(PRECISION);
 
@@ -284,11 +290,17 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function ensureCompanyIsWhitelisted(uint256 companyId, address companyOwner) internal view {
+        IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
+
         require(_identityContract.isCompanyAddressWhitelisted(companyOwner), "Address blacklisted");
         require(_identityContract.isCompanyWhitelisted(companyId), "Company blacklisted");
     }
 
     function deleteProposal(uint256 proposalId, address companyOwnerAddress) external override c2cCallValid {
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+
+
         Proposal memory proposal = _proposalStore.getProposal(proposalId);
         Company memory company = _companyStore.getCompanyById(proposal.CompanyId);
         require(company.OwnerAddress == companyOwnerAddress, "Unauthorized access to proposal");
@@ -300,6 +312,9 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function deleteRound(uint256 roundId, address companyOwnerAddress) external override c2cCallValid {
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
+
         Round memory round = _roundStore.getRound(roundId);
         Company memory company = _companyStore.getCompanyById(round.CompanyId);
         require(company.OwnerAddress == companyOwnerAddress, "Unauthorized access to round");
@@ -334,12 +349,16 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function doesCompanyHaveOpenRound(uint256 companyId) internal view returns (bool) {
+        IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
+
         Round[] memory rounds = _roundStore.getCompanyRounds(companyId);
         Round memory lastRound = rounds[rounds.length - 1];
         return isRoundOpen(lastRound);
     }
 
     function doesCompanyHaveOpenProposal(uint256 companyId) internal view returns (bool) {
+        IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
+
         Proposal[] memory proposals = _proposalStore.getCompanyProposals(companyId);
         Proposal memory lastProposal = proposals[proposals.length - 1];
 
@@ -375,6 +394,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function getVoteDuration() internal view returns (uint256) {
+        IConfig _config = IConfig(_dns.getRoute(CONFIG));
         return _config.getNumericConfig(CONFIG);
     }
 
@@ -382,6 +402,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         Checks the payment currencies against a list of supported payment currencies in the company vault contract
     */
     function validateRoundPaymentOptions(address[] memory paymentCurrencies) internal view returns (bool) {
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
         for (uint256 i = 0; i < paymentCurrencies.length; i++) {
             address currency = paymentCurrencies[i];
             bool isSupported = _companyVaultStore.isSupportedPaymentOption(currency);
@@ -399,6 +421,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         Company memory company,
         Round memory round
     ) internal {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
+
         _eventEmitter.emitCompanyDepositEvent(
             CompanyDepositRequest(company.Id, roundId, company.OwnerAddress, company.CompanyTokenContractAddress, round.TotalTokensUpForSale)
         );
@@ -420,6 +444,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function depsitCompanyTokensToVault(Company memory company, uint256 expectedTokenDeposit) internal {
+        ICompanyVault  _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
         uint256 amountToDeposit = token.allowance(company.OwnerAddress, address(this));
         require(expectedTokenDeposit == amountToDeposit, "Approved deposit does not tally with round allocation");

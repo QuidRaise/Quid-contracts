@@ -47,9 +47,10 @@ module.exports = {
     hardhat: {
       // forking: {
       //   url: `https://bsc-dataseed.binance.org/`,
-      //   blockNumber: 6674768,
+      //   // blockNumber: 6674768,
       // },
       blockGasLimit: 12000000,
+      allowUnlimitedContractSize :true
     },
   },
   etherscan: {
