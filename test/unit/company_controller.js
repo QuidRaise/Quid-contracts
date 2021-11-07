@@ -21,8 +21,8 @@ describe("company controller contract", function () {
 
     // DEPLOYMENT
     DNS = await dns.deploy();
-    console.log(DNS.address)
     COMPANY_CONTROLLER = await company_controller.deploy(DNS.address);
+    console.log(DNS.address)
   });
 
   it("should create company successfully", async function () {

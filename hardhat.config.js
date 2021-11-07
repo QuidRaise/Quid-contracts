@@ -14,7 +14,7 @@ const PRIVATE_KEY_GANACHE = process.env.PRIVATE_KEY_GANACHE;
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
   solidity: {
     compilers: [
       {
@@ -45,10 +45,10 @@ module.exports = {
       accounts: [`${PRIVATE_KEY}`],
     },
     hardhat: {
-      forking: {
-        url: `https://bsc-dataseed.binance.org/`,
-        blockNumber: 6674768,
-      },
+      // forking: {
+      //   url: `https://bsc-dataseed.binance.org/`,
+      //   blockNumber: 6674768,
+      // },
       blockGasLimit: 12000000,
     },
   },
