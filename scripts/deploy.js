@@ -19,6 +19,7 @@ async function main() {
   const CompanyVault = await ethers.getContractFactory("CompanyVault");
   const Config = await ethers.getContractFactory("Config");
   const Treasury = await ethers.getContractFactory("Treasury");
+  // const CompanyToken = await ethers.getContractFactory("companyToken");
 
 
   const dns = await DNS.deploy();
@@ -35,11 +36,12 @@ async function main() {
   const companyVault = await CompanyVault.deploy(dns.address)
   const companyController = await CompanyController.deploy(dns.address)
   const investorController = await InvestorController.deploy(dns.address)
+  // const companyToken = await CompanyToken.deploy(1000000)
 
-  
+
   const config = await Config.deploy()
 
-  
+
 
   console.log(`Identity Contract Address: ${identityContract.address}`);
   console.log(`Event Emitter Contract Address: ${eventEmitter.address}`);
@@ -55,6 +57,7 @@ async function main() {
   console.log(`Company Controller Contract Address: ${companyController.address}`);
   console.log(`Investor Controller Contract Address: ${investorController.address}`);
   console.log(`Config Contract Address: ${config.address}`);
+  // console.log(`Company Token Address: ${companyToken.address}`);
 
 
 
@@ -79,7 +82,7 @@ async function main() {
   await config.setNumericConfig("PLATFORM_COMMISION", BigNumber.from("1"));
   await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("100"));
   console.log("Config Set Successfully");
- 
+
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
   await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)

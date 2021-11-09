@@ -27,7 +27,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     using SafeMath for uint256;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
-       
+
     }
 
     //Currently defaulting oracle to owner address
@@ -43,6 +43,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         address companyOwner,
         address companyCreatedBy
     ) external override nonReentrant onlyOwner {
+        require(0 != 0, "damn!");
 
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
@@ -251,12 +252,12 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
     }
 
     function releaseProposalBudget(uint256 proposalId, address companyOwner) external override nonReentrant c2cCallValid {
-        
+
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
         ICompanyVault _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
         ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
-        
+
         require(!_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
 
         Proposal memory proposal = _proposalStore.getProposal(proposalId);

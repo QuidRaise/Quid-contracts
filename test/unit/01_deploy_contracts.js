@@ -1,9 +1,7 @@
-const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { BigNumber } = require("ethers");
-const { loadFixture } = require("ethereum-waffle");
 
-
+// export function deploy() {
 describe("Deployment of contracts", function () {
   before(async () => {
     DNS = await ethers.getContractFactory("DNS");
@@ -38,6 +36,8 @@ describe("Deployment of contracts", function () {
 
     config = await Config.deploy();
 
+
+    module.exports = { dns, companyController };
   });
 
   it("should set the contracts routes", async () => {
@@ -84,29 +84,4 @@ describe("Deployment of contracts", function () {
   });
 });
 
-describe("Company controller contract", function () {
-  before(async () => {
-    // ACCOUNTS
-    [owner, addr1, addr2, addr3] = await ethers.getSigners();
-
-      COMPANY_URL = "https://quidraise.co"
-      COMPANY_NAME = "Quid Raise"
-      COMPANY_OWNER = addr2.address
-      COMPANY_CREATED_BY = addr1.address;
-  });
-
-
-  async function fixture([], provider) {
-    const Contract = await ethers.getContractFactory("companyToken");
-    let companyToken = await Contract.deploy();
-    return { companyToken};
-  }
-
-  it("should create company successfully", async function () {
-    const { companyToken} = await loadFixture(fixture);
-    COMPANY_TOKEN_CONTRACT_ADDRESS = companyToken.address,
-    expect(
-      await companyController.createCompany(COMPANY_URL, COMPANY_NAME, COMPANY_TOKEN_CONTRACT_ADDRESS, COMPANY_OWNER, COMPANY_CREATED_BY),
-    ).to.emit(companyController, "CompanyCreated");
-  });
-});
+// }
