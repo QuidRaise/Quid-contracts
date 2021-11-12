@@ -15,6 +15,14 @@ pragma solidity 0.7.0;
  *
  */
 abstract contract Events {
+
+    event ProposalVote
+    (
+        uint256 indexed proposalId,
+        address indexed investor,
+        bool isApproved
+    );
+
     event CompanyDeposit(uint256 indexed companyId, uint256 indexed roundId, address indexed sender, address tokenContractAddress, uint256 amount);
 
     event CompanyWithdrawal(
@@ -87,7 +95,6 @@ abstract contract Events {
   
 
     event ShareCertificateCreated(
-        uint256 indexed registryId,
         uint256 indexed tokenId,
         uint256 indexed roundId,
         uint256 underlyingFundAmount,

@@ -105,6 +105,12 @@ contract EventEmitter is BaseContract, DataGrant, Events, IEventEmitter {
     }
 
     function emitShareCertificateCreatedEvent(ShareCertificateCreatedRequest memory model) external override c2cCallValid {
-        emit ShareCertificateCreated(model.RegistryId, model.TokenId, model.RoundId, model.UnderlyingFundAmount, model.nftTokenContractAddress);
+        emit ShareCertificateCreated(model.TokenId, model.RoundId, model.UnderlyingFundAmount, model.nftTokenContractAddress);
     }
+
+    function emitProposalVoteEvent(ProposalVoteRequest memory model) external override c2cCallValid
+    {
+        emit ProposalVote(model.ProposalId, model.Investor, model.IsApproved);
+    }
+
 }

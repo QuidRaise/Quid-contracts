@@ -142,6 +142,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         Proposal memory proposal =  _proposalStore.getProposal(proposalId);
         uint256 tokenAllocation = _quidRaiseShares.balanceOf(investor,proposal.CompanyId);
         require(tokenAllocation>0, "You are not a shareholder in this company");
+        require(canVote(proposal), "Votes can no longer be cast on this proposal");
         ensureWhitelist(proposal.CompanyId,investor);
 
 
@@ -177,6 +178,20 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         _investorStore.updateProposalsVotedIn(investor,proposalVote);
         _proposalStore.updateProposal(proposal);
+    }
+
+    function canVote(Proposal memory proposal) internal view returns(bool)
+    {
+        uint256 expiryTimeStamp = proposal.VoteStartTimeStamp.add(proposal.VoteSessionDuration);
+
+        if(block.timestamp<=expiryTimeStamp)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     function viewProposalVote(uint256 proposalId, address investor) external view override returns (ProposalVote memory)

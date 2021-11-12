@@ -3,6 +3,13 @@
 pragma solidity 0.7.0;
 pragma experimental ABIEncoderV2;
 
+struct ProposalVoteRequest
+{
+    uint256 ProposalId;
+    address Investor;
+    bool IsApproved;
+}
+
 struct CompanyDepositRequest {
     uint256 CompanyId;
     uint256 RoundId;
@@ -111,7 +118,6 @@ struct RoundCreatedRequest {
 }
 
 struct ShareCertificateCreatedRequest {
-    uint256 RegistryId;
     uint256 TokenId;
     uint256 RoundId;
     uint256 UnderlyingFundAmount;

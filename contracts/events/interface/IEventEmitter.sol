@@ -36,4 +36,6 @@ interface IEventEmitter {
     function emitRoundCreatedEvent(RoundCreatedRequest memory model) external;
 
     function emitShareCertificateCreatedEvent(ShareCertificateCreatedRequest memory model) external;
+    function emitProposalVoteEvent(ProposalVoteRequest memory model) external;
 }
+

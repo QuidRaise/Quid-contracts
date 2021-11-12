@@ -101,18 +101,6 @@ async function main() {
 
   console.log("Identity Access Grant Set Successfully");
 
-
-
-
-
-
-
-
-
-
-
-
-
   if (hre.network.name === "mainnet" || hre.network.name === "testnet") {
     await hre.run("verify:verify", {
       address: quidRaise.address,
