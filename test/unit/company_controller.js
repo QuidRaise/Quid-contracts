@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { BigNumber } = require("ethers");
 const { loadFixture } = require("ethereum-waffle");
-
+// const { dns } = require("./01_deploy_contracts");
 
 describe("Deployment of contracts", function () {
   before(async () => {
@@ -37,7 +37,6 @@ describe("Deployment of contracts", function () {
     investorController = await InvestorController.deploy(dns.address);
 
     config = await Config.deploy();
-
   });
 
   it("should set the contracts routes", async () => {
@@ -80,33 +79,49 @@ describe("Deployment of contracts", function () {
     await identityContract.grantContractInteraction(companyController.address, proposalStore.address);
     await identityContract.grantContractInteraction(companyController.address, investorStore.address);
     await identityContract.grantContractInteraction(companyController.address, companyStore.address);
-
   });
 });
 
 describe("Company controller contract", function () {
   before(async () => {
     // ACCOUNTS
-    [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    [tester, addr1, addr2, addr3] = await ethers.getSigners();
 
-      COMPANY_URL = "https://quidraise.co"
-      COMPANY_NAME = "Quid Raise"
-      COMPANY_OWNER = addr2.address
-      COMPANY_CREATED_BY = addr1.address;
+    COMPANY_URL = "https://quidraise.co";
+    COMPANY_NAME = "Quid Raise";
+    COMPANY_OWNER = tester.address;
+    COMPANY_CREATED_BY = tester.address;
+    await identityContract.grantContractInteraction(tester.address, companyController.address);
+    // await identityContract.grantContractInteraction(companyController.address, identityContract.address);
+    await identityContract.activateDataAcess(companyController.address);
   });
-
 
   async function fixture([], provider) {
     const Contract = await ethers.getContractFactory("companyToken");
     let companyToken = await Contract.deploy();
-    return { companyToken};
+    return { companyToken };
   }
 
+  /* it ("should make tester signer owner of companyController", async () => {
+    console.log({current_owner:await companyController.owner()})
+    console.log({dns_address:dns.address});
+    console.log({tester_address:tester.address});
+    dns.connect(dns.address).transferOwnership(tester.address);
+    let current_owner = dns.owner();
+    expect(current_owner).to.equal(tester.address)
+  }) */
+
   it("should create company successfully", async function () {
-    const { companyToken} = await loadFixture(fixture);
-    COMPANY_TOKEN_CONTRACT_ADDRESS = companyToken.address,
+    const { companyToken } = await loadFixture(fixture);
+    COMPANY_TOKEN_CONTRACT_ADDRESS = companyToken.address;
     expect(
-      await companyController.createCompany(COMPANY_URL, COMPANY_NAME, COMPANY_TOKEN_CONTRACT_ADDRESS, COMPANY_OWNER, COMPANY_CREATED_BY),
+      await companyController.connect(tester).createCompany(
+        COMPANY_URL,
+        COMPANY_NAME,
+        COMPANY_TOKEN_CONTRACT_ADDRESS,
+        COMPANY_OWNER,
+        COMPANY_CREATED_BY
+        ),
     ).to.emit(companyController, "CompanyCreated");
   });
 });

@@ -43,7 +43,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         address companyOwner,
         address companyCreatedBy
     ) external override nonReentrant onlyOwner {
-        require(0 != 0, "damn!");
+        // require(0 != 0, "damn!");
 
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));

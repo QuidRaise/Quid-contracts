@@ -18,7 +18,7 @@ contract IdentityContract is DataGrant, IIdentityContract {
     mapping(address => mapping(address => bool)) private _c2cWhitleist;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
-       
+
     }
 
     function whitelistCompanyAddress(address companyOwnerAddress) external override onlyDataAccessor {
