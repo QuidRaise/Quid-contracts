@@ -70,19 +70,17 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         {
             uint256[] memory investmentAmounts = new uint256[](paymentOptions.length);
 
-            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts            ,true);
+            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts,true);
             // If it's a new investor, then we update the investor count for this round;
             round.TotalInvestors = round.TotalInvestors.add(1);
-
         }
 
          for (uint256 i = 0; i < paymentOptions.length; i++)
          {
             if(paymentOptions[i]==paymentTokenAddress)
             {
-                 roundInvestment.InvestmentAmounts[i] = roundInvestment.InvestmentAmounts[i].add(investmentAmount);
+                roundInvestment.InvestmentAmounts[i] = roundInvestment.InvestmentAmounts[i].add(investmentAmount);
                 roundInvestment.TokenAlloaction =   roundInvestment.TokenAlloaction.add(tokenAllocation);
-
                  // Update the Total raised in that round for that particular currency
                  round.TotalRaised[i] = round.TotalRaised[i].add(investmentAmount);
             }
