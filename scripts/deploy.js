@@ -77,7 +77,7 @@ async function main() {
 
   await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("3"));
   await config.setNumericConfig("PLATFORM_COMMISION", BigNumber.from("1"));
-  await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("100"));
+  await config.setNumericConfig("PRECISION", BigNumber.from("100"));
   console.log("Config Set Successfully");
  
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
