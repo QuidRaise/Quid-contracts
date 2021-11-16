@@ -32,6 +32,7 @@ struct InvestmentDepositRequest {
     address Sender;
     address TokenContractAddress;
     uint256 Amount;
+    uint256 TokenQuantity;
 }
 
 struct InvestmentWithdrawalRequest {
@@ -120,6 +121,7 @@ struct RoundCreatedRequest {
 struct ShareCertificateCreatedRequest {
     uint256 TokenId;
     uint256 RoundId;
+    address Investor;
     uint256 UnderlyingFundAmount;
     address nftTokenContractAddress;
 }

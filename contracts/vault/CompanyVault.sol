@@ -18,7 +18,7 @@ pragma solidity 0.7.0;
  * The system actors, Investors and Companies do not interact with this contract directly, but rather via the
  * Company controller or Investor controller
  */
-contract CompanyVault is BaseContract, DataGrant, ICompanyVault {
+contract CompanyVault is BaseContract, ICompanyVault {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     constructor(address dnsContract) BaseContract(dnsContract) {

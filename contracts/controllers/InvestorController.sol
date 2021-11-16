@@ -93,7 +93,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         (IQuidRaiseShares(_dns.getRoute(NFT))).mint(round.CompanyId, tokenAllocation, investor);
 
 
-        (IEventEmitter(_dns.getRoute(EVENT_EMITTER))).emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount));
+        (IEventEmitter(_dns.getRoute(EVENT_EMITTER))).emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount,tokenAllocation));
     }
 
     function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)

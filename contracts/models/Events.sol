@@ -33,7 +33,7 @@ abstract contract Events {
         uint256 amount
     );
 
-    event InvestmentDeposit(uint256 indexed companyId, uint256 indexed roundId, address indexed sender, address tokenContractAddress, uint256 amount);
+    event InvestmentDeposit(uint256 indexed companyId, uint256 indexed roundId, address indexed sender, address tokenContractAddress, uint256 amount, uint256 tokenQuantity);
 
     event InvestmentWithdrawal(
         uint256 indexed companyId,
@@ -97,6 +97,7 @@ abstract contract Events {
     event ShareCertificateCreated(
         uint256 indexed tokenId,
         uint256 indexed roundId,
+        address indexed investor,
         uint256 underlyingFundAmount,
         address nftTokenContractAddress
     );
