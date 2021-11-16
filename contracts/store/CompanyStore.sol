@@ -21,16 +21,16 @@ contract CompanyStore is BaseContract, ICompanyStore {
 
     }
 
-    function isCompanyOwner(address ownerAddress) external override returns(bool) {
+    function isCompanyOwner(address ownerAddress) external view override returns(bool) {
         return _ownedCompanies[ownerAddress].Exists;
     }
 
-    function getCompanyById(uint id) external override returns(Company memory) {
+    function getCompanyById(uint id) external view override returns(Company memory) {
         require(_companyIndexes[id].Exists, "No such record");
         return _companies[id];
     }
 
-    function getCompanyByOwner(address ownerAddress) external override returns(Company memory)  {
+    function getCompanyByOwner(address ownerAddress) external view override returns(Company memory)  {
         require(_ownedCompanies[ownerAddress].Exists, "No record for address");
         uint companyIndex = _ownedCompanies[ownerAddress].Index;
         Company memory company = _companies[companyIndex];

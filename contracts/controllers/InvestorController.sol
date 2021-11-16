@@ -15,6 +15,9 @@ import "../store/interface/IRoundStore.sol";
 import "../vault/interface/ICompanyVault.sol";
 import "../store/interface/ICompanyVaultStore.sol";
 
+import "../vault/interface/IInvestmentTokenVault.sol";
+
+
 import "../events/interface/IEventEmitter.sol";
 import "../infrastructure/interface/IIdentityContract.sol";
 import "../store/interface/IInvestorStore.sol";
@@ -89,11 +92,25 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         _roundStore.updateRound(round.Id, round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
-        // _investorStore.updateCompaniesInvestedIn(investor, round.CompanyId);
+        lockTokensAllocated(round, investor,tokenAllocation);
         (IQuidRaiseShares(_dns.getRoute(NFT))).mint(round.CompanyId, tokenAllocation, investor);
 
-
         (IEventEmitter(_dns.getRoute(EVENT_EMITTER))).emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount,tokenAllocation));
+    }
+
+    function lockTokensAllocated(Round memory round, address investor, uint256 tokenAllocation) internal
+    {
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        ICompanyVault _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
+
+        Company memory company = _companyStore.getCompanyById(round.CompanyId);
+
+        IERC20 companyToken =   IERC20(company.CompanyTokenContractAddress);
+        _companyVault.withdrawCompanyTokens(round.CompanyId,tokenAllocation);
+        companyToken.approve(round.TokenLockVaultAddres, tokenAllocation);
+
+        IInvestmentTokenVault(round.TokenLockVaultAddres).lockTokens(investor);
+
     }
 
     function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)

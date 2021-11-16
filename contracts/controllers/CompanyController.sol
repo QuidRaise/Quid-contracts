@@ -11,6 +11,8 @@ import "../store/interface/ICompanyStore.sol";
 import "../store/interface/IProposalStore.sol";
 import "../store/interface/IRoundStore.sol";
 import "../vault/interface/ICompanyVault.sol";
+import "../vault/InvestmentTokenVault.sol";
+
 import "../store/interface/ICompanyVaultStore.sol";
 
 import "../events/interface/IEventEmitter.sol";
@@ -120,16 +122,31 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             startTimestamp,
             duration,
             roundDocumentUrl,
+            address(0x0),
             runTillFullySubscribed,
             false
         );
 
-        uint256 roundId = (IRoundStore(_dns.getRoute(ROUND_STORE))).createRound(round);
-
-        (IRoundStore(_dns.getRoute(ROUND_STORE))).createRoundPaymentOptions(roundId, paymentCurrencies);
-
-        emitRoundCreatedEvents(roundId, paymentCurrencies, company, round);
+        roundCreationSecondStep(round,company);
     }
+
+    function roundCreationSecondStep(Round memory round, Company memory company) internal
+    {
+        round.Id = (IRoundStore(_dns.getRoute(ROUND_STORE))).createRound(round);
+
+        InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),company.CompanyTokenContractAddress,
+                                                                       round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
+
+        round.TokenLockVaultAddres = address(tokenLockVault);
+
+        (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round.Id,round);   
+
+        (IRoundStore(_dns.getRoute(ROUND_STORE))).createRoundPaymentOptions(round.Id, round.PaymentCurrencies);
+
+        emitRoundCreatedEvents(round.Id, round.PaymentCurrencies, company, round);
+    }
+
+   
 
     function createProposal(
         uint256[] calldata amountRequested,

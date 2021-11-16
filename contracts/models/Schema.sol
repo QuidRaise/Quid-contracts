@@ -30,6 +30,7 @@ struct Round {
     uint256 RoundStartTimeStamp;
     uint256 DurationInSeconds;
     string DocumentUrl;
+    address TokenLockVaultAddres;
     // When set to true, the round duration is not considered
     // The round is kept open until it has been fully subscribed
     // Fully subscribed being that the TotalTokensUpForSale == TotalRaised
