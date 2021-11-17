@@ -40,12 +40,11 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         address companyTokenContractAddress,
         address companyOwner,
         address companyCreatedBy
-    ) external override nonReentrant onlyOwner {
+    ) external override nonReentrant c2cCallValid {
 
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
         IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
-        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
 
 
         bool isInvestor = _investorStore.isInvestor(companyOwner);
@@ -55,14 +54,22 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             require(_identityContract.isInvestorAddressWhitelisted(companyOwner), "Company owner address blacklisted as investor");
         }
         Company memory company = Company(0, companyName, CompanyUrl, companyTokenContractAddress, companyOwner);
-        uint256 companyId = _companyStore.createCompany(company);
+        company.Id = _companyStore.createCompany(company);
+        createCompanySecondStep(companyCreatedBy,company);
+        
+    }
 
-        _identityContract.whitelistCompanyAddress(companyOwner);
-        _identityContract.whitelistCompany(companyId);
+    function createCompanySecondStep(address companyCreatedBy,Company memory company) internal
+    {
+        IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
+        IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
+
+        _identityContract.whitelistCompanyAddress(company.OwnerAddress);
+        _identityContract.whitelistCompany(company.Id);
 
         _eventEmitter.emitCompanyCreatedEvent(
             CompanyCreatedRequest(
-                companyId,
+                company.Id,
                 company.OwnerAddress,
                 companyCreatedBy,
                 company.CompanyName,
@@ -309,7 +316,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         require(_identityContract.isCompanyWhitelisted(companyId), "Company blacklisted");
     }
 
-    function deleteProposal(uint256 proposalId, address companyOwnerAddress) external override c2cCallValid {
+    function deleteProposal(uint256 proposalId, address companyOwnerAddress) external override c2cCallValid nonReentrant {
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
 
@@ -324,7 +331,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         //TODO: Emit Proposal Deleted Event;
     }
 
-    function deleteRound(uint256 roundId, address companyOwnerAddress) external override c2cCallValid {
+    function deleteRound(uint256 roundId, address companyOwnerAddress) external override c2cCallValid nonReentrant {
         ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
         IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
 
