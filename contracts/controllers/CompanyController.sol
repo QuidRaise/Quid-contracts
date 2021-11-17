@@ -107,7 +107,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             "Contract input data is invalid"
         );
 
-        require(!_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
+        require(_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
         Company memory company = _companyStore.getCompanyByOwner(companyOwner);
 
         ensureCompanyIsWhitelisted(company.Id, companyOwner);

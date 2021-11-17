@@ -10,7 +10,7 @@ import "../controllers/interface/IInvestorController.sol";
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-contract CompanyProxy is BaseContract, ReentrancyGuard {
+contract InvestorProxy is BaseContract, ReentrancyGuard {
    
 
     constructor(address dnsContract) BaseContract(dnsContract) {

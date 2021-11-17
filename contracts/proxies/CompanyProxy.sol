@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+import "../DataGrant.sol";
 
 import "../infrastructure/BaseContract.sol";
 import "../libraries/ReentrancyGuard.sol";
@@ -10,7 +11,7 @@ import "../controllers/interface/IInvestorController.sol";
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-contract CompanyProxy is BaseContract, ReentrancyGuard {
+contract CompanyProxy is BaseContract, DataGrant, ReentrancyGuard {
    
 
     constructor(address dnsContract) BaseContract(dnsContract) {
@@ -24,7 +25,7 @@ contract CompanyProxy is BaseContract, ReentrancyGuard {
         string calldata companyName,
         address companyTokenContractAddress,
         address companyOwner
-    ) external nonReentrant onlyOwner {
+    ) external nonReentrant onlyDataAccessor {
 
         ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
         controller.createCompany(CompanyUrl,companyName,companyTokenContractAddress,companyOwner, _msgSender());

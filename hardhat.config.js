@@ -6,8 +6,11 @@ require("@nomiclabs/hardhat-truffle5");
 
 const { utils } = require("ethers");
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const PRIVATE_KEY_GANACHE = process.env.PRIVATE_KEY_GANACHE;
+const PRIVATE_KEY_1 = process.env.PRIVATE_KEY;
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2;
+const PRIVATE_KEY_3 = process.env.PRIVATE_KEY_3;
+const PRIVATE_KEY_4 = process.env.PRIVATE_KEY_4;
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -29,18 +32,19 @@ module.exports = {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      accounts: [`${PRIVATE_KEY}`],
+      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
     }, 
     localhost: {
       url: `http://localhost:8545`,
-      accounts: [`${PRIVATE_KEY_GANACHE}`],
+      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
       timeout: 150000,
       gasPrice: parseInt(utils.parseUnits("132", "gwei")),
+      allowUnlimitedContractSize :true
     },
     mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
-      accounts: [`${PRIVATE_KEY}`],
+      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
     },
     hardhat: {
       // forking: {
