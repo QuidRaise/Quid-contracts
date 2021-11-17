@@ -41,12 +41,10 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.1",
+    "ethers": "^5.4.4",
     "fs-extra": "^10.0.0",
     "ganache-cli": "^6.12.2",
-    "hardhat": "^2.6.8",
-    "hardhat-deploy": "^0.9.4",
-    "hardhat-deploy-ethers": "^0.3.0-beta.11",
+    "hardhat": "^2.6.7",
     "hardhat-gas-reporter": "^1.0.4",
     "husky": "^7.0.1",
     "lint-staged": "^11.1.2",
@@ -73,14 +71,12 @@
     "postinstall": "husky install",
     "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts}\"",
-    "test": "hardhat test",
+    "test": "hardhat test --network localhost",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.4",
-    "@openzeppelin/contracts": "^4.3.2",
-    "@tenderly/hardhat-tenderly": "^1.0.12",
-    "babel": "^6.23.0"
+    "@tenderly/hardhat-tenderly": "^1.0.12"
   },
   "packageManager": "yarn@3.1.0"
 }

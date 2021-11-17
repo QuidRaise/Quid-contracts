@@ -1,6 +1,4 @@
 require("@nomiclabs/hardhat-ethers");
-require("@nomiclabs/hardhat-waffle")
-require('hardhat-deploy');
 require("@tenderly/hardhat-tenderly");
 require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
@@ -14,17 +12,11 @@ const PRIVATE_KEY_GANACHE = process.env.PRIVATE_KEY_GANACHE;
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
   solidity: {
     compilers: [
       {
         version: "0.7.0",
-      },
-      {
-        version: "0.6.0",
-      },
-      {
-        version: "0.8.0",
       },
     ],
     optimizer: {
@@ -38,9 +30,9 @@ module.exports = {
       chainId: 97,
       gasPrice: 20000000000,
       accounts: [`${PRIVATE_KEY}`],
-    },
+    }, 
     localhost: {
-      url: `http://localhost:9545`,
+      url: `http://localhost:8545`,
       accounts: [`${PRIVATE_KEY_GANACHE}`],
       timeout: 150000,
       gasPrice: parseInt(utils.parseUnits("132", "gwei")),
@@ -57,7 +49,7 @@ module.exports = {
       // },
       blockGasLimit: 12000000,
       allowUnlimitedContractSize :true
-    },
+    }, 
   },
   etherscan: {
     apiKey: process.env.BSCSCAN_API_KEY,
