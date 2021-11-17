@@ -139,7 +139,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
         round.TokenLockVaultAddres = address(tokenLockVault);
 
-        (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round.Id,round);   
+        (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round);   
 
         (IRoundStore(_dns.getRoute(ROUND_STORE))).createRoundPaymentOptions(round.Id, round.PaymentCurrencies);
 
@@ -340,7 +340,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
         round.IsDeleted = true;
 
-        _roundStore.updateRound(roundId, round);
+        _roundStore.updateRound(round);
         //TODO: Emit Round Deleted Event;
     }
 
@@ -365,6 +365,9 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         IRoundStore _roundStore = IRoundStore(_dns.getRoute(ROUND_STORE));
 
         Round[] memory rounds = _roundStore.getCompanyRounds(companyId);
+        if(rounds.length==0)
+            return false;
+
         Round memory lastRound = rounds[rounds.length - 1];
         return isRoundOpen(lastRound);
     }
@@ -373,6 +376,10 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         IProposalStore _proposalStore = IProposalStore(_dns.getRoute(PROPOSAL_STORE));
 
         Proposal[] memory proposals = _proposalStore.getCompanyProposals(companyId);
+
+        if(proposals.length==0)
+            return false;
+
         Proposal memory lastProposal = proposals[proposals.length - 1];
 
         if (lastProposal.IsDeleted) {

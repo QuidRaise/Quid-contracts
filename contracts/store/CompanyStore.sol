@@ -15,7 +15,7 @@ contract CompanyStore is BaseContract, ICompanyStore {
 
     Company[] private _companies;
     mapping(address => Index) private _ownedCompanies;
-    mapping(uint => Index) _companyIndexes;
+    mapping(uint => Index) private _companyIndexes;
 
     constructor(address dnsContract) BaseContract(dnsContract) {
 
@@ -27,10 +27,10 @@ contract CompanyStore is BaseContract, ICompanyStore {
 
     function getCompanyById(uint id) external view override returns(Company memory) {
         require(_companyIndexes[id].Exists, "No such record");
-        return _companies[id];
+        return _companies[_companyIndexes[id].Index];
     }
 
-    function getCompanyByOwner(address ownerAddress) external view override returns(Company memory)  {
+    function getCompanyByOwner(address ownerAddress) external view override  returns(Company memory)  {
         require(_ownedCompanies[ownerAddress].Exists, "No record for address");
         uint companyIndex = _ownedCompanies[ownerAddress].Index;
         Company memory company = _companies[companyIndex];
@@ -38,18 +38,19 @@ contract CompanyStore is BaseContract, ICompanyStore {
         return company;
     }
 
-    function updateCompany(Company memory company) external override {
-        require(_ownedCompanies[company.OwnerAddress].Exists, "No such record");
-        _companies[company.Id.sub(1)] = company;
+    function updateCompany(Company memory company) external override c2cCallValid {
+        Index memory index = _companyIndexes[company.Id];
+        require(index.Exists, "Record Not Found");
+        _companies[index.Index] = company;
     }
 
-    function createCompany(Company memory company) external override returns(uint) {
+    function createCompany(Company memory company) external override c2cCallValid returns(uint) {
         require(!_ownedCompanies[company.OwnerAddress].Exists, "Record of company exists for address");
-        Index memory index;
+        
         uint256 recordIndex = _companies.length;
 
         company.Id = recordIndex.add(1);
-        index = Index(recordIndex, true);
+        Index memory index = Index(recordIndex, true);
 
         _companies.push(company);
         _ownedCompanies[company.OwnerAddress] = index;

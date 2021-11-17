@@ -9,7 +9,7 @@ interface IRoundStore {
 
     function getCompanyRounds(uint256 companyId) external view returns (Round[] memory);
 
-    function updateRound(uint256 id, Round memory round) external;
+    function updateRound(Round memory round) external;
 
     function createRound(Round memory round) external returns (uint256);
 

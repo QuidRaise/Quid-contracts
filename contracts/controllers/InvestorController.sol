@@ -88,7 +88,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
          round.TotalTokensSold =  round.TotalTokensSold.add(tokenAllocation);
 
-        _roundStore.updateRound(round.Id, round);
+        _roundStore.updateRound(round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
         lockTokensAllocated(round, investor,tokenAllocation);
         (IQuidRaiseShares(_dns.getRoute(NFT))).mint(round.CompanyId, tokenAllocation, investor);
