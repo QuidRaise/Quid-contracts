@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 import "../infrastructure/BaseContract.sol";
+import "../DataGrant.sol";
 import "./interface/IInvestmentTokenVault.sol";
 import "../interfaces/IERC20.sol";
 import "../libraries/SafeERC20.sol";
@@ -15,7 +16,7 @@ pragma solidity 0.7.0;
  * The system actors, Investors and Companies do not interact with this contract directly, but rather via the
  * Company controller or Investor controller
  */
-contract InvestmentTokenVault is BaseContract, IInvestmentTokenVault {
+contract InvestmentTokenVault is BaseContract, DataGrant, IInvestmentTokenVault {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     
@@ -27,6 +28,7 @@ contract InvestmentTokenVault is BaseContract, IInvestmentTokenVault {
      */
 
     uint256 private _claimed;
+    
     /** @dev
       * How many tokens have not been claimed
      */
@@ -46,7 +48,7 @@ contract InvestmentTokenVault is BaseContract, IInvestmentTokenVault {
        _tokenAddress = tokenAddress;
     }
 
-    function setReleaseTimeStamp(uint256 releaseTimeStamp) external override c2cCallValid
+    function setReleaseTimeStamp(uint256 releaseTimeStamp) external override onlyDataAccessor
     {
         _releaseTimeStamp = releaseTimeStamp;
     }
@@ -55,7 +57,7 @@ contract InvestmentTokenVault is BaseContract, IInvestmentTokenVault {
      * Tokens purchased in a round are locked in this contract till the lockup period for that round has elapsed
      * 
      */
-    function lockTokens(address investor) external override c2cCallValid {
+    function lockTokens(address investor) external override onlyDataAccessor {
         
         IERC20 token = IERC20(_tokenAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
@@ -67,7 +69,7 @@ contract InvestmentTokenVault is BaseContract, IInvestmentTokenVault {
     /**
      * After the lockup period has elapsed tokens are released to the investors
      */
-    function releaseTokens(uint256 amount, address investor) external override c2cCallValid {
+    function releaseTokens(uint256 amount, address investor) external override onlyDataAccessor {
         require(_investorTokenAllocation[investor]>=amount, "Insufficient Token Allocation");
         require(block.timestamp>=_releaseTimeStamp, "Tokens are still locked");
 

@@ -143,7 +143,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
         InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),company.CompanyTokenContractAddress,
                                                                        round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
-
+        tokenLockVault.activateDataAccess(_dns.getRoute(INVESTOR_CONTROLLER));
         round.TokenLockVaultAddres = address(tokenLockVault);
 
         (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round);   

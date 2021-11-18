@@ -101,6 +101,7 @@ async function main() {
   await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, roundStore.address)
+  await identityContract.grantContractInteraction(investorController.address, nft.address)
 
   await identityContract.grantContractInteraction(investorController.address, proposalStore.address)
   await identityContract.grantContractInteraction(investorController.address, investorStore.address)
