@@ -68,13 +68,13 @@ contract IdentityContract is DataGrant, IIdentityContract {
         return _c2cWhitleist[sourceContract][destinationContract];
     }
 
-    function grantContractInteraction(address sourceContract, address destinationContract) external override onlyOwner {
+    function grantContractInteraction(address sourceContract, address destinationContract) external override onlyDataAccessor {
         IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _c2cWhitleist[sourceContract][destinationContract] = true;
         _eventEmitter.emitC2CAccessGrantEvent(C2CAccessGrantRequest(sourceContract, destinationContract, _msgSender()));
     }
 
-    function revokeContractInteraction(address sourceContract, address destinationContract) external override onlyOwner {
+    function revokeContractInteraction(address sourceContract, address destinationContract) external override onlyDataAccessor {
         IEventEmitter _eventEmitter = IEventEmitter(_dns.getRoute(EVENT_EMITTER));
         _c2cWhitleist[sourceContract][destinationContract] = false;
         _eventEmitter.emitC2CAccessRevokedEvent(C2CAccessRevokedRequest(sourceContract, destinationContract, _msgSender()));

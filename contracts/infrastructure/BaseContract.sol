@@ -25,7 +25,9 @@ abstract contract BaseContract is Ownable {
 
     string constant MAX_ROUND_PAYMENT_OPTION = "MAX_ROUND_PAYMENT_OPTION";
     string constant PLATFORM_COMMISION = "PLATFORM_COMMISION";
-    string constant PRECISION = "PRECISION";
+    string constant PRECISION = "PRECISION";  
+    string constant INVESTMENT_TOKEN_VAULT = "INVESTMENT_TOKEN_VAULT";
+
 
     IDNS _dns;
 

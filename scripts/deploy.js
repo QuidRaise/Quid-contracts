@@ -25,8 +25,6 @@ async function main() {
   const Config = await ethers.getContractFactory("Config");
   const Treasury = await ethers.getContractFactory("Treasury");
 
-
-
   const dns = await DNS.deploy();
 
   const treasury = await Treasury.deploy();
@@ -43,7 +41,6 @@ async function main() {
   const investorController = await InvestorController.deploy(dns.address)
   const companyProxy = await CompanyProxy.deploy(dns.address)
   const investorProxy = await InvestorProxy.deploy(dns.address)
-
 
   const config = await Config.deploy()
 
@@ -67,8 +64,6 @@ async function main() {
   console.log(`Config Contract Address: ${config.address}`);
 
 
-
-
   await dns.setRoute("IDENTITY_CONTRACT", identityContract.address);
   await dns.setRoute("EVENT_EMITTER", eventEmitter.address);
   await dns.setRoute("COMPANY_VAULT_STORE", companyVaultStore.address);
@@ -80,7 +75,8 @@ async function main() {
   await dns.setRoute("NFT", nft.address);
   await dns.setRoute("CONFIG", config.address);
   await dns.setRoute("COMPANY_CONTROLLER", companyController.address);
-  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);
+  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);  
+
   console.log("Routes Set Successfully");
 
 
@@ -95,12 +91,15 @@ async function main() {
   await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, config.address)
   await identityContract.grantContractInteraction(companyController.address, identityContract.address)
+  await identityContract.grantContractInteraction(investorController.address, identityContract.address)
+
   await identityContract.grantContractInteraction(companyController.address, companyVault.address)
   await identityContract.grantContractInteraction(investorController.address, companyVault.address)
   await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, roundStore.address)
+
   await identityContract.grantContractInteraction(investorController.address, proposalStore.address)
   await identityContract.grantContractInteraction(investorController.address, investorStore.address)
   await identityContract.grantContractInteraction(investorController.address, companyStore.address)
@@ -110,6 +109,7 @@ async function main() {
   await identityContract.grantContractInteraction(companyController.address, companyStore.address)
   await identityContract.grantContractInteraction(companyProxy.address, companyController.address);
   await identityContract.grantContractInteraction(investorProxy.address, investorController.address);
+  console.log("Identity Access Grant Set Successfully");
 
   await companyProxy.activateDataAccess(deployer.address);
   await identityContract.activateDataAccess(companyController.address);
@@ -184,10 +184,12 @@ async function main() {
       console.log({round2CreationResult})
 
 
+      let investment1Result = await investorProxy.connect(investor).investInRound(1,Usdt.address);
+      console.log({investment1Result})
+
 
   }
 
-  console.log("Identity Access Grant Set Successfully");
 
   if (hre.network.name === "mainnet" || hre.network.name === "testnet") {
     await hre.run("verify:verify", {
