@@ -474,7 +474,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         ICompanyVault  _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
         uint256 amountToDeposit = token.allowance(company.OwnerAddress, address(this));
-        require(expectedTokenDeposit == amountToDeposit, "Approved deposit does not tally with round allocation");
+        require(expectedTokenDeposit >= amountToDeposit, "Approved deposit does not tally with round allocation");
         require(amountToDeposit > 0, "Cannot deposit 0 tokens");
 
         token.safeTransferFrom(company.OwnerAddress, address(this), amountToDeposit);

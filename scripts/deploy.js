@@ -140,6 +140,11 @@ async function main() {
     const USDContract = await ethers.getContractFactory("ERC20Token");
     Usdc = await USDContract.deploy("USDC", "USDC");
 
+    await companyVaultStore.enablePaymentOption(Usdt.address);
+    await companyVaultStore.enablePaymentOption(Dai.address);
+    await companyVaultStore.enablePaymentOption(Busd.address);
+    await companyVaultStore.enablePaymentOption(Usdc.address);
+
 
 
 
