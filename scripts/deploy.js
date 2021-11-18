@@ -75,7 +75,7 @@ async function main() {
   await dns.setRoute("NFT", nft.address);
   await dns.setRoute("CONFIG", config.address);
   await dns.setRoute("COMPANY_CONTROLLER", companyController.address);
-  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);  
+  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);
 
   console.log("Routes Set Successfully");
 
@@ -86,7 +86,7 @@ async function main() {
   await config.setNumericConfig("PRECISION", BigNumber.from("100"));
   console.log("Config Set Successfully");
 
-  await identityContract.activateDataAccess(companyController.address); 
+  await identityContract.activateDataAccess(companyController.address);
   await identityContract.activateDataAccess(deployer.address);
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
@@ -122,7 +122,7 @@ async function main() {
 
   /**
    * The following lines of code is a hack to get the contracts initialized. This should not run on mainnet release
-   * 
+   *
    */
   if (hre.network.name === "localhost" || hre.network.name === "testnet") {
 
@@ -184,9 +184,9 @@ async function main() {
       .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, companyOwner2.address);
       console.log({company2CreationResult})
 
-    
-    
-    
+
+
+
     let roundCreationResult = await companyProxy
       .connect(companyOwner)
       .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 60, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);

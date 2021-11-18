@@ -71,12 +71,13 @@
     "postinstall": "husky install",
     "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts}\"",
-    "test": "hardhat test --network localhost",
+    "test": "hardhat test --network hardhat",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
   },
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.4",
-    "@tenderly/hardhat-tenderly": "^1.0.12"
+    "@tenderly/hardhat-tenderly": "^1.0.12",
+    "hardhat-deploy": "^0.9.8"
   },
   "packageManager": "yarn@3.1.0"
 }

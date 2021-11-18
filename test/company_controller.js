@@ -4,9 +4,12 @@ const { BigNumber } = require("ethers");
 
 describe("Deployment of Contracts", function () {
   before(async () => {
+    [tester, addr1, addr2, addr3] = await ethers.getSigners();
     DNS = await ethers.getContractFactory("DNS");
     CompanyController = await ethers.getContractFactory("CompanyController");
     InvestorController = await ethers.getContractFactory("InvestorController");
+    CompanyProxy = await ethers.getContractFactory("CompanyProxy");
+    InvestorProxy = await ethers.getContractFactory("InvestorProxy");
     EventEmitter = await ethers.getContractFactory("EventEmitter");
     IdentityContract = await ethers.getContractFactory("IdentityContract");
     QuidRaiseShares = await ethers.getContractFactory("QuidRaiseShares");
@@ -33,6 +36,8 @@ describe("Deployment of Contracts", function () {
     companyVault = await CompanyVault.deploy(dns.address);
     companyController = await CompanyController.deploy(dns.address);
     investorController = await InvestorController.deploy(dns.address);
+    companyProxy = await CompanyProxy.deploy(dns.address)
+    investorProxy = await InvestorProxy.deploy(dns.address)
 
     config = await Config.deploy();
   });
@@ -59,53 +64,61 @@ describe("Deployment of Contracts", function () {
   });
 
   it("should grant access to contracts ", async () => {
-    await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address);
-    await identityContract.grantContractInteraction(companyController.address, eventEmitter.address);
-    await identityContract.grantContractInteraction(investorController.address, eventEmitter.address);
-    await identityContract.grantContractInteraction(companyController.address, config.address);
-    await identityContract.grantContractInteraction(companyController.address, identityContract.address);
-    await identityContract.grantContractInteraction(companyController.address, companyVault.address);
-    await identityContract.grantContractInteraction(investorController.address, companyVault.address);
-    await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address);
-    await identityContract.grantContractInteraction(companyVault.address, companyStore.address);
-    await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address);
-    await identityContract.grantContractInteraction(investorController.address, companyVaultStore.address);
-    await identityContract.grantContractInteraction(investorController.address, roundStore.address);
-    await identityContract.grantContractInteraction(investorController.address, proposalStore.address);
-    await identityContract.grantContractInteraction(investorController.address, investorStore.address);
-    await identityContract.grantContractInteraction(investorController.address, companyStore.address);
-    await identityContract.grantContractInteraction(companyController.address, roundStore.address);
-    await identityContract.grantContractInteraction(companyController.address, proposalStore.address);
-    await identityContract.grantContractInteraction(companyController.address, investorStore.address);
-    await identityContract.grantContractInteraction(companyController.address, companyStore.address);
+    await identityContract.activateDataAccess(companyController.address);
+    await identityContract.activateDataAccess(tester.address);
+    await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
+    await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
+    await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
+    await identityContract.grantContractInteraction(companyController.address, config.address)
+    await identityContract.grantContractInteraction(companyController.address, identityContract.address)
+    await identityContract.grantContractInteraction(investorController.address, identityContract.address)
+
+    await identityContract.grantContractInteraction(companyController.address, companyVault.address)
+    await identityContract.grantContractInteraction(investorController.address, companyVault.address)
+    await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address)
+    await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address)
+    await identityContract.grantContractInteraction(investorController.address, companyVaultStore.address)
+    await identityContract.grantContractInteraction(investorController.address, roundStore.address)
+    await identityContract.grantContractInteraction(investorController.address, nft.address)
+
+    await identityContract.grantContractInteraction(investorController.address, proposalStore.address)
+    await identityContract.grantContractInteraction(investorController.address, investorStore.address)
+    await identityContract.grantContractInteraction(investorController.address, companyStore.address)
+    await identityContract.grantContractInteraction(companyController.address, roundStore.address)
+    await identityContract.grantContractInteraction(companyController.address, proposalStore.address)
+    await identityContract.grantContractInteraction(companyController.address, investorStore.address)
+    await identityContract.grantContractInteraction(companyController.address, companyStore.address)
+    await identityContract.grantContractInteraction(companyProxy.address, companyController.address);
+    await identityContract.grantContractInteraction(investorProxy.address, investorController.address);
   });
 });
 
-let createCompany,companyToken, Usdt, Dai, Busd, Usdc;
+let createCompany, companyToken, Usdt, Dai, Busd, Usdc;
 
 describe("Company Controller Contract", function () {
   before(async () => {
-    [tester, addr1, addr2, addr3] = await ethers.getSigners();
     await identityContract.grantContractInteraction(tester.address, companyController.address);
     await identityContract.activateDataAcess(companyController.address);
     await identityContract.grantContractInteraction(tester.address, investorStore.address);
     await identityContract.activateDataAcess(investorStore.address);
+    await identityContract.grantContractInteraction(tester.address, companyController.address);
+    await companyProxy.activateDataAccess(tester.address);
 
     // DEPLOY PAYMENT OPTIONS
-    const Contract = await ethers.getContractFactory("ERC20Token");
-    companyToken = await Contract.deploy("QuidToken","QT");
+    const Contract = await ethers.getContractFactory("companyToken");
+    companyToken = await Contract.deploy();
 
-    const usdtContract = await ethers.getContractFactory("ERC20Token");
-    Usdt = await usdtContract.deploy("USDT tether","USDT");
+    const usdtContract = await ethers.getContractFactory("USDT");
+    Usdt = await usdtContract.deploy();
 
-    const daiContract = await ethers.getContractFactory("ERC20Token");
-    Dai = await daiContract.deploy("DAI Token","DAI");
+    const daiContract = await ethers.getContractFactory("DAI");
+    Dai = await daiContract.deploy();
 
-    const busdContract = await ethers.getContractFactory("ERC20Token");
-    Busd = await busdContract.deploy("Binance BUSD","BUSD");
+    const busdContract = await ethers.getContractFactory("BUSD");
+    Busd = await busdContract.deploy();
 
-    const USDContract = await ethers.getContractFactory("ERC20Token");
-    Usdc = await USDContract.deploy("USDC","USDC");
+    const USDContract = await ethers.getContractFactory("USDC");
+    Usdc = await USDContract.deploy();
 
     // ENABLE PAYMENT OPTIONS
     await companyVaultStore.enablePaymentOption(Usdt.address);
@@ -138,9 +151,6 @@ describe("Company Controller Contract", function () {
 
   describe("createCompany function", () => {
     it("should emit event if company was created successfully", async function () {
-
-        
-
       expect(createCompany).to.emit(eventEmitter, "CompanyCreated");
     });
 
@@ -232,7 +242,6 @@ describe("Company Controller Contract", function () {
       ).to.be.revertedWith("Contract input data is invalid");
     });
     it("should fail if round creator is not a company owner", async () => {
-
       let companyOwner = addr1.address;
       await expect(
         companyController
@@ -250,10 +259,10 @@ describe("Company Controller Contract", function () {
           ),
       ).to.be.revertedWith("Could not find a company owned by this user");
     });
-    it("should get company details by company owner address", async ()=>{
+    it("should get company details by company owner address", async () => {
       let companyByOwner = await companyStore.callStatic.getCompanyByOwner(companyOwner);
       expect(companyByOwner.CompanyName).to.equal("Quid Raise");
-    })
+    });
 
     it("should ensure company is whitelisted", async () => {
       let companyIsWhitelisted = await identityContract.isCompanyWhitelisted(1);
@@ -266,27 +275,23 @@ describe("Company Controller Contract", function () {
     });
 
     it("should fail if company has an open round", async () => {
-
       // let companyid = await companyStore.getCompanyById(1);
       // console.log(companyid);
       await companyToken.approve(companyController.address, BigNumber.from("20000"));
       let createRound = await companyController
-          .connect(tester)
-          .createRound(
-            companyOwner,
-            roundDocumentUrl,
-            startTimestamp,
-            duration,
-            lockupPeriodForShare,
-            tokensSuppliedForRound,
-            runTillFullySubscribed,
-            paymentCurrencies,
-            pricePerShare,
-          );
-          console.log(createRound)
-
-    })
-
-
+        .connect(tester)
+        .createRound(
+          companyOwner,
+          roundDocumentUrl,
+          startTimestamp,
+          duration,
+          lockupPeriodForShare,
+          tokensSuppliedForRound,
+          runTillFullySubscribed,
+          paymentCurrencies,
+          pricePerShare,
+        );
+      console.log(createRound);
+    });
   });
 });
