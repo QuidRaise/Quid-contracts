@@ -187,12 +187,12 @@ async function main() {
     
     let roundCreationResult = await companyProxy
       .connect(companyOwner)
-      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp()-400, 1000, 10, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
+      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 10, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({roundCreationResult})
 
       let round2CreationResult = await companyProxy
       .connect(companyOwner2)
-      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp()-400, 1000, 10, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
+      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, 10, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
       console.log({round2CreationResult})
 
 
@@ -209,8 +209,8 @@ async function main() {
       console.log({proposalResult1});
       
       
-      let proxyVoteResult = await investorProxy.connect(investor).voteForProposal(1, true);
-      console.log({proxyVoteResult});
+      // let proxyVoteResult = await investorProxy.connect(investor).voteForProposal(1, true);
+      // console.log({proxyVoteResult});
 
 
       let proposalResult2 = await companyProxy.connect(companyOwner2).createProposal([BigNumber.from("100000000000000000000"),BigNumber.from("100000000000000000000")],[Usdt.address,Busd.address],getCurrentTimeStamp()+5000);

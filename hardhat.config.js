@@ -11,6 +11,10 @@ const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2;
 const PRIVATE_KEY_3 = process.env.PRIVATE_KEY_3;
 const PRIVATE_KEY_4 = process.env.PRIVATE_KEY_4;
 
+const TESTNET_DEPLOYER = process.env.TESTNET_DEPLOYER;
+const TESTNET_INVESTOR = process.env.TESTNET_INVESTOR;
+
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -32,7 +36,7 @@ module.exports = {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
+      accounts: [`${TESTNET_DEPLOYER}`,`${TESTNET_INVESTOR}`],
     }, 
     localhost: {
       url: `http://localhost:8545`,
