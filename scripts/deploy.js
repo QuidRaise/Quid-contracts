@@ -84,10 +84,14 @@ async function main() {
   await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("3"));
   await config.setNumericConfig("PLATFORM_COMMISION", BigNumber.from("1"));
   await config.setNumericConfig("PRECISION", BigNumber.from("100"));
+  await config.setNumericConfig("VOTE_DURATION", BigNumber.from("30"));
+
   console.log("Config Set Successfully");
 
   await identityContract.activateDataAccess(companyController.address); 
+  await identityContract.activateDataAccess(investorController.address); 
   await identityContract.activateDataAccess(deployer.address);
+
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
   await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
@@ -170,10 +174,6 @@ async function main() {
 
     await Usdt.connect(investor).approve(investorController.address,roundInvestmentAmount)
 
-
-
-
-
     let companyCreationResult = await companyProxy
       .connect(deployer)
       .createCompany("https://www.lazerpay.finance/", "Lazer Pay", companyToken.address, companyOwner.address);
@@ -182,24 +182,40 @@ async function main() {
     let company2CreationResult = await companyProxy
       .connect(deployer)
       .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, companyOwner2.address);
-      console.log({company2CreationResult})
+      console.log({company2CreationResult});
 
-    
-    
     
     let roundCreationResult = await companyProxy
       .connect(companyOwner)
-      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 60, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
+      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp()-400, 1000, 10, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({roundCreationResult})
 
       let round2CreationResult = await companyProxy
       .connect(companyOwner2)
-      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, 60, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
+      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp()-400, 1000, 10, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
       console.log({round2CreationResult})
 
 
       let investment1Result = await investorProxy.connect(investor).investInRound(1,Usdt.address);
-      console.log({investment1Result})
+      console.log({investment1Result});
+
+      await Busd.connect(investor).approve(investorController.address,roundInvestmentAmount);
+      let investment2Result = await investorProxy.connect(investor).investInRound(1,Busd.address);
+      console.log({investment2Result});
+
+      await wait(60*1000);
+
+      let proposalResult1 = await companyProxy.connect(companyOwner).createProposal([BigNumber.from("100000000000000000000"),BigNumber.from("100000000000000000000")],[Usdt.address,Busd.address],getCurrentTimeStamp()+5000);
+      console.log({proposalResult1});
+      
+      
+      let proxyVoteResult = await investorProxy.connect(investor).voteForProposal(1, true);
+      console.log({proxyVoteResult});
+
+
+      let proposalResult2 = await companyProxy.connect(companyOwner2).createProposal([BigNumber.from("100000000000000000000"),BigNumber.from("100000000000000000000")],[Usdt.address,Busd.address],getCurrentTimeStamp()+5000);
+      console.log({proposalResult2});
+
 
 
   }
@@ -225,6 +241,11 @@ function getCurrentTimeStamp()
 
 
 }
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 
 
 main()

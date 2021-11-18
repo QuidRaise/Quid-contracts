@@ -27,6 +27,7 @@ abstract contract BaseContract is Ownable {
     string constant PLATFORM_COMMISION = "PLATFORM_COMMISION";
     string constant PRECISION = "PRECISION";  
     string constant INVESTMENT_TOKEN_VAULT = "INVESTMENT_TOKEN_VAULT";
+    string constant VOTE_DURATION = "VOTE_DURATION";
 
 
     IDNS _dns;

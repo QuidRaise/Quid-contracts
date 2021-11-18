@@ -169,7 +169,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
         require(_config.getNumericConfig(MAX_ROUND_PAYMENT_OPTION) >= paymentCurrencies.length, "Exceeded number of payment options");
 
-        require(!_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
+        require(_companyStore.isCompanyOwner(companyOwner), "Could not find a company owned by this user");
         Company memory company = _companyStore.getCompanyByOwner(companyOwner);
 
         ensureCompanyIsWhitelisted(company.Id, companyOwner);
@@ -288,6 +288,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
         require(company.OwnerAddress == companyOwner, "Unauthorized access to proposal budegt");
         require(!proposal.IsDeleted, "Proposal has been deleted");
         require(!proposal.HasWithdrawn, "Proposal has been withdrawn from");
+        require(block.timestamp >= proposal.VoteStartTimeStamp.add(proposal.VoteSessionDuration), "Proposal has not ended");
+
         proposal.HasWithdrawn = true;
         _proposalStore.updateProposal(proposal);
 
@@ -298,6 +300,8 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             _companyVault.withdrawPaymentTokensFromVault(proposal.CompanyId, currency, proposal.AmountRequested[i]);
         }
     }
+
+    
 
     function calculatePlatformCommision(uint256 amount) internal view returns (uint256) {
         IConfig _config = IConfig(_dns.getRoute(CONFIG));
@@ -359,6 +363,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
             }
         } else {
             uint256 expiryTime = round.RoundStartTimeStamp.add(round.DurationInSeconds);
+
             if (block.timestamp <= expiryTime) {
                 return true;
             } else {
@@ -421,7 +426,7 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
     function getVoteDuration() internal view returns (uint256) {
         IConfig _config = IConfig(_dns.getRoute(CONFIG));
-        return _config.getNumericConfig(CONFIG);
+        return _config.getNumericConfig(VOTE_DURATION);
     }
 
     /***

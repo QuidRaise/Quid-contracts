@@ -22,7 +22,7 @@ interface IInvestorStore {
     function getRoundsInvestedIn(address investorAddress) external view returns (RoundInvestment[] memory);
 
     function getProposalVotes(address investorAddress) external view returns (ProposalVote[] memory);
-
+    function votedInProposal(address investorAddress, uint256 proposalId) external view returns(bool);
     function getProposalVote(address investorAddress, uint256 proposalId) external view returns (ProposalVote memory);
 
     function getRoundInvestment(address investorAddress, uint256 roundId) external view returns (RoundInvestment memory);

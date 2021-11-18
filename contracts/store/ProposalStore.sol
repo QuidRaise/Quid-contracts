@@ -38,7 +38,7 @@ contract ProposalStore is BaseContract, IProposalStore {
 
     function updateProposal(Proposal memory proposal) external override c2cCallValid {
         Index memory index = _companyProposalIndex[proposal.CompanyId][proposal.Id];
-        require(!index.Exists, "Record not found");
+        require(index.Exists, "Record not found");
         Proposal memory currentProposal = _proposals[index.Index];
 
         proposal.Id = currentProposal.Id;
