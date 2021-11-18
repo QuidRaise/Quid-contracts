@@ -148,7 +148,6 @@ contract CompanyController is BaseContract, ReentrancyGuard, ICompanyController 
 
         (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round);   
 
-        (IRoundStore(_dns.getRoute(ROUND_STORE))).createRoundPaymentOptions(round.Id, round.PaymentCurrencies);
 
         emitRoundCreatedEvents(round.Id, round.PaymentCurrencies, company, round);
     }

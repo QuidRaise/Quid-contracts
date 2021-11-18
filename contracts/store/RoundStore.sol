@@ -49,7 +49,7 @@ contract RoundStore is BaseContract, IRoundStore {
     }
 
     function createRound(Round memory round) external override c2cCallValid returns (uint) {
-        Index memory index = _companyRoundIndex[round.Id][round.Id];
+        Index memory index = _roundIndex[round.Id];
         require(!index.Exists, "Record already exist");
 
         uint256 recordIndex = _rounds.length;
@@ -63,17 +63,6 @@ contract RoundStore is BaseContract, IRoundStore {
         _roundIndex[round.Id] = index;
 
         return round.Id;
-    }
-
-    function createRoundPaymentOptions(uint roundId, address[] memory paymentCurrencies) external override c2cCallValid {
-        Round memory round = _rounds[roundId];
-        Index memory index = _companyRoundIndex[round.CompanyId][round.Id];
-        require(index.Exists, "Record doesn't exists");
-
-        round.PaymentCurrencies = paymentCurrencies;
-
-        _rounds[roundId] = round;
-        
     }
 
     function getRoundPaymentOptions(uint id) external override view returns(address[] memory){

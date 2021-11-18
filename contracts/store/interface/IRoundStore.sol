@@ -13,7 +13,6 @@ interface IRoundStore {
 
     function createRound(Round memory round) external returns (uint256);
 
-    function createRoundPaymentOptions(uint256 roundId, address[] memory paymentCurrencies) external;
 
     function getRoundPaymentOptions(uint256 id) external view returns (address[] memory);
 }

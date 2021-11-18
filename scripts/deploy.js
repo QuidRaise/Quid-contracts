@@ -127,6 +127,13 @@ async function main() {
     companyToken = await Contract.deploy("LazerPay", "LP");
     companyToken2 = await Contract.deploy("Wicrypt", "WNT");
 
+    // SEND TOKENS TO COMPANY OWNERS TO USE IN CREATING ROUNDS
+    await companyToken.transfer(companyOwner.address, BigNumber.from("10000000000000000000000000"))
+    await companyToken2.transfer(companyOwner2.address, BigNumber.from("10000000000000000000000000"))
+
+    const companyATokenAllocation = BigNumber.from("1000000000000000000000000")
+    const companyBTokenAllocation = BigNumber.from("500000000000000000000000")
+
 
     const usdtContract = await ethers.getContractFactory("ERC20Token");
     Usdt = await usdtContract.deploy("USDT tether", "USDT");
@@ -146,6 +153,11 @@ async function main() {
     await companyVaultStore.enablePaymentOption(Usdc.address);
 
 
+    await companyToken.connect(companyOwner).approve(companyController.address,companyATokenAllocation)
+    await companyToken2.connect(companyOwner2).approve(companyController.address,companyBTokenAllocation)
+
+
+
 
 
     let companyCreationResult = await companyProxy
@@ -159,14 +171,16 @@ async function main() {
       console.log({company2CreationResult})
 
     
+    
+    
     let roundCreationResult = await companyProxy
       .connect(companyOwner)
-      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 60, 100, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
+      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 60, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({roundCreationResult})
 
       let round2CreationResult = await companyProxy
       .connect(companyOwner2)
-      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, 60, 100, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
+      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, 60, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
       console.log({round2CreationResult})
 
 
