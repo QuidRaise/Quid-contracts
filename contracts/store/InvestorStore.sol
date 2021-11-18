@@ -108,6 +108,12 @@ contract InvestorStore is BaseContract, IInvestorStore {
         return _investorProposalVotes[index.Index];
     }
 
+    function investedInRound(address investorAddress, uint256 roundId) external view override returns (bool) {
+        Index memory index = _investorRoundIndex[investorAddress][roundId];
+        return index.Exists;
+    }
+
+
     function getRoundInvestment(address investorAddress, uint256 roundId) external view override returns (RoundInvestment memory) {
         Index memory index = _investorRoundIndex[investorAddress][roundId];
         return _investorRounds[index.Index];

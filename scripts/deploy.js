@@ -86,6 +86,8 @@ async function main() {
   await config.setNumericConfig("PRECISION", BigNumber.from("100"));
   console.log("Config Set Successfully");
 
+  await identityContract.activateDataAccess(companyController.address); 
+  await identityContract.activateDataAccess(deployer.address);
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
   await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
@@ -112,7 +114,8 @@ async function main() {
   console.log("Identity Access Grant Set Successfully");
 
   await companyProxy.activateDataAccess(deployer.address);
-  await identityContract.activateDataAccess(companyController.address);
+
+
   console.log("Auth Access Granted");
 
 
@@ -131,8 +134,9 @@ async function main() {
     await companyToken.transfer(companyOwner.address, BigNumber.from("10000000000000000000000000"))
     await companyToken2.transfer(companyOwner2.address, BigNumber.from("10000000000000000000000000"))
 
-    const companyATokenAllocation = BigNumber.from("1000000000000000000000000")
-    const companyBTokenAllocation = BigNumber.from("500000000000000000000000")
+    const companyATokenAllocation = BigNumber.from("1000000000000000000000000");
+    const companyBTokenAllocation = BigNumber.from("500000000000000000000000");
+    const roundInvestmentAmount = BigNumber.from("10000000000000000000000");
 
 
     const usdtContract = await ethers.getContractFactory("ERC20Token");
@@ -147,14 +151,23 @@ async function main() {
     const USDContract = await ethers.getContractFactory("ERC20Token");
     Usdc = await USDContract.deploy("USDC", "USDC");
 
+    await Usdt.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Dai.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Busd.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Usdc.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+
+
     await companyVaultStore.enablePaymentOption(Usdt.address);
     await companyVaultStore.enablePaymentOption(Dai.address);
     await companyVaultStore.enablePaymentOption(Busd.address);
     await companyVaultStore.enablePaymentOption(Usdc.address);
 
 
+
     await companyToken.connect(companyOwner).approve(companyController.address,companyATokenAllocation)
     await companyToken2.connect(companyOwner2).approve(companyController.address,companyBTokenAllocation)
+
+    await Usdt.connect(investor).approve(investorController.address,roundInvestmentAmount)
 
 
 

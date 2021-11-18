@@ -65,14 +65,18 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
             _investorStore.createInvestor(Investor(investor,0,0));
         }
 
-        RoundInvestment memory roundInvestment  = _investorStore.getRoundInvestment(investor,roundId);
-        if(!roundInvestment.Exists)
+        RoundInvestment memory roundInvestment;
+        if(!_investorStore.investedInRound(investor,roundId))
         {
             uint256[] memory investmentAmounts = new uint256[](paymentOptions.length);
 
             roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts,true);
             // If it's a new investor, then we update the investor count for this round;
             round.TotalInvestors = round.TotalInvestors.add(1);
+        }
+        else
+        {
+            roundInvestment = _investorStore.getRoundInvestment(investor,roundId);
         }
 
          for (uint256 i = 0; i < paymentOptions.length; i++)
@@ -127,9 +131,14 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     function ensureWhitelist(uint256 companyId, address investor) internal view
     {
+        IInvestorStore _investorStore = IInvestorStore(_dns.getRoute(INVESTOR_STORE));
+
         IIdentityContract _identityContract = IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT));
-        require(_identityContract.isInvestorAddressWhitelisted(investor),
-                    "Address blacklisted");
+        if(_investorStore.isInvestor(investor))
+        {
+            require(_identityContract.isInvestorAddressWhitelisted(investor),
+                        "Address blacklisted");
+        }
         require(_identityContract.isCompanyWhitelisted(companyId),
                 "Company blacklisted");
     }
