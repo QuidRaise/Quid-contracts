@@ -5,6 +5,9 @@ import "../infrastructure/BaseContract.sol";
 import "../libraries/ReentrancyGuard.sol";
 
 import "../controllers/interface/ICompanyController.sol";
+import "../controllers/interface/ICompanyRoundController.sol";
+import "../controllers/interface/ICompanyProposalController.sol";
+
 import "../controllers/interface/IInvestorController.sol";
 
 
@@ -43,7 +46,7 @@ contract CompanyProxy is BaseContract, DataGrant, ReentrancyGuard {
         uint256[] memory pricePerShare
     ) external nonReentrant {
 
-        ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+        ICompanyRoundController controller  = ICompanyRoundController(_dns.getRoute("COMPANY_ROUND_CONTROLLER"));
         controller.createRound(_msgSender(),roundDocumentUrl, startTimestamp, duration,  lockupPeriodForShare, tokensSuppliedForRound, runTillFullySubscribed, paymentCurrencies, pricePerShare);
         
     }
@@ -55,36 +58,36 @@ contract CompanyProxy is BaseContract, DataGrant, ReentrancyGuard {
         uint256 votingStartTimestamp
     ) external  nonReentrant {
 
-         ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+         ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
         controller.createProposal(amountRequested,paymentCurrencies,votingStartTimestamp,_msgSender());
 
     }
 
     function getProposalResult(uint256 proposalId) external view  returns (ProposalResponse memory) {
-         ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+         ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
          return controller.getProposalResult(proposalId);
        
     }
 
 
     function getRound(uint256 roundId) external view returns (RoundResponse memory) {
-         ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+         ICompanyRoundController controller  = ICompanyRoundController(_dns.getRoute("COMPANY_ROUND_CONTROLLER"));
          return controller.getRound(roundId);
     }
 
     function releaseProposalBudget(uint256 proposalId) external nonReentrant {
-        ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+        ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
         controller.releaseProposalBudget(proposalId,_msgSender());      
     }
 
 
     function deleteProposal(uint256 proposalId) external nonReentrant {
-        ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+        ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
         controller.deleteProposal(proposalId,_msgSender());    
     }
 
     function deleteRound(uint256 roundId) external nonReentrant {
-        ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
+        ICompanyRoundController controller  = ICompanyRoundController(_dns.getRoute("COMPANY_ROUND_CONTROLLER"));
         controller.deleteRound(roundId,_msgSender());   
     }
 
