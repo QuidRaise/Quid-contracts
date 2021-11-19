@@ -9,8 +9,6 @@ async function main() {
 
   const DNS = await ethers.getContractFactory("DNS");
   const CompanyController = await ethers.getContractFactory("CompanyController");
-  const CompanyRoundController = await ethers.getContractFactory("CompanyRoundController");
-  const CompanyproposalController = await ethers.getContractFactory("CompanyProposalController");
   const InvestorController = await ethers.getContractFactory("InvestorController");
   const CompanyProxy = await ethers.getContractFactory("CompanyProxy");
   const InvestorProxy = await ethers.getContractFactory("InvestorProxy");
@@ -28,10 +26,7 @@ async function main() {
   const Treasury = await ethers.getContractFactory("Treasury");
 
   const dns = await DNS.deploy();
-  const companyRoundController = await CompanyRoundController.deploy(dns.address)
-  const companyProposalController = await CompanyProposalController.deploy(dns.address)
-  const companyController = await CompanyController.deploy(dns.address)
-  const investorController = await InvestorController.deploy(dns.address)
+
   const treasury = await Treasury.deploy();
   const identityContract = await IdentityContract.deploy(dns.address);
   const eventEmitter = await EventEmitter.deploy(dns.address)
@@ -42,7 +37,8 @@ async function main() {
   const roundStore = await RoundStore.deploy(dns.address)
   const companyVaultStore = await CompanyVaultStore.deploy(dns.address)
   const companyVault = await CompanyVault.deploy(dns.address)
- 
+  const companyController = await CompanyController.deploy(dns.address)
+  const investorController = await InvestorController.deploy(dns.address)
   const companyProxy = await CompanyProxy.deploy(dns.address)
   const investorProxy = await InvestorProxy.deploy(dns.address)
 
@@ -62,8 +58,6 @@ async function main() {
   console.log(`Company Vault Store Contract Address: ${companyVaultStore.address}`);
   console.log(`Company Vault Contract Address: ${companyVault.address}`);
   console.log(`Company Controller Contract Address: ${companyController.address}`);
-  console.log(`Company Round Controller Contract Address: ${companyRoundController.address}`);
-  console.log(`Company Proposal Controller Contract Address: ${companyProposalController.address}`);
   console.log(`Investor Controller Contract Address: ${investorController.address}`);
   console.log(`Company Proxy Contract Address: ${companyProxy.address}`);
   console.log(`Investor Proxy Contract Address: ${investorProxy.address}`);
@@ -81,10 +75,7 @@ async function main() {
   await dns.setRoute("NFT", nft.address);
   await dns.setRoute("CONFIG", config.address);
   await dns.setRoute("COMPANY_CONTROLLER", companyController.address);
-  await dns.setRoute("COMPANY_ROUND_CONTROLLER", companyRoundController.address);
-  await dns.setRoute("COMPANY_PROPOSAL_CONTROLLER", companyProposalController.address);
-
-  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);  
+  await dns.setRoute("INVESTOR_CONTROLLER", investorController.address);
 
   console.log("Routes Set Successfully");
 
@@ -93,60 +84,32 @@ async function main() {
   await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("3"));
   await config.setNumericConfig("PLATFORM_COMMISION", BigNumber.from("1"));
   await config.setNumericConfig("PRECISION", BigNumber.from("100"));
-  await config.setNumericConfig("VOTE_DURATION", BigNumber.from("30"));
-
   console.log("Config Set Successfully");
 
-  await identityContract.activateDataAccess(companyController.address); 
-  await identityContract.activateDataAccess(investorController.address); 
+  await identityContract.activateDataAccess(companyController.address);
   await identityContract.activateDataAccess(deployer.address);
-
   await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, eventEmitter.address)
+  await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
   await identityContract.grantContractInteraction(companyController.address, config.address)
   await identityContract.grantContractInteraction(companyController.address, identityContract.address)
-  await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address)
-  await identityContract.grantContractInteraction(companyController.address, roundStore.address)
-  await identityContract.grantContractInteraction(companyController.address, proposalStore.address)
-  await identityContract.grantContractInteraction(companyController.address, investorStore.address)
-  await identityContract.grantContractInteraction(companyController.address, companyStore.address)
+  await identityContract.grantContractInteraction(investorController.address, identityContract.address)
+
   await identityContract.grantContractInteraction(companyController.address, companyVault.address)
-
-  await identityContract.grantContractInteraction(companyRoundController.address, eventEmitter.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, config.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, identityContract.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, companyVaultStore.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, roundStore.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, proposalStore.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, investorStore.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, companyStore.address)
-  await identityContract.grantContractInteraction(companyRoundController.address, companyVault.address)
-
-
-  await identityContract.grantContractInteraction(companyProposalController.address, eventEmitter.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, config.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, identityContract.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, companyVaultStore.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, roundStore.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, proposalStore.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, investorStore.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, companyStore.address)
-  await identityContract.grantContractInteraction(companyProposalController.address, companyVault.address)
-
-
-
   await identityContract.grantContractInteraction(investorController.address, companyVault.address)
   await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address)
+  await identityContract.grantContractInteraction(companyController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, companyVaultStore.address)
   await identityContract.grantContractInteraction(investorController.address, roundStore.address)
   await identityContract.grantContractInteraction(investorController.address, nft.address)
-  await identityContract.grantContractInteraction(investorController.address, identityContract.address)
-  await identityContract.grantContractInteraction(investorController.address, eventEmitter.address)
 
   await identityContract.grantContractInteraction(investorController.address, proposalStore.address)
   await identityContract.grantContractInteraction(investorController.address, investorStore.address)
   await identityContract.grantContractInteraction(investorController.address, companyStore.address)
- 
+  await identityContract.grantContractInteraction(companyController.address, roundStore.address)
+  await identityContract.grantContractInteraction(companyController.address, proposalStore.address)
+  await identityContract.grantContractInteraction(companyController.address, investorStore.address)
+  await identityContract.grantContractInteraction(companyController.address, companyStore.address)
   await identityContract.grantContractInteraction(companyProxy.address, companyController.address);
   await identityContract.grantContractInteraction(investorProxy.address, investorController.address);
   console.log("Identity Access Grant Set Successfully");
@@ -159,7 +122,7 @@ async function main() {
 
   /**
    * The following lines of code is a hack to get the contracts initialized. This should not run on mainnet release
-   * 
+   *
    */
   if (hre.network.name === "localhost" || hre.network.name === "testnet") {
 
@@ -169,13 +132,12 @@ async function main() {
     companyToken2 = await Contract.deploy("Wicrypt", "WNT");
 
     // SEND TOKENS TO COMPANY OWNERS TO USE IN CREATING ROUNDS
-    // await companyToken.transfer(companyOwner.address, BigNumber.from("10000000000000000000000000"))
-    // await companyToken2.transfer(companyOwner2.address, BigNumber.from("10000000000000000000000000"))
+    await companyToken.transfer(companyOwner.address, BigNumber.from("10000000000000000000000000"))
+    await companyToken2.transfer(companyOwner2.address, BigNumber.from("10000000000000000000000000"))
 
     const companyATokenAllocation = BigNumber.from("1000000000000000000000000");
     const companyBTokenAllocation = BigNumber.from("500000000000000000000000");
     const roundInvestmentAmount = BigNumber.from("10000000000000000000000");
-    const roundDurationInSeconds = BigNumber.from("1000");
 
 
     const usdtContract = await ethers.getContractFactory("ERC20Token");
@@ -190,10 +152,10 @@ async function main() {
     const USDContract = await ethers.getContractFactory("ERC20Token");
     Usdc = await USDContract.deploy("USDC", "USDC");
 
-    // await Usdt.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Dai.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Busd.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Usdc.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Usdt.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Dai.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Busd.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    await Usdc.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
 
 
     await companyVaultStore.enablePaymentOption(Usdt.address);
@@ -203,53 +165,41 @@ async function main() {
 
 
 
-    await companyToken.connect(deployer).approve(companyController.address,companyATokenAllocation)
-    await companyToken2.connect(deployer).approve(companyController.address,companyBTokenAllocation)
+    await companyToken.connect(companyOwner).approve(companyController.address,companyATokenAllocation)
+    await companyToken2.connect(companyOwner2).approve(companyController.address,companyBTokenAllocation)
 
-    await Usdt.connect(deployer).approve(investorController.address,roundInvestmentAmount)
+    await Usdt.connect(investor).approve(investorController.address,roundInvestmentAmount)
+
+
+
+
 
     let companyCreationResult = await companyProxy
       .connect(deployer)
-      .createCompany("https://www.lazerpay.finance/", "Lazer Pay", companyToken.address, deployer.address);
+      .createCompany("https://www.lazerpay.finance/", "Lazer Pay", companyToken.address, companyOwner.address);
       console.log({companyCreationResult})
 
     let company2CreationResult = await companyProxy
       .connect(deployer)
-      .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, deployer.address);
-      console.log({company2CreationResult});
+      .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, companyOwner2.address);
+      console.log({company2CreationResult})
 
-    
+
+
+
     let roundCreationResult = await companyProxy
-      .connect(deployer)
-      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, roundDurationInSeconds, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
+      .connect(companyOwner)
+      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, 60, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({roundCreationResult})
 
       let round2CreationResult = await companyProxy
-      .connect(deployer)
-      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, roundDurationInSeconds, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
+      .connect(companyOwner2)
+      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, 60, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
       console.log({round2CreationResult})
 
 
-      // let investment1Result = await investorProxy.connect(investor).investInRound(1,Usdt.address);
-      // console.log({investment1Result});
-
-      // await Busd.connect(investor).approve(investorController.address,roundInvestmentAmount);
-      // let investment2Result = await investorProxy.connect(investor).investInRound(1,Busd.address);
-      // console.log({investment2Result});
-
-      // await wait(60*1000);
-
-      // let proposalResult1 = await companyProxy.connect(companyOwner).createProposal([BigNumber.from("100000000000000000000"),BigNumber.from("100000000000000000000")],[Usdt.address,Busd.address],getCurrentTimeStamp()+5000);
-      // console.log({proposalResult1});
-      
-      
-      // let proxyVoteResult = await investorProxy.connect(investor).voteForProposal(1, true);
-      // console.log({proxyVoteResult});
-
-
-      // let proposalResult2 = await companyProxy.connect(companyOwner2).createProposal([BigNumber.from("100000000000000000000"),BigNumber.from("100000000000000000000")],[Usdt.address,Busd.address],getCurrentTimeStamp()+5000);
-      // console.log({proposalResult2});
-
+      let investment1Result = await investorProxy.connect(investor).investInRound(1,Usdt.address);
+      console.log({investment1Result})
 
 
   }
@@ -275,11 +225,6 @@ function getCurrentTimeStamp()
 
 
 }
-
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 
 
 main()

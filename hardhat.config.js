@@ -1,4 +1,6 @@
 require("@nomiclabs/hardhat-ethers");
+require("@nomiclabs/hardhat-waffle");
+require("hardhat-deploy");
 require("@tenderly/hardhat-tenderly");
 require("@nomiclabs/hardhat-etherscan");
 require("dotenv").config();
@@ -6,24 +8,23 @@ require("@nomiclabs/hardhat-truffle5");
 
 const { utils } = require("ethers");
 
-const PRIVATE_KEY_1 = process.env.PRIVATE_KEY;
-const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2;
-const PRIVATE_KEY_3 = process.env.PRIVATE_KEY_3;
-const PRIVATE_KEY_4 = process.env.PRIVATE_KEY_4;
-
-const TESTNET_DEPLOYER = process.env.TESTNET_DEPLOYER;
-const TESTNET_INVESTOR = process.env.TESTNET_INVESTOR;
-
-
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY_GANACHE = process.env.PRIVATE_KEY_GANACHE;
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  defaultNetwork: "localhost",
+  defaultNetwork: "hardhat",
   solidity: {
     compilers: [
       {
         version: "0.7.0",
+      },
+      {
+        version: "0.6.0",
+      },
+      {
+        version: "0.8.0",
       },
     ],
     optimizer: {
@@ -32,33 +33,31 @@ module.exports = {
     },
   },
   networks: {
-     testnet: {
+    /*  testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      allowUnlimitedContractSize :true,
-      accounts: [`${TESTNET_DEPLOYER}`,`${TESTNET_INVESTOR}`],
-    }, 
+      accounts: [`${PRIVATE_KEY}`],
+    }, */
     localhost: {
-      url: `http://localhost:8545`,
-      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
+      url: `http://localhost:9545`,
+      accounts: [`${PRIVATE_KEY_GANACHE}`],
       timeout: 150000,
       gasPrice: parseInt(utils.parseUnits("132", "gwei")),
-      allowUnlimitedContractSize :true
     },
-    mainnet: {
+    /* mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
-      accounts: [`${PRIVATE_KEY_1}`,`${PRIVATE_KEY_2}`, `${PRIVATE_KEY_3}`, `${PRIVATE_KEY_4}`],
-    },
+      accounts: [`${PRIVATE_KEY}`],
+    }, */
     hardhat: {
       // forking: {
       //   url: `https://bsc-dataseed.binance.org/`,
       //   // blockNumber: 6674768,
       // },
       blockGasLimit: 12000000,
-      allowUnlimitedContractSize :true
-    }, 
+      allowUnlimitedContractSize: true,
+    },
   },
   etherscan: {
     apiKey: process.env.BSCSCAN_API_KEY,
