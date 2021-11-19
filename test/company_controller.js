@@ -98,27 +98,27 @@ let createCompany, companyToken, Usdt, Dai, Busd, Usdc;
 describe("Company Controller Contract", function () {
   before(async () => {
     await identityContract.grantContractInteraction(tester.address, companyController.address);
-    await identityContract.activateDataAcess(companyController.address);
+    await identityContract.activateDataAccess(companyController.address);
     await identityContract.grantContractInteraction(tester.address, investorStore.address);
-    await identityContract.activateDataAcess(investorStore.address);
+    await identityContract.activateDataAccess(investorStore.address);
     await identityContract.grantContractInteraction(tester.address, companyController.address);
     await companyProxy.activateDataAccess(tester.address);
 
     // DEPLOY PAYMENT OPTIONS
-    const Contract = await ethers.getContractFactory("companyToken");
-    companyToken = await Contract.deploy();
+    const Contract = await ethers.getContractFactory("ERC20Token");
+    companyToken = await Contract.deploy("Quid Raise", "QR");
 
-    const usdtContract = await ethers.getContractFactory("USDT");
-    Usdt = await usdtContract.deploy();
+    const usdtContract = await ethers.getContractFactory("ERC20Token");
+    Usdt = await usdtContract.deploy("USDT tether", "USDT");
 
-    const daiContract = await ethers.getContractFactory("DAI");
-    Dai = await daiContract.deploy();
+    const daiContract = await ethers.getContractFactory("ERC20Token");
+    Dai = await daiContract.deploy("DAI Token", "DAI");
 
-    const busdContract = await ethers.getContractFactory("BUSD");
-    Busd = await busdContract.deploy();
+    const busdContract = await ethers.getContractFactory("ERC20Token");
+    Busd = await busdContract.deploy("Binance BUSD", "BUSD");
 
-    const USDContract = await ethers.getContractFactory("USDC");
-    Usdc = await USDContract.deploy();
+    const USDContract = await ethers.getContractFactory("ERC20Token");
+    Usdc = await USDContract.deploy("USDC", "USDC");
 
     // ENABLE PAYMENT OPTIONS
     await companyVaultStore.enablePaymentOption(Usdt.address);
@@ -275,8 +275,6 @@ describe("Company Controller Contract", function () {
     });
 
     it("should fail if company has an open round", async () => {
-      // let companyid = await companyStore.getCompanyById(1);
-      // console.log(companyid);
       await companyToken.approve(companyController.address, BigNumber.from("20000"));
       let createRound = await companyController
         .connect(tester)
@@ -291,7 +289,7 @@ describe("Company Controller Contract", function () {
           paymentCurrencies,
           pricePerShare,
         );
-      console.log(createRound);
+      // console.log(createRound);
     });
   });
 });
