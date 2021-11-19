@@ -23,7 +23,7 @@ import "../interfaces/IConfig.sol";
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
-contract CompanyController is SharedController, ReentrancyGuard, ICompanyRoundController {
+contract CompanyRoundController is SharedController, ReentrancyGuard, ICompanyRoundController {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
