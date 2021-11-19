@@ -103,6 +103,13 @@ contract InvestorStore is BaseContract, IInvestorStore {
         return proposalVotes;
     }
 
+    function votedInProposal(address investorAddress, uint256 proposalId) external view override returns(bool)
+    {
+        Index memory index = _investorProposalIndex[investorAddress][proposalId];
+        return index.Exists;
+
+    }
+
     function getProposalVote(address investorAddress, uint256 proposalId) external view override returns (ProposalVote memory) {
         Index memory index = _investorProposalIndex[investorAddress][proposalId];
         return _investorProposalVotes[index.Index];

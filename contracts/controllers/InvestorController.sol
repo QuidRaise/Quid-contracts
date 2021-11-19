@@ -24,6 +24,9 @@ import "../store/interface/IInvestorStore.sol";
 import "../interfaces/IERC20.sol";
 import "../nfts/interface/IQuidRaiseShares.sol";
 
+import "hardhat/console.sol";
+
+
 pragma experimental ABIEncoderV2;
 pragma solidity 0.7.0;
 
@@ -63,6 +66,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         if(!_investorStore.isInvestor(investor))
         {
             _investorStore.createInvestor(Investor(investor,0,0));
+            (IIdentityContract(_dns.getRoute(IDENTITY_CONTRACT))).whitelistInvestor(investor);
         }
 
         RoundInvestment memory roundInvestment;
@@ -170,10 +174,12 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         ensureWhitelist(proposal.CompanyId,investor);
 
 
-        ProposalVote memory proposalVote  = _investorStore.getProposalVote(investor,proposal.Id);
+        ProposalVote memory proposalVote;
 
-         if(proposalVote.Exists)
+        if(_investorStore.votedInProposal(investor,proposal.Id))
         {
+           proposalVote  = _investorStore.getProposalVote(investor,proposal.Id);
+
            uint256 stakedShares =  proposalVote.SharesStaked;
            if(proposalVote.IsApproved)
            {
@@ -198,6 +204,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
             proposal.TokensStakedForRejectedVotes = proposal.TokensStakedForRejectedVotes.add(tokenAllocation);
             proposal.RejectedVotes = proposal.RejectedVotes.add(1);
         }
+        
         proposalVote = ProposalVote(proposal.Id,tokenAllocation,isApproved,true);
 
         _investorStore.updateProposalsVotedIn(investor,proposalVote);

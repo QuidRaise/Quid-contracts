@@ -21,12 +21,14 @@ abstract contract BaseContract is Ownable {
     string constant NFT = "NFT";
     string constant CONFIG = "CONFIG";
     string constant COMPANY_CONTROLLER = "COMPANY_CONTROLLER";
+    string constant COMPANY_ROUND_CONTROLLER = "COMPANY_ROUND_CONTROLLER";
+    string constant COMPANY_PROPOSAL_CONTROLLER = "COMPANY_PROPOSAL_CONTROLLER";
     string constant INVESTOR_CONTROLLER = "INVESTOR_CONTROLLER";
-
     string constant MAX_ROUND_PAYMENT_OPTION = "MAX_ROUND_PAYMENT_OPTION";
     string constant PLATFORM_COMMISION = "PLATFORM_COMMISION";
     string constant PRECISION = "PRECISION";  
     string constant INVESTMENT_TOKEN_VAULT = "INVESTMENT_TOKEN_VAULT";
+    string constant VOTE_DURATION = "VOTE_DURATION";
 
 
     IDNS _dns;
