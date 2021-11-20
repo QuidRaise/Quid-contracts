@@ -269,7 +269,7 @@ describe("Investor Controller", function () {
     
     await expect(companyProxy
       .connect(companyOwner)
-      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, companyATokenAllocation, runTillFullySubscribed, paymentCurrencies, pricePerShare))
+      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, tokensSuppliedForRound, runTillFullySubscribed, paymentCurrencies, pricePerShare))
       .to.emit(eventEmitter, "RoundCreated")
          .withArgs(
             1,
@@ -294,7 +294,7 @@ describe("Investor Controller", function () {
     const roundDocumentUrl = "https://cdn.invictuscapital.com/reports/2021_QR3.pdf"
     const tokensSuppliedForRound  = BigNumber.from("10000000000000000000000");
     const startTimestamp = getCurrentTimeStamp();
-    const duration = BigNumber.from("0");
+    const duration = BigNumber.from("1");
     const lockupPeriod = BigNumber.from("1000");
     const paymentCurrencies = [ Usdt.address, Dai.address, Busd.address, Usdc.address ];
     const pricePerShare = [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ];
@@ -319,7 +319,7 @@ describe("Investor Controller", function () {
     
     await expect(companyProxy
       .connect(companyOwner)
-      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, companyATokenAllocation, runTillFullySubscribed, paymentCurrencies, pricePerShare))
+      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, tokensSuppliedForRound, runTillFullySubscribed, paymentCurrencies, pricePerShare))
       .to.emit(eventEmitter, "RoundCreated")
          .withArgs(
             1,
@@ -370,7 +370,7 @@ describe("Investor Controller", function () {
     
     await expect(companyProxy
       .connect(companyOwner)
-      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, companyATokenAllocation, runTillFullySubscribed, paymentCurrencies, pricePerShare))
+      .createRound(roundDocumentUrl, startTimestamp, duration, lockupPeriod, tokensSuppliedForRound, runTillFullySubscribed, paymentCurrencies, pricePerShare))
       .to.emit(eventEmitter, "RoundCreated")
          .withArgs(
             1,

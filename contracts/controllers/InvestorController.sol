@@ -142,10 +142,15 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
     }
 
-    function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)
+    function getTokenAllocation(Round memory round,address paymentTokenAddress, uint256 investmentAmount) internal view returns (uint256)
     {       
+        ICompanyStore _companyStore = ICompanyStore(_dns.getRoute(COMPANY_STORE));
+        Company memory company  = _companyStore.getCompanyById(round.CompanyId);
+
+       IERC20 companyToken = IERC20(company.CompanyTokenContractAddress);
        uint256 pricePerShare = getPricePerShare(round,paymentTokenAddress);
-       return investmentAmount.div(pricePerShare);
+       console.log("Price Per Share %s", pricePerShare);
+       return investmentAmount.div(pricePerShare).mul(10**companyToken.decimals());
     }
 
     function getPricePerShare(Round memory round,  address paymentTokenAddress) internal pure returns(uint256)
