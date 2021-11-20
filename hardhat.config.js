@@ -65,6 +65,9 @@ module.exports = {
   etherscan: {
     apiKey: process.env.BSCSCAN_API_KEY,
   },
+  mocha: {
+    timeout: 50000
+  },
   tenderly: {
     project: process.env.TENDERLY_PROJECT,
     username: process.env.TENDERLY_USERNAME,

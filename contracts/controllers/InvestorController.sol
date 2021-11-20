@@ -109,12 +109,20 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         uint256 tokenAllocation = getTokenAllocation(round,paymentTokenAddress,investmentAmount);
 
         uint256 companyTokensLeft =  _companyVaultStore.getCompanyTokenBalance(round.CompanyId);
+        console.log("Company Tokens Left %s", companyTokensLeft);
+        console.log("Initial Token Allocation %s", tokenAllocation);
+        console.log("Initial Investment Amount %s", investmentAmount);
+        
         if(companyTokensLeft<tokenAllocation)
         {
             tokenAllocation = companyTokensLeft;
             uint256 pricePerShare = getPricePerShare(round,paymentTokenAddress);
             investmentAmount = companyTokensLeft.mul(pricePerShare);
         }
+
+        console.log("Investment Amount %s", investmentAmount);
+        console.log("Token Allocation  %s", tokenAllocation);
+
         return (investmentAmount,tokenAllocation) ;         
     }
 
@@ -129,10 +137,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         _companyVault.withdrawCompanyTokens(round.CompanyId,tokenAllocation);
 
-
-        _companyVault.withdrawCompanyTokens(round.CompanyId,tokenAllocation);
         companyToken.approve(round.TokenLockVaultAddres, tokenAllocation);
-
         IInvestmentTokenVault(round.TokenLockVaultAddres).lockTokens(investor);
 
     }
