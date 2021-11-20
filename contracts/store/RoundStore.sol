@@ -67,7 +67,8 @@ contract RoundStore is BaseContract, IRoundStore {
 
     function getRoundPaymentOptions(uint id) external override view returns(address[] memory){
         require(id <= _rounds.length, "No record of such round");
-        return _rounds[id].PaymentCurrencies;
+        Index memory index = _roundIndex[id];
+        return _rounds[index.Index].PaymentCurrencies;
     }
     
 }
