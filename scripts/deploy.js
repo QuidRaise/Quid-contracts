@@ -10,7 +10,7 @@ async function main() {
   const DNS = await ethers.getContractFactory("DNS");
   const CompanyController = await ethers.getContractFactory("CompanyController");
   const CompanyRoundController = await ethers.getContractFactory("CompanyRoundController");
-  const CompanyproposalController = await ethers.getContractFactory("CompanyProposalController");
+  const CompanyProposalController = await ethers.getContractFactory("CompanyProposalController");
   const InvestorController = await ethers.getContractFactory("InvestorController");
   const CompanyProxy = await ethers.getContractFactory("CompanyProxy");
   const InvestorProxy = await ethers.getContractFactory("InvestorProxy");
@@ -27,8 +27,12 @@ async function main() {
   const Config = await ethers.getContractFactory("Config");
   const Treasury = await ethers.getContractFactory("Treasury");
 
-  const dns = await DNS.deploy();
-  const companyRoundController = await CompanyRoundController.deploy(dns.address)
+  // const dns = await DNS.deploy();
+  // const companyRoundController = await CompanyRoundController.deploy(dns.address)
+
+  const dns = await ethers.getContractAt("DNS","0x25EbF1F0F1f656FB43Ab3b922e715Ea2EBf73273");
+  const companyRoundController = await ethers.getContractAt("CompanyRoundController","0x497fd1Dc3f0A7530f85319981d3d215eBd3737eb");
+
   const companyProposalController = await CompanyProposalController.deploy(dns.address)
   const companyController = await CompanyController.deploy(dns.address)
   const investorController = await InvestorController.deploy(dns.address)
@@ -90,10 +94,10 @@ async function main() {
 
 
 
-  await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("3"));
+  await config.setNumericConfig("MAX_ROUND_PAYMENT_OPTION", BigNumber.from("4"));
   await config.setNumericConfig("PLATFORM_COMMISION", BigNumber.from("1"));
   await config.setNumericConfig("PRECISION", BigNumber.from("100"));
-  await config.setNumericConfig("VOTE_DURATION", BigNumber.from("30"));
+  await config.setNumericConfig("VOTE_DURATION", BigNumber.from("600"));
 
   console.log("Config Set Successfully");
 
@@ -148,6 +152,9 @@ async function main() {
   await identityContract.grantContractInteraction(investorController.address, companyStore.address)
  
   await identityContract.grantContractInteraction(companyProxy.address, companyController.address);
+  await identityContract.grantContractInteraction(companyProxy.address, companyProposalController.address);
+  await identityContract.grantContractInteraction(companyProxy.address, companyRoundController.address);
+
   await identityContract.grantContractInteraction(investorProxy.address, investorController.address);
   console.log("Identity Access Grant Set Successfully");
 
@@ -169,11 +176,11 @@ async function main() {
     companyToken2 = await Contract.deploy("Wicrypt", "WNT");
 
     // SEND TOKENS TO COMPANY OWNERS TO USE IN CREATING ROUNDS
-    // await companyToken.transfer(companyOwner.address, BigNumber.from("10000000000000000000000000"))
-    // await companyToken2.transfer(companyOwner2.address, BigNumber.from("10000000000000000000000000"))
+    await companyToken.transfer(companyOwner.address, BigNumber.from("31000000000000000000000000"))
+    await companyToken2.transfer(companyOwner2.address, BigNumber.from("31000000000000000000000000"))
 
     const companyATokenAllocation = BigNumber.from("1000000000000000000000000");
-    const companyBTokenAllocation = BigNumber.from("500000000000000000000000");
+    const companyBTokenAllocation = BigNumber.from("1000000000000000000000000");
     const roundInvestmentAmount = BigNumber.from("10000000000000000000000");
     const roundDurationInSeconds = BigNumber.from("1000");
 
@@ -190,10 +197,18 @@ async function main() {
     const USDContract = await ethers.getContractFactory("ERC20Token");
     Usdc = await USDContract.deploy("USDC", "USDC");
 
-    // await Usdt.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Dai.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Busd.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
-    // await Usdc.transfer(investor.address, BigNumber.from("1000000000000000000000000"))
+    console.log(`Usdt Contract Address: ${Usdt.address}`);
+    console.log(`Dai Contract Address: ${Dai.address}`);
+    console.log(`Busd Contract Address: ${Busd.address}`);
+    console.log(`Usdc Contract Address: ${Usdc.address}`);
+    console.log(`companyToken Contract Address: ${companyToken.address}`);
+    console.log(`companyToken2 Contract Address: ${companyToken2.address}`);
+
+
+    await Usdt.transfer(investor.address, BigNumber.from("31000000000000000000000000"))
+    await Dai.transfer(investor.address, BigNumber.from("31000000000000000000000000"))
+    await Busd.transfer(investor.address, BigNumber.from("31000000000000000000000000"))
+    await Usdc.transfer(investor.address, BigNumber.from("31000000000000000000000000"))
 
 
     await companyVaultStore.enablePaymentOption(Usdt.address);
@@ -203,30 +218,28 @@ async function main() {
 
 
 
-    await companyToken.connect(deployer).approve(companyController.address,companyATokenAllocation)
-    await companyToken2.connect(deployer).approve(companyController.address,companyBTokenAllocation)
-
-    await Usdt.connect(deployer).approve(investorController.address,roundInvestmentAmount)
+    await companyToken.connect(companyOwner).approve(companyController.address,companyATokenAllocation)
+    await companyToken2.connect(companyOwner2).approve(companyController.address,companyBTokenAllocation)
 
     let companyCreationResult = await companyProxy
       .connect(deployer)
-      .createCompany("https://www.lazerpay.finance/", "Lazer Pay", companyToken.address, deployer.address);
+      .createCompany("https://www.lazerpay.finance/", "Lazer Pay", companyToken.address, companyOwner.address);
       console.log({companyCreationResult})
 
     let company2CreationResult = await companyProxy
       .connect(deployer)
-      .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, deployer.address);
+      .createCompany("http://wicrypt.com/", "Wicrypt", companyToken2.address, companyOwner2.address);
       console.log({company2CreationResult});
 
     
     let roundCreationResult = await companyProxy
-      .connect(deployer)
-      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), 1000, roundDurationInSeconds, companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
+      .connect(companyOwner)
+      .createRound("https://cdn.invictuscapital.com/reports/2021_QR3.pdf", getCurrentTimeStamp(), BigNumber.from("1296000"), BigNumber.from("1000"), companyATokenAllocation, false, [ Usdt.address, Dai.address, Busd.address, Usdc.address ], [ BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({roundCreationResult})
 
       let round2CreationResult = await companyProxy
-      .connect(deployer)
-      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), 1000, roundDurationInSeconds, companyBTokenAllocation, false, [ Usdt.address, Dai.address, Busd.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000") ]);
+      .connect(companyOwner2)
+      .createRound("https://token.wicrypt.com/WicryptLitepaper.pdf", getCurrentTimeStamp(), roundDurationInSeconds, BigNumber.from("1296000"), companyBTokenAllocation, true, [ Usdt.address, Dai.address, Busd.address,Usdc.address ], [ BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("1000000000000000000"), BigNumber.from("100000000000000000") ]);
       console.log({round2CreationResult})
 
 

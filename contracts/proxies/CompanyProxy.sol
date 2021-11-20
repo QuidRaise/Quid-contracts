@@ -32,7 +32,6 @@ contract CompanyProxy is BaseContract, DataGrant, ReentrancyGuard {
 
         ICompanyController controller  = ICompanyController(_dns.getRoute("COMPANY_CONTROLLER"));
         controller.createCompany(CompanyUrl,companyName,companyTokenContractAddress,companyOwner, _msgSender());
-        
     }
 
     function createRound(

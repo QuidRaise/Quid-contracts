@@ -12,6 +12,8 @@ const PRIVATE_KEY_3 = process.env.PRIVATE_KEY_3;
 const PRIVATE_KEY_4 = process.env.PRIVATE_KEY_4;
 
 const TESTNET_DEPLOYER = process.env.TESTNET_DEPLOYER;
+const TESTNET_COMPANY_OWNER1 = process.env.TESTNET_COMPANY_OWNER1;
+const TESTNET_COMPANY_OWNER2 = process.env.TESTNET_COMPANY_OWNER2;
 const TESTNET_INVESTOR = process.env.TESTNET_INVESTOR;
 
 
@@ -35,9 +37,9 @@ module.exports = {
      testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
-      gasPrice: 20000000000,
+      blockGasLimit: 9999999999999,
       allowUnlimitedContractSize :true,
-      accounts: [`${TESTNET_DEPLOYER}`,`${TESTNET_INVESTOR}`],
+      accounts: [`${TESTNET_DEPLOYER}`,   `${TESTNET_COMPANY_OWNER1}`, `${TESTNET_COMPANY_OWNER2}`,   `${TESTNET_INVESTOR}`],
     }, 
     localhost: {
       url: `http://localhost:8545`,

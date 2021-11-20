@@ -50,9 +50,9 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         ensureWhitelist(round.CompanyId,investor);
         require(isSupportedPaymentOption(roundId,paymentTokenAddress), "Payment token not supported");
         IERC20 token = IERC20(paymentTokenAddress);
-        uint256 investmentAmount = token.allowance(investor, address(this));
 
-        require(investmentAmount>0,"Cannot deposit 0 tokens");
+
+        (uint256 investmentAmount,uint256 tokenAllocation)  = rebalanceInvestmentAmount(round, token.allowance(investor, address(this)), paymentTokenAddress);
 
         address[] memory paymentOptions = _roundStore.getRoundPaymentOptions(round.Id);
 
@@ -60,8 +60,6 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         token.approve(address(_dns.getRoute(COMPANY_VAULT)),investmentAmount);
         (ICompanyVault(_dns.getRoute(COMPANY_VAULT))).depositPaymentTokensToVault(round.CompanyId, paymentTokenAddress);
-
-        uint256 tokenAllocation = getTokenAllocation(round,paymentTokenAddress,investmentAmount);
 
         if(!_investorStore.isInvestor(investor))
         {
@@ -72,9 +70,7 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         RoundInvestment memory roundInvestment;
         if(!_investorStore.investedInRound(investor,roundId))
         {
-            uint256[] memory investmentAmounts = new uint256[](paymentOptions.length);
-
-            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,investmentAmounts,true);
+            roundInvestment = RoundInvestment(round.Id,0,paymentOptions,new uint256[](paymentOptions.length),true);
             // If it's a new investor, then we update the investor count for this round;
             round.TotalInvestors = round.TotalInvestors.add(1);
         }
@@ -98,10 +94,28 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
 
         _roundStore.updateRound(round);
         _investorStore.updateRoundsInvestment(investor,roundInvestment);
-        lockTokensAllocated(round, investor,tokenAllocation);
+        lockTokensAllocated(round, investor, tokenAllocation);
         (IQuidRaiseShares(_dns.getRoute(NFT))).mint(round.CompanyId, tokenAllocation, investor);
 
         (IEventEmitter(_dns.getRoute(EVENT_EMITTER))).emitInvestmentDepositEvent(InvestmentDepositRequest(round.CompanyId, round.Id, investor,paymentTokenAddress, investmentAmount,tokenAllocation));
+    }
+
+    function rebalanceInvestmentAmount(Round memory round, uint256 investmentAmount, address paymentTokenAddress) internal view returns (uint256,uint256)
+    {
+        require(investmentAmount>0,"Cannot deposit 0 tokens");
+
+        ICompanyVaultStore _companyVaultStore = ICompanyVaultStore(_dns.getRoute(COMPANY_VAULT_STORE));
+
+        uint256 tokenAllocation = getTokenAllocation(round,paymentTokenAddress,investmentAmount);
+
+        uint256 companyTokensLeft =  _companyVaultStore.getCompanyTokenBalance(round.CompanyId);
+        if(companyTokensLeft<tokenAllocation)
+        {
+            tokenAllocation = companyTokensLeft;
+            uint256 pricePerShare = getPricePerShare(round,paymentTokenAddress);
+            investmentAmount = companyTokensLeft.mul(pricePerShare);
+        }
+        return (investmentAmount,tokenAllocation) ;         
     }
 
     function lockTokensAllocated(Round memory round, address investor, uint256 tokenAllocation) internal
@@ -112,6 +126,10 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
         Company memory company = _companyStore.getCompanyById(round.CompanyId);
 
         IERC20 companyToken =   IERC20(company.CompanyTokenContractAddress);
+
+        _companyVault.withdrawCompanyTokens(round.CompanyId,tokenAllocation);
+
+
         _companyVault.withdrawCompanyTokens(round.CompanyId,tokenAllocation);
         companyToken.approve(round.TokenLockVaultAddres, tokenAllocation);
 
@@ -120,16 +138,22 @@ contract InvestorController is  BaseContract,ReentrancyGuard, IInvestorControlle
     }
 
     function getTokenAllocation(Round memory round,  address paymentTokenAddress, uint256 investmentAmount) internal pure returns (uint256)
+    {       
+       uint256 pricePerShare = getPricePerShare(round,paymentTokenAddress);
+       return investmentAmount.div(pricePerShare);
+    }
+
+    function getPricePerShare(Round memory round,  address paymentTokenAddress) internal pure returns(uint256)
     {
-       for (uint256 i = 0; i < round.PaymentCurrencies.length; i++)
+         for (uint256 i = 0; i < round.PaymentCurrencies.length; i++)
        {
            if(paymentTokenAddress == round.PaymentCurrencies[i])
            {
                uint256 pricePerShare = round.PricePerShare[i];
-               return investmentAmount.div(pricePerShare);
+               return pricePerShare;
            }
        }
-       revert("Token allocation cannot be calculated");
+       revert("Unsupported payment token");
     }
 
 
