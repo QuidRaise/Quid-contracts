@@ -29,7 +29,7 @@ contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
         address from,
         uint256 id,
         uint256 amount
-    ) external {
+    ) external nonReentrant c2cCallValid{
         super._burn(from, id, amount);
     }
 
@@ -37,7 +37,7 @@ contract QuidRaiseShares is BaseContract, ERC1155, ReentrancyGuard {
         address from,
         uint256[] memory ids,
         uint256[] memory amounts
-    ) internal virtual {
+    ) external virtual nonReentrant c2cCallValid{
         super._burnBatch(from, ids, amounts);
     }
 
