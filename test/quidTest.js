@@ -370,8 +370,8 @@ describe("Proxy Controller Tests", function () {
    
     // let investmentVaultContract = await ethers.getContractAt("ERC20Token",record.TokenLockVaultAddres);
 
-    expect(companyToken.balanceOf(record.TokenLockVaultAddres)).to.equal(expectedTokenQuantityPurchased);
-    expect(nft.balanceOf(investor.address, 1)).to.equal(expectedTokenQuantityPurchased);    
+    expect(await companyToken.balanceOf(record.TokenLockVaultAddres)).to.equal(expectedTokenQuantityPurchased);
+    expect(await nft.balanceOf(investor.address, 1)).to.equal(expectedTokenQuantityPurchased);    
   });
 
   
@@ -442,14 +442,13 @@ describe("Proxy Controller Tests", function () {
    
     // let investmentVaultContract = await ethers.getContractAt("ERC20Token",record.TokenLockVaultAddres);
 
-    await expect(companyToken.balanceOf(record.TokenLockVaultAddres)).to.equal(expectedTokenQuantityPurchased);
-    await expect(nft.balanceOf(investor.address, 1)).to.equal(expectedTokenQuantityPurchased);    
+    expect(await companyToken.balanceOf(record.TokenLockVaultAddres)).to.equal(expectedTokenQuantityPurchased);
+    expect(await nft.balanceOf(investor.address, 1)).to.equal(expectedTokenQuantityPurchased);    
 
     await Usdt.connect(investor).approve(investorController.address,amountInvested)
 
     await expect(investorProxy.connect(investor).investInRound(1,Usdt.address))
-    .to.throw("Round is fully subscribed");
-   
+          .to.be.revertedWith("Round is fully subscribed");  
     
   });
 
