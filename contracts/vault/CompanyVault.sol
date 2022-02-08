@@ -9,6 +9,8 @@ import "../libraries/SafeERC20.sol";
 import "../libraries/SafeMath.sol";
 
 import "../models/Schema.sol";
+import "./InvestmentTokenVault.sol";
+
 
 pragma experimental ABIEncoderV2;
 
@@ -23,6 +25,12 @@ contract CompanyVault is BaseContract, ICompanyVault {
     using SafeMath for uint256;
     constructor(address dnsContract) BaseContract(dnsContract) {
        
+    }
+
+    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external override c2cCallValid
+    {
+        InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),companyTokenContractAddress,
+                                                                       round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
     }
 
     /**

@@ -5,6 +5,7 @@ import "../models/EventModels.sol";
 import "./SharedController.sol";
 import "../libraries/SafeERC20.sol";
 import "../libraries/ReentrancyGuard.sol";
+import "../libraries/Address.sol";
 
 import "./interface/ICompanyRoundController.sol";
 import "../store/interface/ICompanyStore.sol";
@@ -26,11 +27,11 @@ pragma solidity 0.7.0;
 contract CompanyRoundController is SharedController, ReentrancyGuard, ICompanyRoundController {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
+    using Address for address;
 
     constructor(address dnsContract) SharedController(dnsContract) {
        
     }
-
 
     function createRound(
         address companyOwner,
@@ -96,6 +97,10 @@ contract CompanyRoundController is SharedController, ReentrancyGuard, ICompanyRo
 
         InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),company.CompanyTokenContractAddress,
                                                                        round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
+
+        ICompanyVault  _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
+        _companyVault.createInvestmentTokenVaultForRound(company.CompanyTokenContractAddress, round);
+
         tokenLockVault.activateDataAccess(_dns.getRoute(INVESTOR_CONTROLLER));
         round.TokenLockVaultAddres = address(tokenLockVault);
 
