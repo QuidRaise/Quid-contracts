@@ -5,9 +5,7 @@ const { solidity, loadFixture, deployContract } = require("ethereum-waffle");
 
 use(solidity);
 
-
 return;
-
 
 describe("Deployment of Contracts", function () {
   before(async () => {

@@ -5,6 +5,7 @@ const { solidity, loadFixture, deployContract } = require("ethereum-waffle");
 
 use(solidity);
 
+return;
 
 function getCurrentTimeStamp()
 {
