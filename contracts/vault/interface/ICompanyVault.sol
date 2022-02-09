@@ -1,12 +1,22 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.7.0;
+pragma experimental ABIEncoderV2;
+
+import "../../models/Schema.sol";
+
 
 /**
  * The system actors, Investors and Companies do not interact with this contract directly, but rather via the
  * Company controller or Investor controller
  */
 interface ICompanyVault {
+
+    /**
+      * Creates investment token vault for contract 
+     */
+    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external;
+
     /**
      * During the round creation process for companies
      * The round allocation tokens are deposited in the company vault contract by calling this function

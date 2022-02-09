@@ -45,13 +45,13 @@ contract Treasury is Ownable {
         return tokenContract.balanceOf(address(this));
     }
 
-    function withdrawEthers(uint256 amount) external {
+    function withdrawEthers(uint256 amount) external onlyOwner{
         uint256 etherBalance = address(this).balance;
         require(etherBalance >= amount, "Insufficient ether balance");
         payable(owner()).transfer(amount);
     }
 
-    function withdrawTokens(address tokenAddress, uint256 amount) external {
+    function withdrawTokens(address tokenAddress, uint256 amount) external onlyOwner{
         IERC20 tokenContract = IERC20(tokenAddress);
         uint256 tokenBalance = tokenContract.balanceOf(address(this));
         require(tokenBalance >= amount, "Insufficient token balance");
