@@ -17,36 +17,37 @@ describe("Deployment of Company Vault Contracts", function () {
     const CompanyStore = await ethers.getContractFactory("CompanyStore");
     const IdentityContract = await ethers.getContractFactory("IdentityContract");
     const CompanyVaultStore = await ethers.getContractFactory("CompanyVaultStore");
+    const EventEmitter = await ethers.getContractFactory("EventEmitter");
 
     companyToken = await Contract.deploy("QuidToken","QT");
     paymentToken = await Contract.deploy("PaymentToken","QT");
-    companyVault = await CompanyVault.deploy();
     dns = await DNS.deploy();
-    companyStore = CompanyStore.deploy(dns.address);
+    companyVault = await CompanyVault.deploy(dns.address);
+    companyStore = await CompanyStore.deploy(dns.address);
     identityContract = await IdentityContract.deploy(dns.address);
     companyVaultStore = await CompanyVaultStore.deploy(dns.address);
+    eventEmitter = await EventEmitter.deploy(dns.address);
 
+    //Set Address Registry
     await dns.setRoute("IDENTITY_CONTRACT", identityContract.address);
     await dns.setRoute("COMPANY_STORE", companyStore.address);
     await dns.setRoute("COMPANY_VAULT", companyVault.address);
     await dns.setRoute("COMPANY_VAULT_STORE", companyVaultStore.address);
+    await dns.setRoute("COMPANY_VAULT_STORE", companyVaultStore.address);
+    await dns.setRoute("EVENT_EMITTER", eventEmitter.address);
 
+    //Set Auth Permissions For C2C Calls
+    await identityContract.activateDataAccess(addr1.address);
+    await identityContract.grantContractInteraction(identityContract.address, eventEmitter.address);
     await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address);
     await identityContract.grantContractInteraction(companyVault.address, companyStore.address);
     await identityContract.grantContractInteraction(addr1.address, companyVault.address);
+    await identityContract.grantContractInteraction(addr1.address, companyStore.address);
 
-    let company = {
-      Id=1,
-      CompanyName='QuidRaise',
-      CompanyUrl='https://QuidRaise.io',
-      CompanyTokenContractAddress='MetaVerse Crescent',
-      OwnerAddress = addr1.address
-    };
-    await companyStore.createCompany(company);
 
     //Move payment tokens to other addresses used in this test suite
-    await paymentToken.transfer(addr2, BigNumber.from("15000000000000000000"));
-    await paymentToken.transfer(addr3, BigNumber.from("15000000000000000000"));
+    await paymentToken.transfer(addr2.address, BigNumber.from("15000000000000000000"));
+    await paymentToken.transfer(addr3.address, BigNumber.from("15000000000000000000"));
 
   });
 
@@ -64,13 +65,22 @@ describe("Deployment of Company Vault Contracts", function () {
 
   it("Deposit Company Tokens Should Increment Company Token Balance In Store", async () => {
 
-   
+ 
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
 
+
+    
 
     let companyId=1
     let amountDeposited = BigNumber.from("1000000000000000000");    
-
-    let expectedOwnerBalance = await token.balanceOf(addr1.address);
 
     await companyToken.approve(companyVault.address, amountDeposited);
     await companyVault.connect(addr1).depositCompanyTokens(companyId);
@@ -78,25 +88,25 @@ describe("Deployment of Company Vault Contracts", function () {
 
   });
 
-  it("Deposit Company Tokens Should Increment Company Token Balance In Store On Subsequent Calls", async () => {
-    let companyId=1
-    let amountDeposited = BigNumber.from("1000000000000000000");    
+  // it("Deposit Company Tokens Should Increment Company Token Balance In Store On Subsequent Calls", async () => {
+  //   let companyId=1
+  //   let amountDeposited = BigNumber.from("1000000000000000000");    
 
-    let expectedOwnerBalance = await token.balanceOf(addr1.address);
+  //   let expectedOwnerBalance = await token.balanceOf(addr1.address);
 
-    await token.approve(treasury.address, amountDeposited);
-    await treasury.depositCompanyTokens(companyId);
+  //   await token.approve(treasury.address, amountDeposited);
+  //   await treasury.depositCompanyTokens(companyId);
 
-    expect (await treasury.getTokenBalance(token.address)).to.equal("1000000000000000000")
+  //   expect (await treasury.getTokenBalance(token.address)).to.equal("1000000000000000000")
 
-    await expect(treasury.connect(addr2).withdrawTokens(token.address, amountDeposited)).to.be.revertedWith("Ownable: caller is not the owner");
+  //   await expect(treasury.connect(addr2).withdrawTokens(token.address, amountDeposited)).to.be.revertedWith("Ownable: caller is not the owner");
 
-    await treasury.connect(addr1).withdrawTokens(token.address, amountDeposited);
+  //   await treasury.connect(addr1).withdrawTokens(token.address, amountDeposited);
 
-    expect (await treasury.getTokenBalance(token.address)).to.equal(0)
-    expect (await token.balanceOf(addr1.address)).to.equal(expectedOwnerBalance)
+  //   expect (await treasury.getTokenBalance(token.address)).to.equal(0)
+  //   expect (await token.balanceOf(addr1.address)).to.equal(expectedOwnerBalance)
 
-  });
+  // });
 
 
 
