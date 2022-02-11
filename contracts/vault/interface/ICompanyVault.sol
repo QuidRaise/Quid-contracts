@@ -15,13 +15,13 @@ interface ICompanyVault {
     /**
       * Creates investment token vault for contract 
      */
-    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external  (Round memory);
+    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external  returns (Round memory);
 
     /**
      * During the round creation process for companies
      * The round allocation tokens are deposited in the company vault contract by calling this function
      */
-    function depositCompanyTokens(uint256 companyId) external 
+    function depositCompanyTokens(uint256 companyId) external;
 
     /**
      * During the round sale process

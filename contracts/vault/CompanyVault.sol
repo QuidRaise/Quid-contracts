@@ -27,7 +27,7 @@ contract CompanyVault is BaseContract, ICompanyVault {
        
     }
 
-    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external returns override c2cCallValid  (Round memory)
+    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external  override c2cCallValid  returns (Round memory)
     {
         InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),companyTokenContractAddress,
                                                                        round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);

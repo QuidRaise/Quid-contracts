@@ -33,7 +33,16 @@ describe("Deployment of Company Vault Contracts", function () {
 
     await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address);
     await identityContract.grantContractInteraction(companyVault.address, companyStore.address);
+    await identityContract.grantContractInteraction(addr1.address, companyVault.address);
 
+    let company = {
+      Id=1,
+      CompanyName='QuidRaise',
+      CompanyUrl='https://QuidRaise.io',
+      CompanyTokenContractAddress='MetaVerse Crescent',
+      OwnerAddress = addr1.address
+    };
+    await companyStore.createCompany(company);
 
     //Move payment tokens to other addresses used in this test suite
     await paymentToken.transfer(addr2, BigNumber.from("15000000000000000000"));
@@ -55,7 +64,7 @@ describe("Deployment of Company Vault Contracts", function () {
 
   it("Deposit Company Tokens Should Increment Company Token Balance In Store", async () => {
 
-    companyStore.createCompany();
+   
 
 
     let companyId=1
