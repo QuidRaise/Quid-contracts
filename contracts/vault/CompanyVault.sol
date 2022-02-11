@@ -44,6 +44,7 @@ contract CompanyVault is BaseContract, ICompanyVault {
         Company memory company = _companyStore.getCompanyById(companyId);
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
+        require(allowance>0,"No tokens deposited for round");
         token.safeTransferFrom(_msgSender(), address(this), allowance);
 
         uint256 balance = _companyVaultStore.getCompanyTokenBalance(companyId);
