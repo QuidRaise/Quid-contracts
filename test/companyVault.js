@@ -10,13 +10,30 @@ use(solidity);
 describe("Deployment of Company Vault Contracts", function () {
   before(async () => {
     [addr1, addr2, addr3] = await ethers.getSigners();
-
+    
+    const DNS = await ethers.getContractFactory("DNS");
     const CompanyVault = await ethers.getContractFactory("CompanyVault");
     const Contract = await ethers.getContractFactory("ERC20Token");
+    const CompanyStore = await ethers.getContractFactory("CompanyStore");
+    const IdentityContract = await ethers.getContractFactory("IdentityContract");
+    const CompanyVaultStore = await ethers.getContractFactory("CompanyVaultStore");
 
     companyToken = await Contract.deploy("QuidToken","QT");
     paymentToken = await Contract.deploy("PaymentToken","QT");
     companyVault = await CompanyVault.deploy();
+    dns = await DNS.deploy();
+    companyStore = CompanyStore.deploy(dns.address);
+    identityContract = await IdentityContract.deploy(dns.address);
+    companyVaultStore = await CompanyVaultStore.deploy(dns.address);
+
+    await dns.setRoute("IDENTITY_CONTRACT", identityContract.address);
+    await dns.setRoute("COMPANY_STORE", companyStore.address);
+    await dns.setRoute("COMPANY_VAULT", companyVault.address);
+    await dns.setRoute("COMPANY_VAULT_STORE", companyVaultStore.address);
+
+    await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address);
+    await identityContract.grantContractInteraction(companyVault.address, companyStore.address);
+
 
     //Move payment tokens to other addresses used in this test suite
     await paymentToken.transfer(addr2, BigNumber.from("15000000000000000000"));
@@ -37,6 +54,10 @@ describe("Deployment of Company Vault Contracts", function () {
   });
 
   it("Deposit Company Tokens Should Increment Company Token Balance In Store", async () => {
+
+    companyStore.createCompany();
+
+
     let companyId=1
     let amountDeposited = BigNumber.from("1000000000000000000");    
 
