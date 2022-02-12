@@ -19,6 +19,10 @@ abstract contract DataGrant is BaseContract {
         dataAccessor[acessor] = true;
     }
 
+    function isAcessor(address acessor) external view returns (bool) {
+        return dataAccessor[acessor];
+    }
+
     modifier onlyDataAccessor() {
         bool hasAccess = dataAccessor[msg.sender];
         require(hasAccess, "unauthorized data access to contract");

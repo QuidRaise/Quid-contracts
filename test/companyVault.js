@@ -42,6 +42,7 @@ describe("Deployment of Company Vault Contracts", function () {
     await identityContract.grantContractInteraction(companyVault.address, companyVaultStore.address);
     await identityContract.grantContractInteraction(companyVault.address, companyStore.address);
     await identityContract.grantContractInteraction(addr1.address, companyVault.address);
+    await identityContract.grantContractInteraction(addr1.address, companyVaultStore.address);
     await identityContract.grantContractInteraction(addr1.address, companyStore.address);
 
 
@@ -114,6 +115,95 @@ describe("Deployment of Company Vault Contracts", function () {
 
     expect(await companyToken.balanceOf(companyVault.address)).to.equal("2000000000000000000");
   });
+
+  it("Deposit Payment Tokens To Vault", async () => {
+
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
+
+    await companyVaultStore.enablePaymentOption(paymentToken.address);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+   
+
+    let companyId=1
+    let amountDeposited = BigNumber.from("1000000000000000000");    
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address);
+    expect(await paymentToken.balanceOf(companyVault.address)).to.equal("1000000000000000000");
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId,paymentToken.address);
+
+    expect(await paymentToken.balanceOf(companyVault.address)).to.equal("2000000000000000000");
+  });
+
+  it("Deposit Payment Tokens To Vault Should Fail When Approved Amount Is Zero", async () => {
+
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
+
+    await companyVaultStore.enablePaymentOption(paymentToken.address);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+   
+
+    let companyId=1
+
+    await expect(companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address)).to.be.revertedWith("Cannot deposit 0 to vault");
+  });
+
+
+  
+  it("withdraw Payment Tokens From Vault Should Withdraw Tokens to calling address", async () => {
+
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
+
+    await companyVaultStore.enablePaymentOption(paymentToken.address);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+   
+
+    let companyId=1
+    let amountLiteral = "1000000000000000000";
+    let amountDeposited = BigNumber.from(amountLiteral);    
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address);
+    expect(await paymentToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+
+    await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,amountDeposited)).to.emit(paymentToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
+    expect(await paymentToken.balanceOf(companyVault.address)).to.be(0);
+
+   
+  });
+
 
 
 
