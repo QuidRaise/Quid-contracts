@@ -8,7 +8,7 @@ use(solidity);
 
 
 describe("Deployment of Company Vault Contracts", function () {
-  before(async () => {
+  beforeEach(async () => {
     [addr1, addr2, addr3] = await ethers.getSigners();
     
     const DNS = await ethers.getContractFactory("DNS");
@@ -85,28 +85,35 @@ describe("Deployment of Company Vault Contracts", function () {
     await companyToken.approve(companyVault.address, amountDeposited);
     await companyVault.connect(addr1).depositCompanyTokens(companyId);
 
-
+    expect(await companyToken.balanceOf(companyVault.address)).to.equal("1000000000000000000");
   });
 
-  // it("Deposit Company Tokens Should Increment Company Token Balance In Store On Subsequent Calls", async () => {
-  //   let companyId=1
-  //   let amountDeposited = BigNumber.from("1000000000000000000");    
+   it("Deposit Company Tokens Should Increment Company Token Balance In Store On Subsequent Calls", async () => {
 
-  //   let expectedOwnerBalance = await token.balanceOf(addr1.address);
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
 
-  //   await token.approve(treasury.address, amountDeposited);
-  //   await treasury.depositCompanyTokens(companyId);
 
-  //   expect (await treasury.getTokenBalance(token.address)).to.equal("1000000000000000000")
+    
 
-  //   await expect(treasury.connect(addr2).withdrawTokens(token.address, amountDeposited)).to.be.revertedWith("Ownable: caller is not the owner");
+    let companyId=1
+    let amountDeposited = BigNumber.from("1000000000000000000");    
 
-  //   await treasury.connect(addr1).withdrawTokens(token.address, amountDeposited);
+    await companyToken.approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr1).depositCompanyTokens(companyId);
 
-  //   expect (await treasury.getTokenBalance(token.address)).to.equal(0)
-  //   expect (await token.balanceOf(addr1.address)).to.equal(expectedOwnerBalance)
+    await companyToken.approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr1).depositCompanyTokens(companyId);
 
-  // });
+    expect(await companyToken.balanceOf(companyVault.address)).to.equal("2000000000000000000");
+  });
 
 
 
