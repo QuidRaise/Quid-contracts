@@ -199,9 +199,40 @@ describe("Deployment of Company Vault Contracts", function () {
     expect(await paymentToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
 
     await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,amountDeposited)).to.emit(paymentToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
-    expect(await paymentToken.balanceOf(companyVault.address)).to.be(0);
+    expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(0);   
+  });
+  
+  it("withdraw Company Tokens From Vault Should Withdraw Tokens to calling address", async () => {
 
-   
+    
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+  
+    let companyId=1
+    let amountLiteral = "1000000000000000000";
+    let amountDeposited = BigNumber.from(amountLiteral);    
+
+    await companyToken.approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr1).depositCompanyTokens(companyId);
+
+    expect(await companyToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address);
+    expect(await paymentToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+
+    await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,amountDeposited)).to.emit(paymentToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
+    expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(0);   
   });
 
 
