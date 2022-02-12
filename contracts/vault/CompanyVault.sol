@@ -27,10 +27,16 @@ contract CompanyVault is BaseContract, ICompanyVault {
        
     }
 
-    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external override c2cCallValid
+    function createInvestmentTokenVaultForRound(address companyTokenContractAddress, Round memory round) external  override c2cCallValid  returns (Round memory)
     {
         InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),companyTokenContractAddress,
                                                                        round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
+                                                                        tokenLockVault.activateDataAccess(_dns.getRoute(INVESTOR_CONTROLLER));
+        
+        tokenLockVault.activateDataAccess(address(this));
+        round.TokenLockVaultAddres = address(tokenLockVault);
+
+        return round;
     }
 
     /**
@@ -44,6 +50,7 @@ contract CompanyVault is BaseContract, ICompanyVault {
         Company memory company = _companyStore.getCompanyById(companyId);
         IERC20 token = IERC20(company.CompanyTokenContractAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
+        require(allowance>0,"No tokens deposited for round");
         token.safeTransferFrom(_msgSender(), address(this), allowance);
 
         uint256 balance = _companyVaultStore.getCompanyTokenBalance(companyId);
@@ -63,6 +70,7 @@ contract CompanyVault is BaseContract, ICompanyVault {
 
         IERC20 token = IERC20(tokenContractAddress);
         uint256 allowance = token.allowance(_msgSender(), address(this));
+        require(allowance>0, "Cannot deposit 0 to vault");
         token.safeTransferFrom(_msgSender(), address(this), allowance);
 
         uint256 balance = _companyVaultStore.getCompanyVaultBalance(companyId, tokenContractAddress);

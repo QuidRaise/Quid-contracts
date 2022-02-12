@@ -95,14 +95,8 @@ contract CompanyRoundController is SharedController, ReentrancyGuard, ICompanyRo
     {
         round.Id = (IRoundStore(_dns.getRoute(ROUND_STORE))).createRound(round);
 
-        InvestmentTokenVault tokenLockVault = new InvestmentTokenVault(address(_dns),company.CompanyTokenContractAddress,
-                                                                       round.RoundStartTimeStamp.add(round.DurationInSeconds).add(round.LockUpPeriodForShare), round.Id);
-
         ICompanyVault  _companyVault = ICompanyVault(_dns.getRoute(COMPANY_VAULT));
-        _companyVault.createInvestmentTokenVaultForRound(company.CompanyTokenContractAddress, round);
-
-        tokenLockVault.activateDataAccess(_dns.getRoute(INVESTOR_CONTROLLER));
-        round.TokenLockVaultAddres = address(tokenLockVault);
+        round = _companyVault.createInvestmentTokenVaultForRound(company.CompanyTokenContractAddress, round);
 
         (IRoundStore(_dns.getRoute(ROUND_STORE))).updateRound(round);   
 
