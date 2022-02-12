@@ -201,6 +201,56 @@ describe("Deployment of Company Vault Contracts", function () {
     await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,amountDeposited)).to.emit(paymentToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
     expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(0);   
   });
+
+  
+  it("withdraw Payment Tokens Greater Than Company Vault Balance Should Revert", async () => {
+
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+
+    let secondCompany = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr2.address
+    };
+    await companyStore.createCompany(company);
+    await companyStore.createCompany(secondCompany);
+
+    await companyVaultStore.enablePaymentOption(paymentToken.address);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+   
+
+    let companyId=1
+    let secondCompanyId=2;
+    let amountLiteral = "1000000000000000000";
+    let amountDeposited = BigNumber.from(amountLiteral);    
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address);
+    expect(await paymentToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+
+
+    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr2).depositPaymentTokensToVault(secondCompanyId, paymentToken.address);
+
+    let totalDeposit = amountDeposited.add(amountDeposited);
+
+
+    await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,totalDeposit)).to.be.revertedWith("[CompanyVault] amount exceeded balance");
+    expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(totalDeposit.toString());   
+  });
+
+
   
   it("withdraw Company Tokens From Vault Should Withdraw Tokens to calling address", async () => {
 
@@ -227,11 +277,40 @@ describe("Deployment of Company Vault Contracts", function () {
 
     expect(await companyToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
 
-    await paymentToken.connect(addr2).approve(companyVault.address, amountDeposited);
-    await companyVault.connect(addr2).depositPaymentTokensToVault(companyId, paymentToken.address);
-    expect(await paymentToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+    await expect(companyVault.connect(addr1).withdrawCompanyTokens(companyId,amountDeposited)).to.emit(companyToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
+    expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(0);   
+  });
 
-    await expect(companyVault.connect(addr1).withdrawPaymentTokensFromVault(companyId, paymentToken.address,amountDeposited)).to.emit(paymentToken,"Transfer").withArgs(companyVault.address, addr1.address,amountLiteral );
+
+  
+  it("withdraw Company Tokens From Vault Should Withdraw Tokens to calling address", async () => {
+
+    
+    //Create Test Company
+    let company = {
+      Id:0,
+      CompanyName:'QuidRaise',
+      CompanyUrl:'https://QuidRaise.io',
+      CompanyTokenContractAddress: companyToken.address,
+      OwnerAddress : addr1.address
+    };
+    await companyStore.createCompany(company);
+
+    //So second address can call the depositPaymentTokensToVault function
+    await identityContract.grantContractInteraction(addr2.address, companyVault.address);
+  
+    let companyId=1
+    let amountLiteral = "1000000000000000000";
+    let amountDeposited = BigNumber.from(amountLiteral);    
+
+    await companyToken.approve(companyVault.address, amountDeposited);
+    await companyVault.connect(addr1).depositCompanyTokens(companyId);
+
+    expect(await companyToken.balanceOf(companyVault.address)).to.equal(amountLiteral);
+
+    let exceededBalanceAmount = amountDeposited.mul(2);
+
+    await expect(companyVault.connect(addr1).withdrawCompanyTokens(companyId,exceededBalanceAmount)).to.be.revertedWith("[CompanyVault] amount exceeded balance");
     expect(await paymentToken.balanceOf(companyVault.address)).to.be.equal(0);   
   });
 
