@@ -79,7 +79,7 @@ contract CompanyVaultStore is BaseContract, ICompanyVaultStore {
 
         _paymentOptions[recordIndex] = _paymentOptions[_paymentOptions.length - 1];
 
-        delete _paymentOptions[_paymentOptions.length - 1];
+        _paymentOptions.pop();
         delete _supportedPaymentOptions[tokenContractAddress];
     }
 
