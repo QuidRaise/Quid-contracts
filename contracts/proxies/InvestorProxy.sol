@@ -22,13 +22,17 @@ contract InvestorProxy is BaseContract, ReentrancyGuard {
     function investInRound(uint256 roundId, address paymentTokenAddress) external nonReentrant 
     {
         IInvestorController controller  = IInvestorController(_dns.getRoute("INVESTOR_CONTROLLER"));
-        controller.investInRound(roundId,paymentTokenAddress,_msgSender());
+        (bool success, bytes memory data) = address(controller).delegatecall(
+            abi.encodeWithSignature("investInRound(uint256,address,address)",roundId,paymentTokenAddress,_msgSender())
+        );
     }
 
     function voteForProposal(uint256 proposalId, bool isApproved) external nonReentrant 
     {
         IInvestorController controller  = IInvestorController(_dns.getRoute("INVESTOR_CONTROLLER"));
-        controller.voteForProposal(proposalId,_msgSender(),isApproved);
+        (bool success, bytes memory data) = address(controller).delegatecall(
+            abi.encodeWithSignature("voteForProposal(uint256,address,bool)",proposalId,_msgSender(),isApproved)
+        );
     }
 
     function viewProposalVote(uint256 proposalId) external view returns (ProposalVote memory)

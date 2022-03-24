@@ -82,18 +82,24 @@ contract CompanyProxy is BaseContract, DataGrant, ReentrancyGuard {
 
     function releaseProposalBudget(uint256 proposalId) external nonReentrant {
         ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
-        controller.releaseProposalBudget(proposalId,_msgSender());      
+        (bool success, bytes memory data) = address(controller).delegatecall(
+            abi.encodeWithSignature("releaseProposalBudget(uint256,address)",proposalId,_msgSender())
+        );
     }
 
 
     function deleteProposal(uint256 proposalId) external nonReentrant {
         ICompanyProposalController controller  = ICompanyProposalController(_dns.getRoute("COMPANY_PROPOSAL_CONTROLLER"));
-        controller.deleteProposal(proposalId,_msgSender());    
+        (bool success, bytes memory data) = address(controller).delegatecall(
+            abi.encodeWithSignature("deleteProposal(uint256,address)",proposalId,_msgSender())
+        );
     }
 
     function deleteRound(uint256 roundId) external nonReentrant {
         ICompanyRoundController controller  = ICompanyRoundController(_dns.getRoute("COMPANY_ROUND_CONTROLLER"));
-        controller.deleteRound(roundId,_msgSender());   
+        (bool success, bytes memory data) = address(controller).delegatecall(
+            abi.encodeWithSignature("deleteRound(uint256,address)",roundId,_msgSender())
+        );
     }
 
 }
